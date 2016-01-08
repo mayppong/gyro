@@ -54,9 +54,84 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("topic:subtopic", {})
-channel.join()
+let arena = socket.channel("arenas:lobby", {})
+arena.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
+
+/**
+ * Introduction
+ */
+let idForm = $("form[name=identity]")
+let name = $(".name", idForm)
+let team = $(".team", idForm)
+let save = $(".save", idForm)
+let set = () => {
+  return arena.push("intro", {name: name.val()})
+}
+let submit = event => {
+    set().receive("ok", resp => {
+      $("#my-name").val(resp.name)
+      console.log("Introducing", resp.name)
+    })
+    event.preventDefault()
+    return false
+};
+
+save.click(submit)
+idForm.submit(submit);
+name.on("keypress", event => {
+  if (event.keyCode === 13) {
+    submit(event)
+  }
+});
+
+/**
+ * Shouting
+ */
+let messageHistory = $(".message-history")
+arena.on("shout", payload => {
+  messageHistory.append(`<li>[${Date()}] ${payload.message}</li>`)
+})
+
+let messageForm = $("form[name=shout]")
+let message = $(".message", messageForm)
+let send = $(".send", messageForm)
+let shout = () => {
+  return arena.push("shout", {message: message.val()})
+}
+
+send.click(shout)
+message.on("keypress", event => {
+  if (event.keyCode === 13) {
+    shout()
+    message.val('')
+    event.preventDefault()
+    return false
+  }
+});
+
+/**
+ * Team
+ */
+let teamChannel;
+let teamForm = $("form[name=team]")
+let teamName = $(".name", teamForm)
+let join = $(".join", teamForm)
+let joining = () => {
+  teamChannel = socket.channel("teams:" + teamName.val())
+  teamChannel.join().receive("ok", resp => {
+    console.log("Joined team", resp)
+  })
+}
+
+join.click(joining)
+teamName.on("keypress", event => {
+  if (event.keyCode === 13) {
+    joining()
+    event.preventDefault()
+    return false
+  }
+});
 export default socket
