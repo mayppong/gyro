@@ -4,11 +4,12 @@
 $script = <<SCRIPT
 cd /home/vagrant
 wget http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo dpkg -i erlang-solutions_1.0_all.deb
+curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
+
 sudo apt-get update
 sudo apt-get install -y git elixir erlang-ssl erlang-inets inotify-tools
-sudo apt-get install -y npm nodejs-legacy
+sudo apt-get install -y npm nodejs
 sudo apt-get install -y postgresql
-mix archive.install -y https://github.com/phoenixframework/phoenix/releases/download/v1.1.1/phoenix_new-1.1.1.ez
 
 sudo -u postgres psql postgres
 << EOF
@@ -16,6 +17,8 @@ sudo -u postgres psql postgres
 ALTER ROLE postgres LOGIN;
 ALTER ROLE postgres CREATEDB;
 EOF
+
+mix archive.install -y https://github.com/phoenixframework/phoenix/releases/download/v1.1.2/phoenix_new-1.1.2.ez
 SCRIPT
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
