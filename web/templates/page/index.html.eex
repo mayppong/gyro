@@ -3,34 +3,31 @@
   <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
 </div>
 
-<div class="row marketing">
-  <div class="col-lg-6">
-    <h4>Resources</h4>
-    <ul>
-      <li>
-        <a href="http://phoenixframework.org/docs/overview">Guides</a>
-      </li>
-      <li>
-        <a href="http://hexdocs.pm/phoenix">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-    </ul>
-  </div>
-
-  <div class="col-lg-6">
-    <h4>Help</h4>
-    <ul>
-      <li>
-        <a href="http://groups.google.com/group/phoenix-talk">Mailing list</a>
-      </li>
-      <li>
-        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">@elixirphoenix</a>
-      </li>
-    </ul>
-  </div>
+<div class="row">
+  <p id="my-name"></p>
+  <form name="identity">
+    <label>INIT: <input type="text" name="name" class="name" maxlength="3" /></label>
+    <!--    <label>TEAM: <input type="text" name="team" class="team" maxlength="3" /></label> -->
+    <button type="button" class="save">Save</button>
+  </form>
 </div>
+
+<div class="row">
+  <p id="my-team"></p>
+  <form name="team">
+    <label>TEAM: <input type="text" name="name" class="name" maxlength="3" /></label>
+    <!--    <label>TEAM: <input type="text" name="team" class="team" maxlength="3" /></label> -->
+    <button type="button" class="join">Join</button>
+  </form>
+</div>
+
+<div class="row">
+  <ul class="message-history">
+  </ul>
+  <form name="shout">
+    <label>SHOUT: <input type="text" name="message" class="message" /></label>
+    <button type="button" class="send">Send</button>
+  </form>
+</div>
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
