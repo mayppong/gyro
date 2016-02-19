@@ -58,6 +58,7 @@ let arena = socket.channel("arenas:lobby", {})
 arena.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
+  .receive("introspect", resp => { console.log(resp) })
 
 
 /**
@@ -134,4 +135,5 @@ teamName.on("keypress", event => {
     return false
   }
 });
+
 export default socket
