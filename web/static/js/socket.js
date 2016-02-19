@@ -73,8 +73,8 @@ let set = () => {
 }
 let submit = event => {
     set().receive("ok", resp => {
-      $("#my-name").val(resp.name)
-      console.log("Introducing", resp.name)
+      $("#my-name").text(resp.name)
+      $(".message-history").append("<li>Introducing " + resp.name + "</li>")
     })
     event.preventDefault()
     return false
