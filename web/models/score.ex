@@ -1,7 +1,7 @@
-defmodule Gyro.Spinner do
+defmodule Gyro.Score do
   use Gyro.Web, :model
 
-  schema "spinners" do
+  schema "scores" do
     field :pid, :string
     field :name, :string
     field :team, :string
