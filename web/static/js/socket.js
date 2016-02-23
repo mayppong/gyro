@@ -56,10 +56,24 @@ socket.connect()
 // Now that you are connected, you can join channels with a topic:
 let arena = socket.channel("arenas:lobby", {})
 arena.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
+  .receive("ok", resp => { spin(); console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
-  .receive("introspect", resp => { console.log(resp) })
 
+let updateScore = (score) => {
+  let scoreField = $('.score')
+  scoreField.html(score)
+}
+let spin = () => {
+  setInterval(() => {
+    let scoreField = $('.score')
+    let newScore = parseInt(scoreField.html()) + 55;
+    updateScore(newScore)
+  }, 55)
+}
+
+arena.on("introspect", resp => {
+  updateScore(resp.score)
+})
 
 /**
  * Introduction

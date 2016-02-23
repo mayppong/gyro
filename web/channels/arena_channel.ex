@@ -5,31 +5,16 @@ defmodule Gyro.ArenaChannel do
 
   def join("arenas:lobby", payload, socket) do
     if authorized?(payload) do
-      case Spinner.start(socket) do
-        {:ok, spinner_pid} ->
-          send(self, :after_join)
-          {:ok, assign(socket, :spinner_pid, spinner_pid)}
-        {:error, _} ->
-          {:error, %{reason: "Unable to start spinner process"}}
-      end
+      :timer.send_interval(5000, :spin)
+      Spinner.start(socket)
     else
       {:error, %{reason: "unauthorized"}}
     end
   end
 
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
-  end
-
-  def handle_info(:after_join, socket) do
-    send self, "introspect"
-    {:noreply, socket}
-  end
-
-  def handle_info("introspect", socket) do
-    state = GenServer.call(socket.assigns[:spinner_pid], :introspect)
-    push socket, "introspect", %{key: "TEST"}
+  def handle_info(:spin, socket) do
+    payload = Spinner.introspect(socket)
+    push socket, "introspect", payload
     {:noreply, socket}
   end
 
@@ -47,7 +32,7 @@ defmodule Gyro.ArenaChannel do
   end
 
   def handle_in("intro", %{ "name" => name } = payload, socket) do
-    Spinner.update(socket.assigns[:spinner_pid], :name, name)
+    Spinner.update(socket, :name, name)
     {:reply, {:ok, payload}, assign(socket, :spinner, name)}
   end
 
@@ -62,5 +47,10 @@ defmodule Gyro.ArenaChannel do
   def handle_out(event, payload, socket) do
     push socket, event, payload
     {:noreply, socket}
+  end
+
+  # Add authorization logic here as required.
+  defp authorized?(_payload) do
+    true
   end
 end
