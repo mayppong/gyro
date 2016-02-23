@@ -1,8 +1,8 @@
-defmodule Gyro.Repo.Migrations.CreateSpinner do
+defmodule Gyro.Repo.Migrations.CreateScores do
   use Ecto.Migration
 
   def change do
-    create table(:spinners) do
+    create table(:scores) do
       add :pid, :string
       add :name, :string
       add :team, :string
