@@ -22,6 +22,7 @@ defmodule Gyro.ArenaChannel do
   """
   def handle_info(:spin, socket) do
     payload = Spinner.introspect(socket)
+    socket = assign(socket, :spinner, payload)
     push socket, "introspect", payload
     {:noreply, socket}
   end
