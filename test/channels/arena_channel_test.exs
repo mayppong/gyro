@@ -25,4 +25,14 @@ defmodule Gyro.ArenaChannelTest do
     broadcast_from! socket, "broadcast", %{"some" => "data"}
     assert_push "broadcast", %{"some" => "data"}
   end
+
+  test "changing name through intro event", %{socket: socket} do
+    ref = push socket, "intro", %{"name" => "MAY"}
+    assert_reply ref, :ok, %{"name" => "MAY"}
+  end
+
+  test "taunting other spinners broadcast to non-target censored message", %{socket: socket} do
+    push socket, "taunt", %{"message" => "rude words"}
+    assert_broadcast "taunt", %{"message" => "Someone's been taunted."}
+  end
 end
