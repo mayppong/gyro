@@ -3,6 +3,10 @@ defmodule Gyro.ArenaChannel do
 
   alias Gyro.Spinner
 
+  @doc """
+  The main method for socket to join the arena. We currentl only have just
+  the lobby as the only room in the channel.
+  """
   def join("arenas:lobby", payload, socket) do
     if authorized?(payload) do
       :timer.send_interval(5000, :spin)
@@ -12,6 +16,10 @@ defmodule Gyro.ArenaChannel do
     end
   end
 
+  @doc """
+  Event handler for the infinite spinning loop. Currently it calls Spinner
+  GenServer to get the state of the spinner to report back to user
+  """
   def handle_info(:spin, socket) do
     payload = Spinner.introspect(socket)
     push socket, "introspect", payload
@@ -24,20 +32,32 @@ defmodule Gyro.ArenaChannel do
     {:reply, {:ok, payload}, socket}
   end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (arenas:lobby).
+  @doc """
+  Event handler for spinners to send public message to every one in the room.
+  """
   def handle_in("shout", payload, socket) do
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
 
+  @doc """
+  Event handler for spinners to change their name. Currently we're just
+  responding with the name that the spinner gave as confirmation but we
+  should broadcast the message to the chatroom that a spinner has changed
+  their name.
+  """
   def handle_in("intro", %{ "name" => name } = payload, socket) do
     Spinner.update(socket, :name, name)
     {:reply, {:ok, payload}, assign(socket, :spinner, name)}
   end
 
+  @doc """
+  Event handler for spinner to private message each other, mainly for
+  trash-talking. The room should then broadcase a notification message
+  to let everyone know which spinner is trash-talking which spinner.
+  """
   def handle_in("taunt", payload, socket) do
-    broadcast socket, "taunt", %{message: "Someone's been taunted."}
+    broadcast socket, "taunt", %{"message" => "Someone's been taunted."}
     {:noreply, socket}
   end
 
