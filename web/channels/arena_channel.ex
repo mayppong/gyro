@@ -1,7 +1,8 @@
 defmodule Gyro.ArenaChannel do
   use Gyro.Web, :channel
-
   alias Gyro.Spinner
+
+  @timer 5000
 
   @doc """
   The main method for socket to join the arena. We currentl only have just
@@ -9,7 +10,7 @@ defmodule Gyro.ArenaChannel do
   """
   def join("arenas:lobby", payload, socket) do
     if authorized?(payload) do
-      :timer.send_interval(5000, :spin)
+      :timer.send_interval(@timer, :spin)
       Spinner.start(socket)
     else
       {:error, %{reason: "unauthorized"}}

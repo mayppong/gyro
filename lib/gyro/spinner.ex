@@ -4,13 +4,14 @@ defmodule Gyro.Spinner do
   alias Gyro.Spinner
   alias Phoenix.Socket
 
-  defstruct connected_at: :calendar.universal_time(), score: 0
+  defstruct name: nil, connected_at: :calendar.universal_time(), score: 0
+  @timer 1000
 
   def start(socket = %Socket{}) do
     case start_link(%Spinner{}) do
       {:ok, spinner_pid} ->
         socket = Socket.assign(socket, :spinner_pid, spinner_pid)
-        Process.send_after(spinner_pid, :spin, 1000)
+        :timer.send_interval(@timer, spinner_pid, :spin)
         {:ok, socket}
       {:error, _} ->
         {:error, %{reason: "Unable to start spinner process"}}
@@ -42,12 +43,12 @@ defmodule Gyro.Spinner do
   end
 
   def handle_call({:update, key, value}, _from, state) do
-    {:reply, _from, Map.put(state, key, value)}
+    state = Map.put(state, key, value)
+    {:reply, state, state}
   end
 
   def handle_info(:spin, state = %{score: score}) do
-    state = Map.put(state, :score, score + 1000)
-    Process.send_after(self, :spin, 1000)
+    state = Map.put(state, :score, score + @timer)
     {:noreply, state}
   end
 end
