@@ -8,7 +8,7 @@ curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 
 sudo apt-get update
 sudo apt-get install -y git elixir erlang-ssl erlang-inets inotify-tools
-sudo apt-get install -y npm nodejs
+sudo apt-get install -y nodejs
 sudo apt-get install -y postgresql
 
 sudo -u postgres psql postgres
@@ -18,7 +18,8 @@ ALTER ROLE postgres LOGIN;
 ALTER ROLE postgres CREATEDB;
 EOF
 
-mix archive.install -y https://github.com/phoenixframework/phoenix/releases/download/v1.1.2/phoenix_new-1.1.2.ez
+mix local.hex
+mix archive.install https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez
 SCRIPT
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
