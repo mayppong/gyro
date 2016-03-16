@@ -72,7 +72,7 @@ let spin = () => {
 }
 
 arena.on("introspect", resp => {
-  updateScore(resp.score)
+  updateScore(resp.spinner.score)
 })
 
 /**

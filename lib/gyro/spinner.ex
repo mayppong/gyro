@@ -19,18 +19,24 @@ defmodule Gyro.Spinner do
   end
 
   def introspect(socket) do
-    socket.assigns[:spinner_pid]
+    state = socket.assigns[:spinner_pid]
     |> GenServer.call(:introspect)
+    Socket.assign(socket, :spinner, Map.delete(state, :connected_at))
   end
 
   def update(socket, key, value) do
-    socket.assigns[:spinner_pid]
+    state = socket.assigns[:spinner_pid]
     |> GenServer.call({:update, key, value})
+    Socket.assign(socket, :spinner, state)
   end
 
   def stop(socket, reason) do
     socket.assigns[:spinner_pid]
     |> GenServer.stop(reason)
+
+    socket
+    |> Socket.assign(:spinner, nil)
+    |> Socket.assign(:spinner_pid, nil)
   end
 
   def start_link(state) do

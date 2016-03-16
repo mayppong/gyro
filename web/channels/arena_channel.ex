@@ -22,9 +22,8 @@ defmodule Gyro.ArenaChannel do
   GenServer to get the state of the spinner to report back to user
   """
   def handle_info(:spin, socket) do
-    payload = Spinner.introspect(socket)
-    socket = assign(socket, :spinner, payload)
-    push socket, "introspect", payload
+    socket = Spinner.introspect(socket)
+    push socket, "introspect", socket.assigns
     {:noreply, socket}
   end
 
@@ -49,8 +48,8 @@ defmodule Gyro.ArenaChannel do
   their name.
   """
   def handle_in("intro", %{ "name" => name } = payload, socket) do
-    Spinner.update(socket, :name, name)
-    {:reply, {:ok, payload}, assign(socket, :spinner, name)}
+    socket = Spinner.update(socket, :name, name)
+    {:reply, {:ok, payload}, socket}
   end
 
   @doc """
