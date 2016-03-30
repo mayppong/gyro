@@ -80,7 +80,7 @@ arena.on("introspect", resp => {
  */
 let idForm = $("form[name=identity]")
 let name = $(".name", idForm)
-let team = $(".team", idForm)
+let squad = $(".squad", idForm)
 let save = $(".save", idForm)
 let set = () => {
   return arena.push("intro", {name: name.val()})
@@ -128,21 +128,25 @@ message.on("keypress", event => {
 });
 
 /**
- * Team
+ * Squad
  */
-let teamChannel;
-let teamForm = $("form[name=team]")
-let teamName = $(".name", teamForm)
-let join = $(".join", teamForm)
+let squadChannel;
+let squadForm = $("form[name=squad]")
+let squadName = $(".name", squadForm)
+let join = $(".join", squadForm)
 let joining = () => {
-  teamChannel = socket.channel("teams:" + teamName.val())
-  teamChannel.join().receive("ok", resp => {
-    console.log("Joined team", resp)
+  squadChannel = socket.channel("arenas:squads:" + squadName.val())
+
+  squadChannel.join().receive("ok", resp => {
+    console.log("Joined squads", resp)
+  })
+  squadChannel.on("introspect", (resp) => {
+    console.log("Squad score" , resp.score)
   })
 }
 
 join.click(joining)
-teamName.on("keypress", event => {
+squadName.on("keypress", event => {
   if (event.keyCode === 13) {
     joining()
     event.preventDefault()
