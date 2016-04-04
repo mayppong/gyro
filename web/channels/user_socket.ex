@@ -1,6 +1,8 @@
 defmodule Gyro.UserSocket do
   use Phoenix.Socket
 
+  alias Gyro.Spinner
+
   ## Channels
   # channel "rooms:*", Gyro.RoomChannel
   channel "arenas:lobby", Gyro.ArenaChannel
@@ -22,8 +24,15 @@ defmodule Gyro.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(_params, socket) do
-    socket = assign(socket, :connected_at, :calendar.universal_time())
-    {:ok, socket}
+    socket = socket
+    |> assign(:connected_at, :calendar.universal_time())
+    # For the SquadChannel to work, it needs to know the spinner pid. Since we
+    # currently can't share socket data in assigns between channels, I had to
+    # move the `Spinner.start/1` to the connection level. Data assigns to
+    # socket at this level will be available to every channels.
+    # TODO: switch to using some other user id method.
+    #{:ok, socket}
+    Spinner.start(socket)
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

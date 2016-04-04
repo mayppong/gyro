@@ -5,13 +5,13 @@ defmodule Gyro.ArenaChannel do
   @timer 5000
 
   @doc """
-  The main method for socket to join the arena. We currentl only have just
+  The main method for socket to join the arena. We currently only have just
   the lobby as the only room in the channel.
   """
   def join("arenas:lobby", payload, socket) do
     if authorized?(payload) do
       :timer.send_interval(@timer, :spin)
-      Spinner.start(socket)
+      {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end

@@ -2,11 +2,14 @@ defmodule Gyro.SquadChannelTest do
   use Gyro.ChannelCase
 
   alias Gyro.SquadChannel
+  alias Gyro.UserSocket
 
   setup do
+    socket = socket("user_id", %{some: :assign})
+    {:ok, socket} = UserSocket.connect(nil, socket)
     {:ok, _, socket} =
-      socket("user_id", %{some: :assign})
-      |> subscribe_and_join(SquadChannel, "squads:lobby")
+      socket
+      |> subscribe_and_join(SquadChannel, "arenas:squads:lobby")
 
     {:ok, socket: socket}
   end
