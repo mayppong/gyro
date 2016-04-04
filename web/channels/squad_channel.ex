@@ -1,9 +1,13 @@
 defmodule Gyro.SquadChannel do
   use Gyro.Web, :channel
+  alias Gyro.Squad
 
-  def join("squads:lobby", payload, socket) do
+  @doc """
+
+  """
+  def join("arenas:squads:" <> name, payload, socket) do
     if authorized?(payload) do
-      {:ok, socket}
+      Squad.enlist(name, socket)
     else
       {:error, %{reason: "unauthorized"}}
     end
