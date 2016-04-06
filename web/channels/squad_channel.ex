@@ -2,16 +2,34 @@ defmodule Gyro.SquadChannel do
   use Gyro.Web, :channel
   alias Gyro.Squad
 
+  @timer 5000
+
   @doc """
 
   """
   def join("arenas:squads:" <> name, payload, socket) do
     if authorized?(payload) do
+      :timer.send_interval(@timer, :spin)
       Squad.enlist(name, socket)
     else
       {:error, %{reason: "unauthorized"}}
     end
   end
+
+  @doc """
+  Event handler for the infinite spinning loop. Currently it calls Spinner
+  GenServer to get the state of the spinner to report back to user
+  """
+  def handle_info(:spin, socket) do
+    socket = Squad.introspect(socket)
+    payload = socket.assigns[:squad]
+    |> Map.delete(:formed_at)
+    |> Map.delete(:members)
+
+    push socket, "introspect", payload
+    {:noreply, socket}
+  end
+
 
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client

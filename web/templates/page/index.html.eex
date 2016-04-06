@@ -1,6 +1,8 @@
 <div class="jumbotron">
   <h2>Score</h2>
-  <p class="score">0</p>
+  <p class="spinner-score">0</p>
+  <h2>Team Score</h2>
+  <p class="squad-score">0</p>
 </div>
 
 <div class="row">

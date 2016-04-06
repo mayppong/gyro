@@ -55,24 +55,21 @@ socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
 let arena = socket.channel("arenas:lobby", {})
+var spinnerScoreField = $('.spinner-score')
+
 arena.join()
   .receive("ok", resp => { spin(); console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-let updateScore = (score) => {
-  let scoreField = $('.score')
-  scoreField.html(score)
-}
 let spin = () => {
   setInterval(() => {
-    let scoreField = $('.score')
-    let newScore = parseInt(scoreField.html()) + 55;
-    updateScore(newScore)
+    let newScore = parseInt(spinnerScoreField.html()) + 55
+    spinnerScoreField.html(newScore)
   }, 55)
 }
 
 arena.on("introspect", resp => {
-  updateScore(resp.spinner.score)
+  spinnerScoreField.html(resp.score)
 })
 
 /**
@@ -133,6 +130,8 @@ message.on("keypress", event => {
 let squadChannel;
 let squadForm = $("form[name=squad]")
 let squadName = $(".name", squadForm)
+var squadScoreField = $('.squad-score')
+
 let join = $(".join", squadForm)
 let joining = () => {
   squadChannel = socket.channel("arenas:squads:" + squadName.val())
@@ -141,7 +140,7 @@ let joining = () => {
     console.log("Joined squads", resp)
   })
   squadChannel.on("introspect", (resp) => {
-    console.log("Squad score" , resp.score)
+    squadScoreField.html(resp.score)
   })
 }
 
