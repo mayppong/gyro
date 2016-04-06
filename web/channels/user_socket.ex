@@ -26,6 +26,7 @@ defmodule Gyro.UserSocket do
   def connect(_params, socket) do
     socket = socket
     |> assign(:connected_at, :calendar.universal_time())
+
     # For the SquadChannel to work, it needs to know the spinner pid. Since we
     # currently can't share socket data in assigns between channels, I had to
     # move the `Spinner.start/1` to the connection level. Data assigns to

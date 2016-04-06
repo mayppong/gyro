@@ -5,7 +5,10 @@ defmodule Gyro.SquadChannel do
   @timer 5000
 
   @doc """
-
+  The main method for socket to join a squad. The namespace shows dependence
+  on client being part of the arena channel already.
+  The name of the squad is defined by the user which is then by Squad GenServer
+  to look up with.
   """
   def join("arenas:squads:" <> name, payload, socket) do
     if authorized?(payload) do
@@ -17,8 +20,8 @@ defmodule Gyro.SquadChannel do
   end
 
   @doc """
-  Event handler for the infinite spinning loop. Currently it calls Spinner
-  GenServer to get the state of the spinner to report back to user
+  Event handler for the infinite spinning loop. Currently it calls Squad
+  GenServer to get the state of the squad to report back to client
   """
   def handle_info(:spin, socket) do
     socket = Squad.introspect(socket)

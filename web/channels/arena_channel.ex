@@ -19,7 +19,7 @@ defmodule Gyro.ArenaChannel do
 
   @doc """
   Event handler for the infinite spinning loop. Currently it calls Spinner
-  GenServer to get the state of the spinner to report back to user
+  GenServer to get the state of the spinner to report back to client
   """
   def handle_info(:spin, socket) do
     socket = Spinner.introspect(socket)
