@@ -30,7 +30,7 @@ defmodule Gyro.Squad do
   def introspect(socket) do
     state = socket.assigns[:squad_pid]
     |> GenServer.call(:introspect)
-    Socket.assign(socket, :spinner, Map.delete(state, :formed_at))
+    Socket.assign(socket, :squad, state)
   end
 
   def stop(socket, reason) do
@@ -52,8 +52,7 @@ defmodule Gyro.Squad do
   end
 
   def handle_call(:introspect, _from, state) do
-    response = Map.delete(state, :formed_at)
-    {:reply, response, state}
+    {:reply, state, state}
   end
 
   def handle_call({:update, key, value}, from, state) do
