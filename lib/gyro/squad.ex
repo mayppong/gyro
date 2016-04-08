@@ -4,7 +4,9 @@ defmodule Gyro.Squad do
   alias Gyro.Squad
   alias Phoenix.Socket
 
-  defstruct name: nil, formed_at: :calendar.universal_time(), score: 0, members: []
+  defstruct name: nil, score: 0, latest: [],
+    formed_at: :calendar.universal_time(), members: []
+
   @timer 5000
 
   def enlist(name, socket) do
@@ -64,6 +66,7 @@ defmodule Gyro.Squad do
     state = state
     |> update_members
     |> update_score
+    |> update_latest
 
     {:noreply, state}
   end
@@ -87,5 +90,22 @@ defmodule Gyro.Squad do
     Map.put(state, :score, score)
   end
 
+  defp update_latest(state) do
+    latest = state.members
+    |> Enum.sort(fn({_, spinner_1}, {_, spinner_2}) ->
+      spinner_1.connected_at < spinner_2. connected_at
+    end)
+    |> Enum.take(10)
+    |> minify
 
+    Map.put(state, :latest, latest)
+  end
+
+  defp minify(members) do
+    members
+    |> Enum.map(fn({_spinner, spinner}) ->
+      spinner
+      |> Map.delete(:connected_at)
+    end)
+  end
 end

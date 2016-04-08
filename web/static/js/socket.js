@@ -140,6 +140,7 @@ let joining = () => {
     console.log("Joined squads", resp)
   })
   squadChannel.on("introspect", (resp) => {
+    console.log(resp)
     squadScoreField.html(resp.score)
   })
 }
