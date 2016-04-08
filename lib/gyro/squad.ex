@@ -47,7 +47,8 @@ defmodule Gyro.Squad do
   end
 
   def handle_call({:enlist, spinner_pid}, _from, state) do
-    state = Map.put(state, :members, [spinner_pid | state.members])
+    member = {spinner_pid, inspect_spinner(spinner_pid)}
+    state = Map.put(state, :members, [member | state.members])
     {:reply, state, state}
   end
 
@@ -60,11 +61,30 @@ defmodule Gyro.Squad do
   end
 
   def handle_info("spin", state) do
-    score = Enum.reduce(state.members, 0, fn(spinner_pid, acc) ->
-      spinner = GenServer.call(spinner_pid, :introspect)
+    state = state
+    |> update_members
+    |> update_score
+
+    {:noreply, state}
+  end
+
+  defp inspect_spinner(spinner_pid) do
+    GenServer.call(spinner_pid, :introspect)
+  end
+
+  defp update_members(state) do
+    members = Enum.map(state.members, fn({spinner_pid, _}) ->
+      {spinner_pid, inspect_spinner(spinner_pid)}
+    end)
+    Map.put(state, :members, members)
+  end
+
+  defp update_score(state) do
+    score = state.members
+    |> Enum.reduce(0, fn({_, spinner}, acc) ->
       acc + spinner.score
     end)
-    {:noreply, Map.put(state, :score, score)}
+    Map.put(state, :score, score)
   end
 
 
