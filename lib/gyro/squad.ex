@@ -42,6 +42,17 @@ defmodule Gyro.Squad do
     end
   end
 
+  @doc """
+  Remove the spinner from the given socket from a squad that's assigned
+  within the socket.
+  """
+  def delist(socket) do
+    socket.assigns[:squad_pid]
+    |> GenServer.call({:delist, socket.assigns[:spinner_pid]})
+
+    socket
+    |> Socket.assign(:squad_pid, nil)
+    |> Socket.assign(:squad, nil)
   end
 
   @doc """
@@ -85,6 +96,22 @@ defmodule Gyro.Squad do
   def handle_call({:enlist, spinner_pid}, _from, state) do
     member = {spinner_pid, inspect_spinner(spinner_pid)}
     state = Map.put(state, :members, [member | state.members])
+    {:reply, state, state}
+  end
+
+  @doc """
+  Handle a member leaving the squad.
+  We need to remove the member from the member list. The ideal situation
+  would be to find the member from the list by map. However, since we're
+  using the spinner pid as "key"-ish right now, we can't look up the member
+  listing map by key right now.
+  """
+  def handle_call({:delist, quitter_pid}, _from, state) do
+    members = state.members
+    |> Enum.filter(fn({spinner_pid, _}) ->
+      spinner_pid != quitter_pid
+    end)
+    state = Map.put(state, :members, members)
     {:reply, state, state}
   end
 

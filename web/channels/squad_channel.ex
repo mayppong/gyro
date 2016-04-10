@@ -19,6 +19,10 @@ defmodule Gyro.SquadChannel do
     end
   end
 
+  def terminate(_, socket) do
+    Squad.delist(socket)
+  end
+
   @doc """
   Event handler for the infinite spinning loop. Currently it calls Squad
   GenServer to get the state of the squad to report back to client

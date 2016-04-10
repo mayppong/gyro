@@ -16,6 +16,7 @@ defmodule Gyro.SquadSocketTest do
 
   test "start a squad" do
     {status, _} = Squad.start("TIM")
+
     assert :ok == status
   end
 
@@ -23,6 +24,15 @@ defmodule Gyro.SquadSocketTest do
     {:ok, socket} = Squad.enlist("TIM", socket)
     socket = Squad.introspect(socket)
     [{member_pid, _}] = socket.assigns.squad.members
+
     assert member_pid == socket.assigns[:spinner_pid]
+  end
+
+  test "delist a member", %{socket: socket} do
+    {:ok, socket} = Squad.enlist("TIM", socket)
+    socket = Squad.delist(socket)
+
+    assert nil == socket.assigns[:squad_pid]
+    assert nil == socket.assigns[:squad]
   end
 end
