@@ -7,8 +7,7 @@ defmodule Gyro.ArenaChannelTest do
   setup do
     socket = socket("user_id", %{some: :assign})
     {:ok, socket} = UserSocket.connect(nil, socket)
-    {:ok, _, socket} =
-      socket
+    {:ok, _, socket} = socket
       |> subscribe_and_join(ArenaChannel, "arenas:lobby")
 
     {:ok, socket: socket}

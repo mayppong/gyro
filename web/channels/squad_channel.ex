@@ -33,7 +33,6 @@ defmodule Gyro.SquadChannel do
     {:noreply, socket}
   end
 
-
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("ping", payload, socket) do
