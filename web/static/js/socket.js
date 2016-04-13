@@ -5,6 +5,8 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
 
+const spinRate = 200 // miliseconds
+
 let socket = new Socket("/socket", {params: {token: window.userToken}})
 
 // When you connect, you'll often need to authenticate the client.
@@ -55,22 +57,35 @@ socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
 let arena = socket.channel("arenas:lobby", {})
+
 var spinnerScoreField = $('.spinner-score')
 
 arena.join()
-  .receive("ok", resp => { spin(); console.log("Joined successfully", resp) })
+  .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-let spin = () => {
-  setInterval(() => {
-    let newScore = parseInt(spinnerScoreField.html()) + 55
-    spinnerScoreField.html(newScore)
-  }, 55)
+arena.on("introspect", resp => {
+  spin(resp)
+})
+
+let setSpinnerScore = (score) => {
+  spinnerScoreField.html(score.toFixed(3))
 }
 
-arena.on("introspect", resp => {
-  spinnerScoreField.html(resp.score)
-})
+let spinInterval
+let spin = (stat) => {
+  if (spinInterval) {
+    clearInterval(spinInterval);
+  }
+
+  setSpinnerScore(stat.score)
+
+  let localSpin = ((stat.spm / 60) * (spinRate / 1000))
+  spinInterval = setInterval(() => {
+    stat.score = stat.score + localSpin
+    setSpinnerScore(stat.score)
+  }, spinRate)
+}
 
 /**
  * Introduction

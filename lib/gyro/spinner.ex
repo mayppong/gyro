@@ -4,7 +4,9 @@ defmodule Gyro.Spinner do
   alias Gyro.Spinner
   alias Phoenix.Socket
 
-  defstruct name: nil, connected_at: :calendar.universal_time(), score: 0
+  defstruct name: nil, spm: 1, score: 0,
+    connected_at: :calendar.universal_time()
+
   @timer 1000
 
   def start(socket = %Socket{}) do
@@ -52,8 +54,21 @@ defmodule Gyro.Spinner do
     {:reply, state, state}
   end
 
-  def handle_info(:spin, state = %{score: score}) do
-    state = Map.put(state, :score, score + @timer)
+  @doc """
+  Handle `spinning` which is where we update the current state of a spinner
+  at a set interval.
+  """
+  def handle_info(:spin, state) do
+    state = state
+    |> update_score
     {:noreply, state}
   end
+
+  # Calculate score by converting spin per minute to seconds and convert spin
+  # interval from miliseconds to seconds, then combine them together.
+  defp update_score(state = %{score: score, spm: spm}) do
+    score = score + (spm * (@timer / 1000) / 60)
+    Map.put(state, :score, score)
+  end
+
 end
