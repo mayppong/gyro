@@ -65,23 +65,23 @@ arena.join()
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 arena.on("introspect", resp => {
-  spin(resp)
+  spinnerSpin(resp)
 })
 
 let setSpinnerScore = (score) => {
   spinnerScoreField.html(score.toFixed(3))
 }
 
-let spinInterval
-let spin = (stat) => {
-  if (spinInterval) {
-    clearInterval(spinInterval);
+let spinnerInterval
+let spinnerSpin = (stat) => {
+  if (spinnerInterval) {
+    clearInterval(spinnerInterval);
   }
 
   setSpinnerScore(stat.score)
 
   let localSpin = ((stat.spm / 60) * (spinRate / 1000))
-  spinInterval = setInterval(() => {
+  spinnerInterval = setInterval(() => {
     stat.score = stat.score + localSpin
     setSpinnerScore(stat.score)
   }, spinRate)
@@ -155,8 +155,7 @@ let joining = () => {
     console.log("Joined squads", resp)
   })
   squadChannel.on("introspect", (resp) => {
-    console.log(resp)
-    squadScoreField.html(resp.score)
+    squadSpin(resp)
   })
 }
 
@@ -168,5 +167,25 @@ squadName.on("keypress", event => {
     return false
   }
 });
+
+let setSquadScore = (score) => {
+  squadScoreField.html(score.toFixed(3))
+}
+
+let squadInterval
+let squadSpin = (stat) => {
+  if (squadInterval) {
+    clearInterval(squadInterval);
+  }
+
+  setSpinnerScore(stat.score)
+
+  let localSpin = ((stat.spm / 60) * (spinRate / 1000))
+  squadInterval = setInterval(() => {
+    stat.score = stat.score + localSpin
+    setSquadScore(stat.score)
+  }, spinRate)
+}
+
 
 export default socket;

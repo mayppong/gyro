@@ -4,7 +4,7 @@ defmodule Gyro.Squad do
   alias Gyro.Squad
   alias Phoenix.Socket
 
-  defstruct name: nil, score: 0, latest: [],
+  defstruct name: nil, spm: 0, score: 0, latest: [],
     formed_at: :calendar.universal_time(), members: []
 
   @timer 5000
@@ -161,11 +161,14 @@ defmodule Gyro.Squad do
   # Private method for iterating through all members and summing up their
   # score.
   defp update_score(state) do
-    score = state.members
-    |> Enum.reduce(0, fn({_, spinner}, acc) ->
-      acc + spinner.score
+    {score, spm} = state.members
+    |> Enum.reduce({0, 0}, fn({_, spinner}, {score, spm}) ->
+      {score + spinner.score, spm + spinner.spm}
     end)
-    Map.put(state, :score, score)
+
+    state
+    |> Map.put(:score, score)
+    |> Map.put(:spm, spm)
   end
 
   # Private method for finding the newest spinners in the squad.
