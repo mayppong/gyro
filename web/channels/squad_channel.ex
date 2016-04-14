@@ -19,6 +19,11 @@ defmodule Gyro.SquadChannel do
     end
   end
 
+  @doc """
+  Terminate method is called when a user leaves the channel. In this case,
+  we want to remove the user from the squad they belong to as stored in the
+  socket's `assigns` key.
+  """
   def terminate(_, socket) do
     Squad.delist(socket)
   end

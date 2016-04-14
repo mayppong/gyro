@@ -9,6 +9,9 @@ defmodule Gyro.Spinner do
 
   @timer 1000
 
+  @doc """
+  The main method for starting a new spinner GenServer for a given socket.
+  """
   def start(socket = %Socket{}) do
     case start_link(%Spinner{}) do
       {:ok, spinner_pid} ->
@@ -20,19 +23,28 @@ defmodule Gyro.Spinner do
     end
   end
 
+  @doc """
+  Inspect the current state of the spinner assigned to the given socket
+  """
   def introspect(socket) do
     state = socket.assigns[:spinner_pid]
     |> GenServer.call(:introspect)
     Socket.assign(socket, :spinner, state)
   end
 
+  @doc """
+  Update spinner data for the spinner stored in the socket.
+  """
   def update(socket, key, value) do
     state = socket.assigns[:spinner_pid]
     |> GenServer.call({:update, key, value})
     Socket.assign(socket, :spinner, state)
   end
 
-  def stop(socket, reason) do
+  @doc """
+  Stop the squad GenServer assigned to the given socket with a given reason
+  """
+  def stop(socket, reason \\ :normal) do
     socket.assigns[:spinner_pid]
     |> GenServer.stop(reason)
 
@@ -41,14 +53,25 @@ defmodule Gyro.Spinner do
     |> Socket.assign(:spinner_pid, nil)
   end
 
+  @doc """
+  Start a new GenServer for the current spinner. The server is registered
+  as an unnamed since we don't worry about duplicating name in this case,
+  unlike with squads where we want to allow only a team of the same name.
+  """
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
   end
 
+  @doc """
+  Handle a call to get the current state stored in the process.
+  """
   def handle_call(:introspect, _from, state) do
     {:reply, state, state}
   end
 
+  @doc """
+  Handle updating a key in the current state.
+  """
   def handle_call({:update, key, value}, _from, state) do
     state = Map.put(state, key, value)
     {:reply, state, state}

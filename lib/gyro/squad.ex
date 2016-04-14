@@ -65,10 +65,9 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  TODO: DEPRECATE
   Stop the squad GenServer assigned to the given socket with a given reason
   """
-  def stop(socket, reason) do
+  def stop(socket, reason \\ :normal) do
     socket.assigns[:squad_pid]
     |> GenServer.stop(reason)
 
