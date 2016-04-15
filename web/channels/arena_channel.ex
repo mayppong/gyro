@@ -18,6 +18,14 @@ defmodule Gyro.ArenaChannel do
   end
 
   @doc """
+  Terminate method is called when a user leaves the channel. In this case,
+  we would want stop the GenServer when the user leave `arena` channel.
+  """
+  def terminate(_, socket) do
+    Spinner.stop(socket)
+  end
+
+  @doc """
   Event handler for the infinite spinning loop. Currently it calls Spinner
   GenServer to get the state of the spinner to report back to client
   """
