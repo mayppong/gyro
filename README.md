@@ -1,4 +1,5 @@
 # Gyro
+[![Build Status](https://travis-ci.org/mayppong/gyro.png)](https://travis-ci.org/mayppong/gyro)
 
 Gyro is an Elixir clone of shawarmaspin that whiterook6 started.
 
