@@ -82,6 +82,7 @@ defmodule Gyro.Squad do
   means the squad name is unique and can be referenced by name from anywhere
   in the system without the process id.
   """
+  def start_link(_, :arena), do: {:error, %{reason: "Reserved name"}}
   def start_link(state, name) do
     GenServer.start_link(__MODULE__, state, name: {:global, name})
   end

@@ -1,5 +1,5 @@
 defmodule Gyro.SquadTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Gyro.Spinner
   alias Gyro.Squad
