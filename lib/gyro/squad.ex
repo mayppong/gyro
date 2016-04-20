@@ -33,10 +33,10 @@ defmodule Gyro.Squad do
   Add the spinner from the given socket to a squad of a given name. If the
   squad doesn't already exist, also start it.
   """
-  def enlist(name, socket) do
+  def enlist(name, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     case start(name) do
       {:ok, squad_pid} ->
-        GenServer.call(squad_pid, {:enlist, socket.assigns[:spinner_pid]})
+        GenServer.call(squad_pid, {:enlist, spinner_pid})
         {:ok, Socket.assign(socket, :squad_pid, squad_pid)}
       error -> error
     end
@@ -46,9 +46,8 @@ defmodule Gyro.Squad do
   Remove the spinner from the given socket from a squad that's assigned
   within the socket.
   """
-  def delist(socket) do
-    socket.assigns[:squad_pid]
-    |> GenServer.call({:delist, socket.assigns[:spinner_pid]})
+  def delist(socket = %Socket{assigns: %{spinner_pid: spinner_pid, squad_pid: squad_pid}}) do
+    GenServer.call(squad_pid, {:delist, spinner_pid})
 
     socket
     |> Socket.assign(:squad_pid, nil)
@@ -58,18 +57,16 @@ defmodule Gyro.Squad do
   @doc """
   Inspect the current state of the Squad assigned to the given socket
   """
-  def introspect(socket) do
-    state = socket.assigns[:squad_pid]
-    |> GenServer.call(:introspect)
+  def introspect(socket = %Socket{assigns: %{squad_pid: squad_pid}}) do
+    state = GenServer.call(squad_pid, :introspect)
     Socket.assign(socket, :squad, state)
   end
 
   @doc """
   Stop the squad GenServer assigned to the given socket with a given reason
   """
-  def stop(socket, reason \\ :normal) do
-    socket.assigns[:squad_pid]
-    |> GenServer.stop(reason)
+  def stop(socket = %Socket{assigns: %{squad_pid: squad_pid}}, reason \\ :normal) do
+    GenServer.stop(squad_pid, reason)
 
     socket
     |> Socket.assign(:squad, nil)
@@ -125,7 +122,7 @@ defmodule Gyro.Squad do
   @doc """
   Handle updating a key in the current state.
   """
-  def handle_call({:update, key, value}, from, state) do
+  def handle_call({:update, key, value}, _, state) do
     state = Map.put(state, key, value)
     {:reply, state, state}
   end

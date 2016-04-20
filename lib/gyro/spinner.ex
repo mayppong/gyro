@@ -26,27 +26,24 @@ defmodule Gyro.Spinner do
   @doc """
   Inspect the current state of the spinner assigned to the given socket
   """
-  def introspect(socket) do
-    state = socket.assigns[:spinner_pid]
-    |> GenServer.call(:introspect)
+  def introspect(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+    state = GenServer.call(spinner_pid, :introspect)
     Socket.assign(socket, :spinner, state)
   end
 
   @doc """
   Update spinner data for the spinner stored in the socket.
   """
-  def update(socket, key, value) do
-    state = socket.assigns[:spinner_pid]
-    |> GenServer.call({:update, key, value})
+  def update(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, key, value) do
+    state = GenServer.call(spinner_pid, {:update, key, value})
     Socket.assign(socket, :spinner, state)
   end
 
   @doc """
   Stop the squad GenServer assigned to the given socket with a given reason
   """
-  def stop(socket, reason \\ :normal) do
-    socket.assigns[:spinner_pid]
-    |> GenServer.stop(reason)
+  def stop(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, reason \\ :normal) do
+    GenServer.stop(spinner_pid, reason)
 
     socket
     |> Socket.assign(:spinner, nil)
