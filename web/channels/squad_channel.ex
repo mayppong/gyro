@@ -12,8 +12,9 @@ defmodule Gyro.SquadChannel do
   """
   def join("arenas:squads:" <> name, payload, socket) do
     if authorized?(payload) do
-      :timer.send_interval(@timer, :spin)
-      Squad.enlist(name, socket)
+      resp = Squad.enlist(name, socket)
+      send(self, :init)
+      resp
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -26,6 +27,12 @@ defmodule Gyro.SquadChannel do
   """
   def terminate(_, socket) do
     Squad.delist(socket)
+  end
+
+  def handle_info(:init, socket) do
+    send(self, :spin)
+    :timer.send_interval(@timer, :spin)
+    {:noreply, socket}
   end
 
   @doc """

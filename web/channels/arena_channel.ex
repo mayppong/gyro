@@ -10,7 +10,7 @@ defmodule Gyro.ArenaChannel do
   """
   def join("arenas:lobby", payload, socket) do
     if authorized?(payload) do
-      :timer.send_interval(@timer, :spin)
+      send(self, :init)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -23,6 +23,15 @@ defmodule Gyro.ArenaChannel do
   """
   def terminate(_, socket) do
     Spinner.stop(socket)
+  end
+
+  @doc """
+  Set spinner up with their initial data on their first join.
+  """
+  def handle_info(:init, socket) do
+    send(self, :spin)
+    :timer.send_interval(@timer, :spin)
+    {:noreply, socket}
   end
 
   @doc """
