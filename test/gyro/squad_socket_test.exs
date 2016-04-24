@@ -4,6 +4,7 @@ defmodule Gyro.SquadSocketTest do
   alias Gyro.Squad
   alias Gyro.ArenaChannel
   alias Gyro.UserSocket
+  alias Phoenix.Socket
 
   setup do
     socket = socket("user_id", %{})
@@ -21,10 +22,7 @@ defmodule Gyro.SquadSocketTest do
 
   test "enlist a member", %{socket: socket} do
     {:ok, socket} = Squad.enlist(socket, "TIM")
-    socket = Squad.introspect(socket)
-    [{member_pid, _}] = socket.assigns.squad.members
-
-    assert member_pid == socket.assigns[:spinner_pid]
+    assert is_member(socket, "TIM")
   end
 
   test "delist a member", %{socket: socket} do
@@ -35,5 +33,11 @@ defmodule Gyro.SquadSocketTest do
     assert nil == squad
   end
 
+  defp is_member(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, name) do
+    %{ members: members } = GenServer.call({:global, name}, :introspect)
+    nil != members
+      |> Enum.find(fn({member_pid, _}) ->
+        member_pid == spinner_pid
+      end)
   end
 end
