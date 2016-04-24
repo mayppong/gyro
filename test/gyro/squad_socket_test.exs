@@ -33,6 +33,14 @@ defmodule Gyro.SquadSocketTest do
     assert nil == squad
   end
 
+  test "enlist a member who's already in another squad", %{socket: socket} do
+    {:ok, socket} = Squad.enlist(socket, "TIM")
+    {:ok, socket} = Squad.enlist(socket, "MAY")
+
+    assert is_member(socket, "MAY")
+    refute is_member(socket, "TIM")
+  end
+
   defp is_member(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, name) do
     %{ members: members } = GenServer.call({:global, name}, :introspect)
     nil != members
