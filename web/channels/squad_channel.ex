@@ -12,7 +12,7 @@ defmodule Gyro.SquadChannel do
   """
   def join("arenas:squads:" <> name, payload, socket) do
     if authorized?(payload) do
-      resp = Squad.enlist(name, socket)
+      resp = Squad.enlist(socket, name)
       send(self, :init)
       resp
     else

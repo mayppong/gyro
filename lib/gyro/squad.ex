@@ -33,7 +33,7 @@ defmodule Gyro.Squad do
   Add the spinner from the given socket to a squad of a given name. If the
   squad doesn't already exist, also start it.
   """
-  def enlist(name, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+  def enlist(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, name) do
     case start(name) do
       {:ok, squad_pid} ->
         GenServer.call(squad_pid, {:enlist, spinner_pid})
