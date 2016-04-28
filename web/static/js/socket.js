@@ -149,6 +149,9 @@ var squadScoreField = $('.squad-score')
 
 let join = $(".join", squadForm)
 let joining = () => {
+  if (squadChannel) {
+    squadChannel.leave()
+  }
   squadChannel = socket.channel("arenas:squads:" + squadName.val())
 
   squadChannel.join().receive("ok", resp => {
