@@ -16,7 +16,6 @@ defmodule Gyro.Spinner do
     case start_link(%Spinner{}) do
       {:ok, spinner_pid} ->
         socket = Socket.assign(socket, :spinner_pid, spinner_pid)
-        :timer.send_interval(@timer, spinner_pid, :spin)
         {:ok, socket}
       {:error, _} ->
         {:error, %{reason: "Unable to start spinner process"}}
@@ -57,6 +56,15 @@ defmodule Gyro.Spinner do
   """
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
+  end
+
+  @doc """
+  Once the GenServer is started successfully, the init function is invoked.
+  For now, we just need to tell it to start spinning.
+  """
+  def init(state) do
+    :timer.send_interval(@timer, self, :spin)
+    {:ok, state}
   end
 
   @doc """

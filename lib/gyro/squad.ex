@@ -21,7 +21,6 @@ defmodule Gyro.Squad do
   def start(name) do
     case start_link(%Squad{name: name}, name) do
       {:ok, squad_pid} ->
-        :timer.send_interval(@timer, squad_pid, :spin)
         {:ok, squad_pid}
       {:error, {:already_started, squad_pid}} ->
         {:ok, squad_pid}
@@ -85,6 +84,15 @@ defmodule Gyro.Squad do
   def start_link(_, :arena), do: {:error, %{reason: "Reserved name"}}
   def start_link(state, name) do
     GenServer.start_link(__MODULE__, state, name: {:global, name})
+  end
+
+  @doc """
+  Once the GenServer is started successfully, the init function is invoked.
+  For now, we just need to tell it to start spinning.
+  """
+  def init(state) do
+    :timer.send_interval(@timer, self, :spin)
+    {:ok, state}
   end
 
   @doc """
