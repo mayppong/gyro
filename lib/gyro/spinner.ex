@@ -1,6 +1,7 @@
 defmodule Gyro.Spinner do
   use GenServer
 
+  alias Gyro.Arena
   alias Gyro.Spinner
   alias Phoenix.Socket
 
@@ -15,6 +16,7 @@ defmodule Gyro.Spinner do
   def enlist(socket = %Socket{}) do
     case start_link(%Spinner{}) do
       {:ok, spinner_pid} ->
+        Arena.enlist(spinner_pid)
         socket = Socket.assign(socket, :spinner_pid, spinner_pid)
         {:ok, socket}
       {:error, _} ->
@@ -42,6 +44,7 @@ defmodule Gyro.Spinner do
   Stop the squad GenServer assigned to the given socket with a given reason
   """
   def delist(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, reason \\ :normal) do
+    Arena.delist(spinner_pid)
     GenServer.stop(spinner_pid, reason)
 
     socket
