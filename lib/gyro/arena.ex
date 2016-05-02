@@ -29,8 +29,8 @@ defmodule Gyro.Arena do
   Agent and not starts the arena GenServer.
   """
   def start_link(state \\ %Arena{}) do
-    with {:ok, spinner_roster} <- Agent.start_link((fn() -> [] end)),
-    {:ok, squad_roster} <- Agent.start_link((fn() -> [] end))
+    with {:ok, spinner_roster} <- Agent.start_link((fn() -> %{} end)),
+    {:ok, squad_roster} <- Agent.start_link((fn() -> %{} end))
     do
       state = %{state | spinner_roster: spinner_roster, squad_roster: squad_roster}
       GenServer.start_link(__MODULE__, state, name: {:global, @name})
@@ -40,9 +40,11 @@ defmodule Gyro.Arena do
   @doc """
   Add the given spinner id to the spinner roster Agent.
   """
-  def handle_call({:enlist, spinner_pid}, _from, state) do
-    state.spinner_roster
-    |> Agent.update(fn(state) -> [spinner_pid | state] end)
+  def handle_call({:enlist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
+    spinner_roster
+    |> Agent.update(fn(state) ->
+      Map.put(state, :erlang.pid_to_list(spinner_pid), spinner_pid)
+    end)
 
     {:reply, state, state}
   end

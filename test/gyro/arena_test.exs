@@ -13,8 +13,11 @@ defmodule Gyro.ArenaTest do
   end
 
   test "adding a new spinner", %{socket: %{assigns: %{spinner_pid: spinner_pid}}} do
-     %{spinner_roster: spinner_roster} = Arena.enlist(spinner_pid)
-    [listed_pid] = Agent.get(spinner_roster, fn(state) -> state end)
+    %{spinner_roster: spinner_roster} = Arena.enlist(spinner_pid)
+    listed_pid = Agent.get(spinner_roster, fn(state) ->
+      state
+      |> Map.get(:erlang.pid_to_list(spinner_pid))
+    end)
 
     assert spinner_pid == listed_pid
   end
