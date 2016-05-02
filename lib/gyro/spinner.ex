@@ -12,7 +12,7 @@ defmodule Gyro.Spinner do
   @doc """
   The main method for starting a new spinner GenServer for a given socket.
   """
-  def start(socket = %Socket{}) do
+  def enlist(socket = %Socket{}) do
     case start_link(%Spinner{}) do
       {:ok, spinner_pid} ->
         socket = Socket.assign(socket, :spinner_pid, spinner_pid)
@@ -41,7 +41,7 @@ defmodule Gyro.Spinner do
   @doc """
   Stop the squad GenServer assigned to the given socket with a given reason
   """
-  def stop(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, reason \\ :normal) do
+  def delist(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, reason \\ :normal) do
     GenServer.stop(spinner_pid, reason)
 
     socket

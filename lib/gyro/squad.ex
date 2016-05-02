@@ -18,7 +18,7 @@ defmodule Gyro.Squad do
   back as if we successfully started the squad. Otherwise, pass the `:error`
   status and reason back.
   """
-  def start(name) do
+  def form(name) do
     case start_link(%Squad{name: name}, name) do
       {:ok, squad_pid} ->
         {:ok, squad_pid}
@@ -36,7 +36,7 @@ defmodule Gyro.Squad do
     socket |> delist |> enlist(name)
   end
   def enlist(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, name) do
-    case start(name) do
+    case form(name) do
       {:ok, squad_pid} ->
         GenServer.call(squad_pid, {:enlist, spinner_pid})
         {:ok, Socket.assign(socket, :squad_pid, squad_pid)}
@@ -67,7 +67,7 @@ defmodule Gyro.Squad do
   @doc """
   Stop the squad GenServer assigned to the given socket with a given reason
   """
-  def stop(socket = %Socket{assigns: %{squad_pid: squad_pid}}, reason \\ :normal) do
+  def disband(socket = %Socket{assigns: %{squad_pid: squad_pid}}, reason \\ :normal) do
     GenServer.stop(squad_pid, reason)
 
     socket

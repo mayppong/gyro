@@ -52,8 +52,8 @@ defmodule Gyro.SquadTest do
     refute is_member?(spinner_pid, squad_pid)
   end
 
-  test "start a squad" do
-    {status, _} = Squad.start("TIM")
+  test "form a squad" do
+    {status, _} = Squad.form("TIM")
     assert :ok == status
   end
 
