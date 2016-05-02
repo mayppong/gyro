@@ -22,7 +22,7 @@ defmodule Gyro.ArenaChannel do
   we would want stop the GenServer when the user leave `arena` channel.
   """
   def terminate(_, socket) do
-    Spinner.stop(socket)
+    Spinner.delist(socket)
   end
 
   @doc """
