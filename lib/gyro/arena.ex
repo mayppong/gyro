@@ -11,7 +11,15 @@ defmodule Gyro.Arena do
     loudest_squads: []
 
   @name :arena
+  @pid {:global, @name}
   @timer 1000
+
+  @doc """
+  Add a new spinner to the spinner roster
+  """
+  def enlist(spinner_pid) do
+    GenServer.call(@pid, {:enlist, spinner_pid})
+  end
 
   @doc """
   Start the arena GenServer by first starts 2 Agents: one for tracking active
@@ -27,6 +35,16 @@ defmodule Gyro.Arena do
       state = %{state | spinner_roster: spinner_roster, squad_roster: squad_roster}
       GenServer.start_link(__MODULE__, state, name: {:global, @name})
     end
+  end
+
+  @doc """
+  Add the given spinner id to the spinner roster Agent.
+  """
+  def handle_call({:enlist, spinner_pid}, _from, state) do
+    state.spinner_roster
+    |> Agent.update(fn(state) -> [spinner_pid | state] end)
+
+    {:reply, state, state}
   end
 
 end
