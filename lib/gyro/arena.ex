@@ -22,6 +22,13 @@ defmodule Gyro.Arena do
   end
 
   @doc """
+  Remove a spinner from the spinner roster
+  """
+  def delist(spinner_pid) do
+    GenServer.call(@pid, {:delist, spinner_pid})
+  end
+
+  @doc """
   Start the arena GenServer by first starts 2 Agents: one for tracking active
   spinners, and another for tracking active squads in the system. One both
   Agents are started successfully, we then start the Arena GenServer.
@@ -44,6 +51,18 @@ defmodule Gyro.Arena do
     spinner_roster
     |> Agent.update(fn(state) ->
       Map.put(state, :erlang.pid_to_list(spinner_pid), spinner_pid)
+    end)
+
+    {:reply, state, state}
+  end
+
+  @doc """
+  Remove the given spinner id from the spinner roster Agent.
+  """
+  def handle_call({:delist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
+    spinner_roster
+    |> Agent.update(fn(state) ->
+      Map.delete(state, :erlang.pid_to_list(spinner_pid))
     end)
 
     {:reply, state, state}
