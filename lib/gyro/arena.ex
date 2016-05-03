@@ -29,6 +29,13 @@ defmodule Gyro.Arena do
   end
 
   @doc """
+  Get the current state of the Arena
+  """
+  def introspect() do
+    GenServer.call(@pid, :introspect)
+  end
+
+  @doc """
   Start the arena GenServer by first starts 2 Agents: one for tracking active
   spinners, and another for tracking active squads in the system. One both
   Agents are started successfully, we then start the Arena GenServer.
@@ -45,12 +52,21 @@ defmodule Gyro.Arena do
   end
 
   @doc """
+  Once the GenServer is started successfully, the init function is invoked.
+  For now, we just need to tell it to start spinning.
+  """
+  def init(state) do
+    :timer.send_interval(@timer, self, :spin)
+    {:ok, state}
+  end
+
+  @doc """
   Add the given spinner id to the spinner roster Agent.
   """
   def handle_call({:enlist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
     spinner_roster
-    |> Agent.update(fn(state) ->
-      Map.put(state, :erlang.pid_to_list(spinner_pid), spinner_pid)
+    |> Agent.update(fn(spinners) ->
+      Map.put(spinners, :erlang.pid_to_list(spinner_pid), spinner_pid)
     end)
 
     {:reply, state, state}
@@ -61,11 +77,50 @@ defmodule Gyro.Arena do
   """
   def handle_call({:delist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
     spinner_roster
-    |> Agent.update(fn(state) ->
-      Map.delete(state, :erlang.pid_to_list(spinner_pid))
+    |> Agent.update(fn(spinners) ->
+      Map.delete(spinners, :erlang.pid_to_list(spinner_pid))
     end)
 
     {:reply, state, state}
   end
 
+  @doc """
+  Handle the introspect call to get the current state of the Arena.
+  """
+  def handle_call(:introspect, _from, state) do
+    {:reply, state, state}
+  end
+
+  @doc """
+  Handle the spinning which is where we update the state of the Arena at an
+  interval.
+  """
+  def handle_info(:spin, state) do
+    state = state
+    |> update_heroic_spinners
+
+    {:noreply, state}
+  end
+
+  # This method is used for updating the heroic_spinners during the spin. It
+  # collects the spinner data by iterating through the spinner roster and ask
+  # for the current spinner state, then sort them by score before taking the
+  # top 10 players.
+  # TODO: Currently, we have to remove the connected_at value from the
+  # spinner bacause we can't output it into a JSON format.
+  defp update_heroic_spinners(state = %{spinner_roster: spinner_roster}) do
+    top10 = Agent.get(spinner_roster, fn(spinners) ->
+      spinners
+      |> Enum.map(fn({_, spinner_pid}) ->
+        GenServer.call(spinner_pid, :introspect)
+        |> Map.delete(:connected_at)
+      end)
+      |> Enum.sort(fn(one, two) ->
+        one.score >= two.score
+      end)
+      |> Enum.take(10)
+    end)
+
+    Map.put(state, :heroic_spinners, top10)
+  end
 end

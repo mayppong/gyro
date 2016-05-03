@@ -65,7 +65,8 @@ arena.join()
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 arena.on("introspect", resp => {
-  spinnerSpin(resp)
+  console.log(resp)
+  spinnerSpin(resp.spinner)
 })
 
 let setSpinnerScore = (score) => {
@@ -158,6 +159,7 @@ let joining = () => {
     console.log("Joined squads", resp)
   })
   squadChannel.on("introspect", (resp) => {
+    console.log(resp)
     squadSpin(resp)
   })
 }
