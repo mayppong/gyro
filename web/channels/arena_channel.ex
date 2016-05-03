@@ -1,5 +1,7 @@
 defmodule Gyro.ArenaChannel do
   use Gyro.Web, :channel
+
+  alias Gyro.Arena
   alias Gyro.Spinner
 
   @timer 5000
@@ -40,10 +42,15 @@ defmodule Gyro.ArenaChannel do
   """
   def handle_info(:spin, socket) do
     socket = Spinner.introspect(socket)
-    payload = socket.assigns[:spinner]
+
+    spinner = socket.assigns[:spinner]
     |> Map.delete(:connected_at)
 
-    push socket, "introspect", payload
+    arena = Arena.introspect()
+    |> Map.delete(:spinner_roster)
+    |> Map.delete(:squad_roster)
+
+    push socket, "introspect", %{arena: arena, spinner: spinner}
     {:noreply, socket}
   end
 
