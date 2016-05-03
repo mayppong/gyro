@@ -29,6 +29,13 @@ defmodule Gyro.Arena do
   end
 
   @doc """
+  Get the current state of the Arena
+  """
+  def introspect() do
+    GenServer.call(@pid, :introspect)
+  end
+
+  @doc """
   Start the arena GenServer by first starts 2 Agents: one for tracking active
   spinners, and another for tracking active squads in the system. One both
   Agents are started successfully, we then start the Arena GenServer.
@@ -49,8 +56,8 @@ defmodule Gyro.Arena do
   """
   def handle_call({:enlist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
     spinner_roster
-    |> Agent.update(fn(state) ->
-      Map.put(state, :erlang.pid_to_list(spinner_pid), spinner_pid)
+    |> Agent.update(fn(spinners) ->
+      Map.put(spinners, :erlang.pid_to_list(spinner_pid), spinner_pid)
     end)
 
     {:reply, state, state}
@@ -61,10 +68,17 @@ defmodule Gyro.Arena do
   """
   def handle_call({:delist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
     spinner_roster
-    |> Agent.update(fn(state) ->
-      Map.delete(state, :erlang.pid_to_list(spinner_pid))
+    |> Agent.update(fn(spinners) ->
+      Map.delete(spinners, :erlang.pid_to_list(spinner_pid))
     end)
 
+    {:reply, state, state}
+  end
+
+  @doc """
+  Handle the introspect call to get the current state of the Arena.
+  """
+  def handle_call(:introspect, _from, state) do
     {:reply, state, state}
   end
 
