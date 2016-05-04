@@ -10,6 +10,9 @@ defmodule Gyro.SpinnerTest do
     {:ok, spinner_pid: spinner_pid}
   end
 
+  test "handle `:introspect` message call" do
+  end
+
   test "enlist a new spinner" do
     {:ok, pid} = Spinner.enlist()
     assert is_pid(pid)
@@ -25,6 +28,24 @@ defmodule Gyro.SpinnerTest do
     assert spinner_pid == found_pid
   end
 
+  test "checking if spinner exists", %{spinner_pid: spinner_pid} do
+    assert Spinner.exists?(spinner_pid)
+  end
+
+  test "introspecting a spinner", %{spinner_pid: spinner_pid} do
+    state = Spinner.introspect(spinner_pid)
+
+    refute is_nil(state.score)
+    assert state.spm == 1
+  end
+
+  test "update spinner state", %{spinner_pid: spinner_pid} do
+    Spinner.update(spinner_pid, :name, "MAY")
+    %{name: name} = Spinner.introspect(spinner_pid)
+
+    assert name == "MAY"
+  end
+
   @tag :skip
   test "delist a spinner", %{spinner_pid: spinner_pid} do
     :ok = Spinner.delist(spinner_pid)
@@ -32,7 +53,4 @@ defmodule Gyro.SpinnerTest do
     assert GenServer.whereis(spinner_pid) == nil
   end
 
-  test "checking if spinner exists", %{spinner_pid: spinner_pid} do
-    assert Spinner.exists?(spinner_pid)
-  end
 end
