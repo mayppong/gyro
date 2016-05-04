@@ -16,21 +16,23 @@ defmodule Gyro.SpinnerTest do
   end
 
   test "enlist a spinner add them to arena" do
-    {:ok, pid} = Spinner.enlist()
+    {:ok, spinner_pid} = Spinner.enlist()
     %{spinner_roster: spinner_roster} = Arena.introspect()
     found_pid = Agent.get(spinner_roster, fn(state) ->
-      Map.get(state, :erlang.pid_to_list(pid))
+      Map.get(state, :erlang.pid_to_list(spinner_pid))
     end)
 
-    assert pid == found_pid
+    assert spinner_pid == found_pid
   end
 
   @tag :skip
-  test "delist a spinner" do
-    {:ok, pid} = Spinner.enlist()
-    :ok = Spinner.delist(pid)
+  test "delist a spinner", %{spinner_pid: spinner_pid} do
+    :ok = Spinner.delist(spinner_pid)
 
-    assert GenServer.whereis(pid) == nil
+    assert GenServer.whereis(spinner_pid) == nil
   end
 
+  test "checking if spinner exists", %{spinner_pid: spinner_pid} do
+    assert Spinner.exists?(spinner_pid)
+  end
 end

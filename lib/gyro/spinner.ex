@@ -23,6 +23,13 @@ defmodule Gyro.Spinner do
   end
 
   @doc """
+  Check if spinner pid is still alive.
+  """
+  def exists?(spinner_pid) do
+    nil != GenServer.whereis(spinner_pid)
+  end
+
+  @doc """
   Inspect the current state of the specified spinner.
   """
   def introspect(spinner_pid) do
