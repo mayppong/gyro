@@ -2,24 +2,17 @@ defmodule Gyro.SquadTest do
   use ExUnit.Case, async: true
   use Gyro.ChannelCase
 
-  alias Phoenix.Socket
-  alias Gyro.ArenaChannel
-  alias Gyro.UserSocket
-
   alias Gyro.Spinner
   alias Gyro.Squad
 
   @squad %Squad{name: "TIM"}
+  @pid {:global, "TIM"}
 
   setup do
-    socket = socket("user_id", %{})
-    {:ok, socket} = UserSocket.connect(nil, socket)
-    {:ok, _, socket} = socket
-      |> subscribe_and_join(ArenaChannel, "arenas:lobby")
+    {:ok, spinner_pid} = Spinner.start_link()
+    {:ok, squad_pid} = Squad.start_link(@squad, @pid)
 
-    {:ok, squad_pid} = Squad.start_link(@squad, @squad.name)
-
-    {:ok, socket: socket, squad_pid: squad_pid}
+    {:ok, spinner_pid: spinner_pid, squad_pid: squad_pid}
   end
 
   test "introspect a squad", %{squad_pid: squad_pid} do
@@ -34,17 +27,14 @@ defmodule Gyro.SquadTest do
     assert %Squad{@squad | score: 100} == state
   end
 
-  test "enlist a spinner to a squad", %{squad_pid: squad_pid} do
-    {:ok, spinner_pid} = Spinner.start_link(%Spinner{})
-
+  test "enlist a spinner to a squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
     %{members: [{member_pid, _} | _]} = GenServer.call(squad_pid, {:enlist, spinner_pid})
 
     assert spinner_pid == member_pid
     assert is_member?(spinner_pid, squad_pid)
   end
 
-  test "delist a spinner from a squad", %{squad_pid: squad_pid} do
-    {:ok, spinner_pid} = Spinner.start_link(%Spinner{})
+  test "delist a spinner from a squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
     GenServer.call(squad_pid, {:enlist, spinner_pid})
 
     %{members: members} = GenServer.call(squad_pid, {:delist, spinner_pid})
@@ -57,31 +47,31 @@ defmodule Gyro.SquadTest do
     assert :ok == status
   end
 
-  test "enlist a member", %{socket: socket} do
-    {:ok, socket} = Squad.enlist(socket, "TIM")
-    assert is_member?(socket, {:global, "TIM"})
+  test "enlist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
+    Squad.enlist(@squad.name, spinner_pid)
+    assert is_member?(spinner_pid, squad_pid)
   end
 
-  test "delist a member", %{socket: socket} do
-    {:ok, socket} = Squad.enlist(socket, "TIM")
-    %{ assigns: %{squad_pid: squad_pid, squad: squad} } = Squad.delist(socket)
+  test "delist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
+    Squad.enlist(@squad.name, spinner_pid)
+    Squad.delist(squad_pid, spinner_pid)
 
-    assert nil == squad_pid
-    assert nil == squad
+    refute is_member?(spinner_pid, squad_pid)
   end
 
-  test "enlist a member who's already in another squad", %{socket: socket} do
-    {:ok, socket} = Squad.enlist(socket, "TIM")
-    {:ok, socket} = Squad.enlist(socket, "MAY")
+  @tag :skip
+  test "enlist a member who's already in another squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
+    Squad.enlist(@squad.name, spinner_pid)
+    Squad.enlist({:global, "MAY"}, spinner_pid)
 
-    assert is_member?(socket, {:global, "MAY"})
-    refute is_member?(socket, {:global, "TIM"})
+    assert is_member?(spinner_pid, {:global, "MAY"})
+    refute is_member?(spinner_pid, squad_pid)
   end
 
 
-  defp is_member?(%Socket{assigns: %{spinner_pid: spinner_pid}}, squad_id), do: is_member?(spinner_pid, squad_id)
   defp is_member?(spinner_pid, squad_id) when is_pid(spinner_pid) do
     %{members: members} = GenServer.call(squad_id, :introspect)
+
     nil != members
       |> Enum.find(fn({member_pid, _}) ->
         member_pid == spinner_pid
