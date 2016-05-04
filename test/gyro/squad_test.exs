@@ -67,6 +67,11 @@ defmodule Gyro.SquadTest do
     refute is_member?(spinner_pid, squad_pid)
   end
 
+  test "checking if squad still exists", %{squad_pid: squad_pid} do
+    assert Squad.exists?(squad_pid)
+    assert Squad.exists?(@squad.name)
+  end
+
 
   defp is_member?(spinner_pid, squad_id) when is_pid(spinner_pid) do
     %{members: members} = GenServer.call(squad_id, :introspect)
