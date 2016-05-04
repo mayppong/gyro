@@ -33,7 +33,8 @@ defmodule Gyro.UserSocket do
     # socket at this level will be available to every channels.
     # TODO: switch to using some other user id method.
     #{:ok, socket}
-    Spinner.enlist(socket)
+    {:ok, spinner_pid} = Spinner.enlist()
+    {:ok, assign(socket, :spinner_pid, spinner_pid)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

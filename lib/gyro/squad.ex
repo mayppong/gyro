@@ -2,7 +2,6 @@ defmodule Gyro.Squad do
   use GenServer
 
   alias Gyro.Squad
-  alias Phoenix.Socket
 
   defstruct name: nil, spm: 0, score: 0, latest: [],
     formed_at: :calendar.universal_time(), members: []
@@ -19,7 +18,7 @@ defmodule Gyro.Squad do
   status and reason back.
   """
   def form(name) do
-    case start_link(%Squad{name: name}, name) do
+    case start_link(%Squad{name: name}, {:global, name}) do
       {:ok, squad_pid} ->
         {:ok, squad_pid}
       {:error, {:already_started, squad_pid}} ->
@@ -29,50 +28,37 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  Add the spinner from the given socket to a squad of a given name. If the
-  squad doesn't already exist, also start it.
+  Add the given spinner to a squad of a given name. If the squad doesn't
+  already exist, also start it.
   """
-  def enlist(socket = %Socket{assigns: %{squad_pid: squad_pid}}, name) when not is_nil(squad_pid) do
-    socket |> delist |> enlist(name)
-  end
-  def enlist(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, name) do
+  def enlist(name, spinner_pid) do
     case form(name) do
       {:ok, squad_pid} ->
         GenServer.call(squad_pid, {:enlist, spinner_pid})
-        {:ok, Socket.assign(socket, :squad_pid, squad_pid)}
+        {:ok, squad_pid}
       error -> error
     end
   end
 
   @doc """
-  Remove the spinner from the given socket from a squad that's assigned
-  within the socket.
+  Remove the spinner from the given squad.
   """
-  def delist(socket = %Socket{assigns: %{spinner_pid: spinner_pid, squad_pid: squad_pid}}) do
+  def delist(squad_pid, spinner_pid) do
     GenServer.call(squad_pid, {:delist, spinner_pid})
-
-    socket
-    |> Socket.assign(:squad_pid, nil)
-    |> Socket.assign(:squad, nil)
   end
 
   @doc """
-  Inspect the current state of the Squad assigned to the given socket
+  Inspect the current state of the given squad.
   """
-  def introspect(socket = %Socket{assigns: %{squad_pid: squad_pid}}) do
-    state = GenServer.call(squad_pid, :introspect)
-    Socket.assign(socket, :squad, state)
+  def introspect(squad_pid) do
+    GenServer.call(squad_pid, :introspect)
   end
 
   @doc """
-  Stop the squad GenServer assigned to the given socket with a given reason
+  Stop the given squad GenServer.
   """
-  def disband(socket = %Socket{assigns: %{squad_pid: squad_pid}}, reason \\ :normal) do
+  def disband(squad_pid, reason \\ :normal) do
     GenServer.stop(squad_pid, reason)
-
-    socket
-    |> Socket.assign(:squad, nil)
-    |> Socket.assign(:squad_pid, nil)
   end
 
   @doc """
@@ -83,7 +69,7 @@ defmodule Gyro.Squad do
   """
   def start_link(_, :arena), do: {:error, %{reason: "Reserved name"}}
   def start_link(state, name) do
-    GenServer.start_link(__MODULE__, state, name: {:global, name})
+    GenServer.start_link(__MODULE__, state, name: name)
   end
 
   @doc """
@@ -159,6 +145,7 @@ defmodule Gyro.Squad do
 
   # Private method for iterating through members in the squad state and
   # update each member current state.
+  # TODO: check if member exists first too
   defp update_members(state) do
     members = Enum.map(state.members, fn({spinner_pid, _}) ->
       {spinner_pid, inspect_spinner(spinner_pid)}
@@ -197,6 +184,7 @@ defmodule Gyro.Squad do
   # list. There are some data in each spinner where we might not care for.
   # This is a good place where we can clean them up and store just the data
   # we need.
+  # TODO: once we can JSONify this, we won't need this method any more
   defp minify(members) do
     members
     |> Enum.map(fn({_spinner, spinner}) ->

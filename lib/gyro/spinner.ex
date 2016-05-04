@@ -3,7 +3,6 @@ defmodule Gyro.Spinner do
 
   alias Gyro.Arena
   alias Gyro.Spinner
-  alias Phoenix.Socket
 
   defstruct name: nil, spm: 1, score: 0,
     connected_at: :calendar.universal_time()
@@ -11,45 +10,38 @@ defmodule Gyro.Spinner do
   @timer 1000
 
   @doc """
-  The main method for starting a new spinner GenServer for a given socket.
+  The main method for starting a new spinner GenServer.
   """
-  def enlist(socket = %Socket{}) do
-    case start_link(%Spinner{}) do
+  def enlist() do
+    case start_link do
       {:ok, spinner_pid} ->
         Arena.enlist(spinner_pid)
-        socket = Socket.assign(socket, :spinner_pid, spinner_pid)
-        {:ok, socket}
+        {:ok, spinner_pid}
       {:error, _} ->
         {:error, %{reason: "Unable to start spinner process"}}
     end
   end
 
   @doc """
-  Inspect the current state of the spinner assigned to the given socket
+  Inspect the current state of the specified spinner.
   """
-  def introspect(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
-    state = GenServer.call(spinner_pid, :introspect)
-    Socket.assign(socket, :spinner, state)
+  def introspect(spinner_pid) do
+    GenServer.call(spinner_pid, :introspect)
   end
 
   @doc """
-  Update spinner data for the spinner stored in the socket.
+  Update spinner data.
   """
-  def update(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, key, value) do
-    state = GenServer.call(spinner_pid, {:update, key, value})
-    Socket.assign(socket, :spinner, state)
+  def update(spinner_pid, key, value) do
+    GenServer.call(spinner_pid, {:update, key, value})
   end
 
   @doc """
-  Stop the squad GenServer assigned to the given socket with a given reason
+  Stop the spinner GenServer with a given reason
   """
-  def delist(socket = %Socket{assigns: %{spinner_pid: spinner_pid}}, reason \\ :normal) do
+  def delist(spinner_pid, reason \\ :normal) do
     Arena.delist(spinner_pid)
     GenServer.stop(spinner_pid, reason)
-
-    socket
-    |> Socket.assign(:spinner, nil)
-    |> Socket.assign(:spinner_pid, nil)
   end
 
   @doc """
@@ -57,7 +49,7 @@ defmodule Gyro.Spinner do
   as an unnamed since we don't worry about duplicating name in this case,
   unlike with squads where we want to allow only a team of the same name.
   """
-  def start_link(state) do
+  def start_link(state \\ %Spinner{}) do
     GenServer.start_link(__MODULE__, state)
   end
 

@@ -1,6 +1,7 @@
 defmodule Gyro.ArenaChannel do
   use Gyro.Web, :channel
 
+  alias Phoenix.Socket
   alias Gyro.Arena
   alias Gyro.Spinner
 
@@ -23,8 +24,8 @@ defmodule Gyro.ArenaChannel do
   Terminate method is called when a user leaves the channel. In this case,
   we would want stop the GenServer when the user leave `arena` channel.
   """
-  def terminate(_, socket) do
-    Spinner.delist(socket)
+  def terminate(_, %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+    Spinner.delist(spinner_pid)
   end
 
   @doc """
@@ -40,11 +41,10 @@ defmodule Gyro.ArenaChannel do
   Event handler for the infinite spinning loop. Currently it calls Spinner
   GenServer to get the state of the spinner to report back to client
   """
-  def handle_info(:spin, socket) do
-    socket = Spinner.introspect(socket)
-
-    spinner = socket.assigns[:spinner]
+  def handle_info(:spin, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+    spinner = Spinner.introspect(spinner_pid)
     |> Map.delete(:connected_at)
+    assign(socket, :spinner, spinner)
 
     arena = Arena.introspect()
     |> Map.delete(:spinner_roster)
@@ -74,8 +74,10 @@ defmodule Gyro.ArenaChannel do
   should broadcast the message to the chatroom that a spinner has changed
   their name.
   """
-  def handle_in("intro", %{ "name" => name } = payload, socket) do
-    socket = Spinner.update(socket, :name, name)
+  def handle_in("intro", %{ "name" => name } = payload, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+    spinner = Spinner.update(spinner_pid, :name, name)
+    assign(socket, :spinner, spinner)
+
     {:reply, {:ok, payload}, socket}
   end
 
