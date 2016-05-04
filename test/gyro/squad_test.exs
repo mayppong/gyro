@@ -1,6 +1,5 @@
 defmodule Gyro.SquadTest do
   use ExUnit.Case, async: true
-  use Gyro.ChannelCase
 
   alias Gyro.Spinner
   alias Gyro.Squad
@@ -66,6 +65,11 @@ defmodule Gyro.SquadTest do
 
     assert is_member?(spinner_pid, {:global, "MAY"})
     refute is_member?(spinner_pid, squad_pid)
+  end
+
+  test "checking if squad still exists", %{squad_pid: squad_pid} do
+    assert Squad.exists?(squad_pid)
+    assert Squad.exists?(@squad.name)
   end
 
 

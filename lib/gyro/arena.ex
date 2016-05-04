@@ -102,6 +102,17 @@ defmodule Gyro.Arena do
     {:noreply, state}
   end
 
+  # This is a generic function for updating a map of spinners
+  defp update_spinners(spinners) do
+    spinners
+    |> Enum.map(fn({_, spinner_pid}) ->
+      case Spinner.exists?(spinner_pid) do
+        nil -> %{score: 0, spm: 0}
+        _ -> Spinner.introspect(spinner_pid) |> Map.delete(:connected_at)
+      end
+    end)
+  end
+
   # This method is used for updating the heroic_spinners during the spin. It
   # collects the spinner data by iterating through the spinner roster and ask
   # for the current spinner state, then sort them by score before taking the
@@ -111,10 +122,7 @@ defmodule Gyro.Arena do
   defp update_heroic_spinners(state = %{spinner_roster: spinner_roster}) do
     top10 = Agent.get(spinner_roster, fn(spinners) ->
       spinners
-      |> Enum.map(fn({_, spinner_pid}) ->
-        GenServer.call(spinner_pid, :introspect)
-        |> Map.delete(:connected_at)
-      end)
+      |> update_spinners
       |> Enum.sort(fn(one, two) ->
         one.score >= two.score
       end)

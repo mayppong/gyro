@@ -1,6 +1,7 @@
 defmodule Gyro.Squad do
   use GenServer
 
+  alias Gyro.Spinner
   alias Gyro.Squad
 
   defstruct name: nil, spm: 0, score: 0, latest: [],
@@ -38,6 +39,14 @@ defmodule Gyro.Squad do
         {:ok, squad_pid}
       error -> error
     end
+  end
+
+  @doc """
+  Check if squad is still alive.
+  """
+  def exists?(name) when is_bitstring(name), do: exists?({:global, name})
+  def exists?(name) do
+    nil != GenServer.whereis(name)
   end
 
   @doc """
@@ -105,6 +114,7 @@ defmodule Gyro.Squad do
     |> Enum.filter(fn({spinner_pid, _}) ->
       spinner_pid != quitter_pid
     end)
+
     state = Map.put(state, :members, members)
     {:reply, state, state}
   end
@@ -140,7 +150,10 @@ defmodule Gyro.Squad do
   # Private method for getting the current state of a spinner for a given
   # spinner pid.
   defp inspect_spinner(spinner_pid) do
-    GenServer.call(spinner_pid, :introspect)
+    case Spinner.exists?(spinner_pid) do
+      nil -> %{score: 0, spm: 0}
+      _ -> Spinner.introspect(spinner_pid)
+    end
   end
 
   # Private method for iterating through members in the squad state and
