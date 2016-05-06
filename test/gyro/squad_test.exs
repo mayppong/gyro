@@ -41,9 +41,17 @@ defmodule Gyro.SquadTest do
     refute is_member?(spinner_pid, squad_pid)
   end
 
-  test "form a squad" do
+  test "form a squad spawn process links to application supervisor" do
     {status, _} = Squad.form("TIM")
+
     assert :ok == status
+
+    #squad_pid = GenServer.whereis(squad_pid)
+    #has_squad = Supervisor.which_children(Gyro.Supervisor)
+    #  |> Enum.any?(fn({_, child_pid, _, _}) ->
+    #    child_pid == squad_pid
+    #  end)
+    #assert has_squad
   end
 
   test "enlist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do

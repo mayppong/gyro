@@ -19,12 +19,23 @@ defmodule Gyro.Squad do
   status and reason back.
   """
   def form(name) do
-    case start_link(%Squad{name: name}, {:global, name}) do
-      {:ok, squad_pid} ->
-        {:ok, squad_pid}
-      {:error, {:already_started, squad_pid}} ->
-        {:ok, squad_pid}
-      error -> error
+    case exists?(name) do
+      true ->
+        {:ok, {:global, name}}
+      false ->
+        import Supervisor.Spec
+
+        child = worker(Squad, [%Squad{name: name}, {:global, name}], [name: {:global, name}])
+        case Supervisor.start_child(Gyro.Supervisor, child) do
+          {:ok, squad_pid} ->
+            {:ok, squad_pid}
+          {:error, {:already_started, squad_pid}} ->
+            {:ok, squad_pid}
+          {:error, {{:already_started, squad_pid}, _}} ->
+            {:ok, squad_pid}
+          error ->
+            error
+        end
     end
   end
 
