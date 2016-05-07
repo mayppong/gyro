@@ -162,8 +162,8 @@ defmodule Gyro.Squad do
   # spinner pid.
   defp inspect_spinner(spinner_pid) do
     case Spinner.exists?(spinner_pid) do
-      nil -> %{score: 0, spm: 0}
-      _ -> Spinner.introspect(spinner_pid)
+      false -> %{score: 0, spm: 0}
+      true -> Spinner.introspect(spinner_pid)
     end
   end
 
