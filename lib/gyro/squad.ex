@@ -108,7 +108,7 @@ defmodule Gyro.Squad do
   of the spinner.
   """
   def handle_call({:enlist, spinner_pid}, _from, state) do
-    member = {spinner_pid, inspect_spinner(spinner_pid)}
+    member = {spinner_pid, %{}}
     state = Map.put(state, :members, [member | state.members])
     {:reply, state, state}
   end
@@ -158,21 +158,15 @@ defmodule Gyro.Squad do
     {:noreply, state}
   end
 
-  # Private method for getting the current state of a spinner for a given
-  # spinner pid.
-  defp inspect_spinner(spinner_pid) do
-    case Spinner.exists?(spinner_pid) do
-      false -> %{score: 0, spm: 0}
-      true -> Spinner.introspect(spinner_pid)
-    end
-  end
-
   # Private method for iterating through members in the squad state and
   # update each member current state.
-  # TODO: check if member exists first too
   defp update_members(state) do
     members = Enum.map(state.members, fn({spinner_pid, _}) ->
-      {spinner_pid, inspect_spinner(spinner_pid)}
+      spinner = case Spinner.introspect(spinner_pid) do
+          nil -> %Spinner{score: 0, spm: 0}
+          state -> state
+        end
+      {spinner_pid, spinner}
     end)
     Map.put(state, :members, members)
   end
