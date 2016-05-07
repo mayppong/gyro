@@ -30,9 +30,23 @@ defmodule Gyro.Spinner do
   end
 
   @doc """
-  Inspect the current state of the specified spinner.
+  Inspect the current state of the specified spinner. If the spinner is not
+  found, the function will catch the error message thrown by GenServer and
+  return `nil` value as a result instead.
   """
   def introspect(spinner_pid) do
+    try do
+      introspect!(spinner_pid)
+    catch
+      :exit, {:noproc, _} -> nil
+    end
+  end
+
+  @doc """
+  Inspect the current state of the specified spinner. If the spinner is not
+  found, GenServer will, by default, throw a message.
+  """
+  def introspect!(spinner_pid) do
     GenServer.call(spinner_pid, :introspect)
   end
 

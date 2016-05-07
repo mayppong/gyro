@@ -106,9 +106,9 @@ defmodule Gyro.Arena do
   defp update_spinners(spinners) do
     spinners
     |> Enum.map(fn({_, spinner_pid}) ->
-      case Spinner.exists?(spinner_pid) do
-        false -> %{score: 0, spm: 0}
-        true -> Spinner.introspect(spinner_pid) |> Map.delete(:connected_at)
+      case Spinner.introspect(spinner_pid) do
+        nil -> %Spinner{score: 0, spm: 0}
+        state -> state |> Map.delete(:connected_at)
       end
     end)
   end
