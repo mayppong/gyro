@@ -107,7 +107,7 @@ defmodule Gyro.Arena do
     spinners
     |> Enum.map(fn({_, spinner_pid}) ->
       case Spinner.introspect(spinner_pid) do
-        nil -> %Spinner{score: 0, spm: 0}
+        nil -> %Spinner{score: 0, spm: 0} |> Map.delete(:connected_at)
         state -> state |> Map.delete(:connected_at)
       end
     end)

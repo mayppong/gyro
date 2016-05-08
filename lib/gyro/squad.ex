@@ -5,7 +5,7 @@ defmodule Gyro.Squad do
   alias Gyro.Squad
 
   defstruct name: nil, spm: 0, score: 0, latest: [],
-    formed_at: :calendar.universal_time(), members: []
+    formed_at: :calendar.universal_time(), members: %{}
 
   @timer 5000
 
@@ -107,9 +107,9 @@ defmodule Gyro.Squad do
   value being the spinner id and the second value be the current known state
   of the spinner.
   """
-  def handle_call({:enlist, spinner_pid}, _from, state) do
-    member = {spinner_pid, %{}}
-    state = Map.put(state, :members, [member | state.members])
+  def handle_call({:enlist, spinner_pid}, _from, state = %{members: members}) do
+    members = Map.put(members, :erlang.pid_to_list(spinner_pid), spinner_pid)
+    state = Map.put(state, :members, members)
     {:reply, state, state}
   end
 
@@ -120,12 +120,8 @@ defmodule Gyro.Squad do
   using the spinner pid as "key"-ish right now, we can't look up the member
   listing map by key right now.
   """
-  def handle_call({:delist, quitter_pid}, _from, state) do
-    members = state.members
-    |> Enum.filter(fn({spinner_pid, _}) ->
-      spinner_pid != quitter_pid
-    end)
-
+  def handle_call({:delist, quitter_pid}, _from, state = %{members: members}) do
+    members = Map.delete(members, :erlang.pid_to_list(quitter_pid))
     state = Map.put(state, :members, members)
     {:reply, state, state}
   end
@@ -149,49 +145,40 @@ defmodule Gyro.Squad do
   Handle `spinning` which is where we update the current state of the squad
   at a set interval.
   """
-  def handle_info(:spin, state) do
+  def handle_info(:spin, state = %{members: members}) do
+    spinners = Enum.reduce(members, [], fn({_, pid}, acc) ->
+      case Spinner.introspect(pid) do
+        nil -> acc
+        member -> [member | acc]
+      end
+    end)
+
     state = state
-    |> update_members
-    |> update_score
-    |> update_latest
+    |> update_score(spinners)
+    |> update_latest(spinners)
 
     {:noreply, state}
   end
 
-  # Private method for iterating through members in the squad state and
-  # update each member current state.
-  defp update_members(state) do
-    members = Enum.map(state.members, fn({spinner_pid, _}) ->
-      spinner = case Spinner.introspect(spinner_pid) do
-          nil -> %Spinner{score: 0, spm: 0}
-          state -> state
-        end
-      {spinner_pid, spinner}
-    end)
-    Map.put(state, :members, members)
-  end
-
   # Private method for iterating through all members and summing up their
   # score.
-  defp update_score(state) do
-    {score, spm} = state.members
-    |> Enum.reduce({0, 0}, fn({_, spinner}, {score, spm}) ->
-      {score + spinner.score, spm + spinner.spm}
+  defp update_score(state, spinners) do
+    {squad_score, squad_spm} = spinners
+    |> Enum.reduce({0, 0}, fn(%{score: score, spm: spm}, {acc_score, acc_spm}) ->
+      {acc_score + score, acc_spm + spm}
     end)
 
     state
-    |> Map.put(:score, score)
-    |> Map.put(:spm, spm)
+    |> Map.put(:score, squad_score)
+    |> Map.put(:spm, squad_spm)
   end
 
   # Private method for finding the newest spinners in the squad.
   # This is done by iterating through members, sort them by their connected
   # time, and take only the first 10 from the list.
-  defp update_latest(state) do
-    latest = state.members
-    |> Enum.sort(fn({_, spinner_1}, {_, spinner_2}) ->
-      spinner_1.connected_at < spinner_2. connected_at
-    end)
+  defp update_latest(state, spinners) do
+    latest = spinners
+    |> Enum.sort(&(&1.connected_at > &2.connected_at))
     |> Enum.take(10)
     |> minify
 
@@ -205,7 +192,7 @@ defmodule Gyro.Squad do
   # TODO: once we can JSONify this, we won't need this method any more
   defp minify(members) do
     members
-    |> Enum.map(fn({_spinner, spinner}) ->
+    |> Enum.map(fn(spinner) ->
       spinner
       |> Map.delete(:connected_at)
     end)
