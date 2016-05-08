@@ -97,20 +97,25 @@ defmodule Gyro.Arena do
   """
   def handle_info(:spin, state) do
     state = state
-    |> update_heroic_spinners
+    |> update_spinners
 
     {:noreply, state}
   end
 
-  # This is a generic function for updating a map of spinners
-  defp update_spinners(spinners) do
-    spinners
-    |> Enum.map(fn({_, spinner_pid}) ->
-      case Spinner.introspect(spinner_pid) do
-        nil -> %Spinner{score: 0, spm: 0} |> Map.delete(:connected_at)
-        state -> state |> Map.delete(:connected_at)
-      end
+  # This is a generic function for updating spinner-related stats
+  defp update_spinners(state = %{spinner_roster: spinner_roster}) do
+    spinners = Agent.get(spinner_roster, fn(spinners) ->
+      spinners
+      |> Enum.reduce([], fn({_, spinner_pid}, acc) ->
+        case Spinner.introspect(spinner_pid) do
+          nil -> acc
+          state -> [state | acc]
+        end
+      end)
     end)
+
+    state
+    |> update_heroic_spinners(spinners)
   end
 
   # This method is used for updating the heroic_spinners during the spin. It
@@ -119,16 +124,28 @@ defmodule Gyro.Arena do
   # top 10 players.
   # TODO: Currently, we have to remove the connected_at value from the
   # spinner bacause we can't output it into a JSON format.
-  defp update_heroic_spinners(state = %{spinner_roster: spinner_roster}) do
-    top10 = Agent.get(spinner_roster, fn(spinners) ->
-      spinners
-      |> update_spinners
-      |> Enum.sort(fn(one, two) ->
-        one.score >= two.score
-      end)
-      |> Enum.take(10)
+  defp update_heroic_spinners(state, spinners) do
+    heroics = spinners
+    |> Enum.sort(fn(one, two) ->
+      one.score >= two.score
     end)
+    |> Enum.take(10)
+    |> minify
 
-    Map.put(state, :heroic_spinners, top10)
+    Map.put(state, :heroic_spinners, heroics)
   end
+
+  # Private method for cleaning up spinner state before we add them to the
+  # list. There are some data in each spinner where we might not care for.
+  # This is a good place where we can clean them up and store just the data
+  # we need.
+  # TODO: once we can JSONify this, we won't need this method any more
+  defp minify(spinners) do
+    spinners
+    |> Enum.map(fn(spinner) ->
+      spinner
+      |> Map.delete(:connected_at)
+    end)
+  end
+
 end
