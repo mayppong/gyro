@@ -29,7 +29,7 @@ defmodule Gyro.SquadTest do
   test "enlist a spinner to a squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
     %{members: members} = GenServer.call(squad_pid, {:enlist, spinner_pid})
 
-    assert Map.has_key?(members, :erlang.pid_to_list(spinner_pid))
+    assert Map.has_key?(members, spinner_pid)
     assert is_member?(spinner_pid, squad_pid)
   end
 
@@ -84,6 +84,6 @@ defmodule Gyro.SquadTest do
   defp is_member?(spinner_pid, squad_id) when is_pid(spinner_pid) do
     %{members: members} = GenServer.call(squad_id, :introspect)
 
-    Map.has_key?(members, :erlang.pid_to_list(spinner_pid))
+    Map.has_key?(members, spinner_pid)
   end
 end

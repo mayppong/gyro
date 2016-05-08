@@ -108,7 +108,7 @@ defmodule Gyro.Squad do
   of the spinner.
   """
   def handle_call({:enlist, spinner_pid}, _from, state = %{members: members}) do
-    members = Map.put(members, :erlang.pid_to_list(spinner_pid), spinner_pid)
+    members = Map.put(members, spinner_pid, spinner_pid)
     state = Map.put(state, :members, members)
     {:reply, state, state}
   end
@@ -121,7 +121,7 @@ defmodule Gyro.Squad do
   listing map by key right now.
   """
   def handle_call({:delist, quitter_pid}, _from, state = %{members: members}) do
-    members = Map.delete(members, :erlang.pid_to_list(quitter_pid))
+    members = Map.delete(members, quitter_pid)
     state = Map.put(state, :members, members)
     {:reply, state, state}
   end

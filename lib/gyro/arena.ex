@@ -66,7 +66,7 @@ defmodule Gyro.Arena do
   def handle_call({:enlist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
     spinner_roster
     |> Agent.update(fn(spinners) ->
-      Map.put(spinners, :erlang.pid_to_list(spinner_pid), spinner_pid)
+      Map.put(spinners, spinner_pid, spinner_pid)
     end)
 
     {:reply, state, state}
@@ -78,7 +78,7 @@ defmodule Gyro.Arena do
   def handle_call({:delist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
     spinner_roster
     |> Agent.update(fn(spinners) ->
-      Map.delete(spinners, :erlang.pid_to_list(spinner_pid))
+      Map.delete(spinners, spinner_pid)
     end)
 
     {:reply, state, state}
