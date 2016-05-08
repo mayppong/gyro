@@ -22,7 +22,7 @@ defmodule Gyro.SpinnerTest do
     {:ok, spinner_pid} = Spinner.enlist()
     %{spinner_roster: spinner_roster} = Arena.introspect()
     found_pid = Agent.get(spinner_roster, fn(state) ->
-      Map.get(state, :erlang.pid_to_list(spinner_pid))
+      Map.get(state, spinner_pid)
     end)
 
     assert spinner_pid == found_pid

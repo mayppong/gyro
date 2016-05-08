@@ -16,7 +16,7 @@ defmodule Gyro.ArenaTest do
     %{spinner_roster: spinner_roster} = Arena.enlist(spinner_pid)
     listed_pid = Agent.get(spinner_roster, fn(state) ->
       state
-      |> Map.get(:erlang.pid_to_list(spinner_pid))
+      |> Map.get(spinner_pid)
     end)
 
     assert spinner_pid == listed_pid
@@ -27,7 +27,7 @@ defmodule Gyro.ArenaTest do
     %{spinner_roster: spinner_roster} = Arena.delist(spinner_pid)
     listed_pid = Agent.get(spinner_roster, fn(state) ->
       state
-      |> Map.get(:erlang.pid_to_list(spinner_pid))
+      |> Map.get(spinner_pid)
     end)
 
     assert listed_pid == nil
