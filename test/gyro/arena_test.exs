@@ -34,7 +34,7 @@ defmodule Gyro.ArenaTest do
     assert listed_pid == nil
   end
 
-  test "inspecting the arena", %{spinner_pid: spinner_pid} do
+  test "inspecting the arena" do
     state = Arena.introspect()
 
     assert is_pid(state.spinner_roster)

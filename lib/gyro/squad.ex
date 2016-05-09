@@ -103,11 +103,10 @@ defmodule Gyro.Squad do
 
   @doc """
   Handle adding a new spinner to the squad.
-  The new spinner is stored in the member list as a tuple with the first
-  value being the spinner id and the second value be the current known state
-  of the spinner.
+  The new spinner is stored in the member list as a map.
   """
   def handle_call({:enlist, spinner_pid}, _from, state = %{members: members}) do
+    Process.monitor(spinner_pid)
     members = Map.put(members, spinner_pid, spinner_pid)
     state = Map.put(state, :members, members)
     {:reply, state, state}
@@ -121,8 +120,11 @@ defmodule Gyro.Squad do
   listing map by key right now.
   """
   def handle_call({:delist, quitter_pid}, _from, state = %{members: members}) do
-    members = Map.delete(members, quitter_pid)
-    state = Map.put(state, :members, members)
+    if Map.has_key?(members, quitter_pid) do
+      members = Map.delete(members, quitter_pid)
+      state = Map.put(state, :members, members)
+    end
+
     {:reply, state, state}
   end
 
@@ -139,6 +141,15 @@ defmodule Gyro.Squad do
   def handle_call({:update, key, value}, _, state) do
     state = Map.put(state, key, value)
     {:reply, state, state}
+  end
+
+  @doc """
+  Handle the `:DOWN` message from the Spinners' process we monitor on enlist.
+  If the Spinner process is downed, we delist them from the Squad.
+  """
+  def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
+    {:reply, _, state} = handle_call({:delist, spinner_pid}, self, state)
+    {:noreply, state}
   end
 
   @doc """
