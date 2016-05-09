@@ -144,7 +144,7 @@ defmodule Gyro.Arena do
     |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.take(10)
 
-    Map.put(state, :lengendary_spinners, legends)
+    Map.put(state, :legendary_spinners, legends)
   end
 
   # Private method for cleaning up spinner state before we add them to the
