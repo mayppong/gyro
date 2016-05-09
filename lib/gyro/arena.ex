@@ -116,6 +116,7 @@ defmodule Gyro.Arena do
 
     state
     |> update_heroic_spinners(spinners)
+    |> update_legendary_spinners
   end
 
   # This method is used for updating the heroic_spinners during the spin. It
@@ -126,13 +127,24 @@ defmodule Gyro.Arena do
   # spinner bacause we can't output it into a JSON format.
   defp update_heroic_spinners(state, spinners) do
     heroics = spinners
-    |> Enum.sort(fn(one, two) ->
-      one.score >= two.score
-    end)
+    |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.take(10)
     |> minify
 
     Map.put(state, :heroic_spinners, heroics)
+  end
+
+  # This method updates the legendary spinner list based on the new heroic
+  # spinners. Unlike heroic, legendary spinners are an all-time score, so we
+  # need to compare the score against existing legendary as well, even if the
+  # spinner has left the system.
+  defp update_legendary_spinners(state = %{heroic_spinners: heroes, legendary_spinners: legends}) do
+    legends = legends
+    |> Enum.concat(heroes)
+    |> Enum.sort(&(&1.score >= &2.score))
+    |> Enum.take(10)
+
+    Map.put(state, :lengendary_spinners, legends)
   end
 
   # Private method for cleaning up spinner state before we add them to the
