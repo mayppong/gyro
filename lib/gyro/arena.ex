@@ -64,6 +64,7 @@ defmodule Gyro.Arena do
   Add the given spinner id to the spinner roster Agent.
   """
   def handle_call({:enlist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
+    Process.monitor(spinner_pid)
     spinner_roster
     |> Agent.update(fn(spinners) ->
       Map.put(spinners, spinner_pid, spinner_pid)
@@ -90,6 +91,16 @@ defmodule Gyro.Arena do
   def handle_call(:introspect, _from, state) do
     {:reply, state, state}
   end
+
+  @doc """
+  Handle the `:DOWN` message from the Spinners' process we monitor on enlist.
+  If the Spinner process is downed, we delist them from the Arna's roster.
+  """
+  def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
+    {:reply, _, state} = handle_call({:delist, spinner_pid}, self, state)
+    {:noreply, state}
+  end
+
 
   @doc """
   Handle the spinning which is where we update the state of the Arena at an
