@@ -5,7 +5,7 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
 
-const spinRate = 200 // miliseconds
+const spinRate = 16 // miliseconds
 
 let socket = new Socket("/socket", {params: {token: window.userToken}})
 
@@ -58,7 +58,7 @@ socket.connect()
 // Now that you are connected, you can join channels with a topic:
 let arena = socket.channel("arenas:lobby", {})
 
-var spinnerScoreField = $('.spinner-score')
+var spinnerScoreField = $('#score-box')
 
 arena.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
@@ -192,5 +192,8 @@ let squadSpin = (stat) => {
   }, spinRate)
 }
 
+/**
+ * High Score Boards
+ */
 
 export default socket;

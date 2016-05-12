@@ -1,0 +1,178 @@
+@font-face {
+	font-family: 'emulogic';
+	src: url('emulogic.eot');
+	src: local(''), url('emulogic.woff') format('woff'), url('emulogic.ttf') format('truetype'), url('emulogic.svg') format('svg');
+	font-style: normal;
+	font-weight: normal;
+}
+
+/* VIDEO */
+.fullscreen-background {
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+	-o-transform: translateX(-50%) translateY(-50%);
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	background-image: url("../images/1080p.png");
+	background-position: 50% 50%;
+	background-repeat:  no-repeat;
+	background-size: cover;
+	left: 50%;
+	min-height:100%;
+	min-width:100%;
+	position: fixed;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	z-index: -100;
+}
+
+body {
+	-webkit-font-smoothing: none;
+	bottom: 0;
+	color: white;
+	font-family: 'emulogic', sans;
+	font-smooth: never;
+	height: 100%;
+	position: relative;
+}
+
+/* Layout */
+.h-fill {
+	display: flex;
+	flex-direction: row;
+}
+
+.v-fill {
+	display: flex;
+	flex-direction: column;
+}
+
+.h-fill > *, .v-fill > * {
+	flex-grow: 0;
+}
+
+.h-fill .fill, .v-fill .fill {
+	flex-grow: 1;
+}
+
+.col {
+	bottom: 0;
+	height: 100%;
+	padding: 1rem;
+	position: fixed;
+	top: 0;
+}
+
+.col.left {
+	left: 0;
+	right: 67%;
+}
+
+.col.right {
+	left: 67%;
+	right: 0;
+}
+
+.col.middle {
+	left: 33%;
+	right: 33%;
+	padding: 0;
+}
+
+.score-box {
+	left: 1rem;
+	right: 1rem;
+	bottom: 0;
+	height: 5rem;
+	position: absolute;
+}
+
+.social {
+	left: 1rem;
+	right: 1rem;
+	top: 0;
+	height: 5rem;
+	position: absolute;
+}
+
+.dark-bg {
+	background-color: #333;
+	background-color: rgba(0,0,0,0.7);
+}
+
+.header {
+	font-size: large;
+	text-align: center;
+}
+
+.tabs {
+	position: relative;
+	text-align: center;
+	width: 100%;
+}
+
+.tabs .tab {
+	border-bottom: 1px solid white;
+	bottom: -1px;
+	color: white;
+	display: inline-block;
+	font-size: small;
+	line-height: 2rem;
+	padding: 0 1rem;
+	position: relative;
+}
+
+.tabs .tab.selected {
+	border-bottom-width: 2px;
+	bottom: -1px;
+	font-weight: bold;
+	padding: 0;
+}
+
+/* Stats table */
+.stats {
+	margin: 1rem 0;
+	width: 100%;
+	margin-bottom: 2rem;
+}
+
+.stats thead {
+	border-bottom: 1px solid white;
+	font-size: small;
+}
+
+.stats tr {
+	line-height: 1.5rem;
+}
+
+.stats td {
+	text-align: center;
+}
+
+.messages {
+	margin-top: 1rem;
+	overflow-y: scroll;
+}
+
+.messages .message {
+	font-size: small;
+	margin-bottom: .25rem;
+}
+
+.messages .message.same-team {
+	color: #9b59b6;
+}
+
+.messages .message.admin {
+	color: #3498db;
+}
+
+.abandon {
+	display: block;
+	width: 100%;
+	border: 0;
+	margin: 1rem 0;
+	background-color: #e74c3c;
+	color: white;
+	font-size: large;
+	font-family: emulogic;
+}
