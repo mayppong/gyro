@@ -155,10 +155,18 @@ defmodule Gyro.Squad do
   @doc """
   Handle `spinning` which is where we update the current state of the squad
   at a set interval.
+  A new process is spun up for each member to introspect the state
+  asynchronously. Once we have all members data, we can continue on with the
+  calculations.
   """
   def handle_info(:spin, state = %{members: members}) do
-    spinners = Enum.reduce(members, [], fn({_, pid}, acc) ->
-      case Spinner.introspect(pid) do
+    spinners = members
+    |> Enum.map(fn({_, pid}) ->
+      Task.async(fn -> Spinner.introspect(pid) end)
+    end)
+    |> Enum.map(&(Task.await(&1)))
+    |> Enum.reduce([], fn(spinner, acc) ->
+      case spinner do
         nil -> acc
         member -> [member | acc]
       end

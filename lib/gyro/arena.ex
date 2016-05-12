@@ -114,11 +114,18 @@ defmodule Gyro.Arena do
   end
 
   # This is a generic function for updating spinner-related stats
+  # To update spinner state,  new process is spun up for each member to
+  # introspect the state asynchronously. Once we have all members data, we can
+  # continue on with the calculations.
   defp update_spinners(state = %{spinner_roster: spinner_roster}) do
     spinners = Agent.get(spinner_roster, fn(spinners) ->
       spinners
-      |> Enum.reduce([], fn({_, spinner_pid}, acc) ->
-        case Spinner.introspect(spinner_pid) do
+      |> Enum.map(fn({_, pid}) ->
+        Task.async(fn -> Spinner.introspect(pid) end)
+      end)
+      |> Enum.map(&(Task.await(&1)))
+      |> Enum.reduce([], fn(spinner, acc) ->
+        case spinner do
           nil -> acc
           state -> [state | acc]
         end
