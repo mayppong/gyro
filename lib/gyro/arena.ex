@@ -117,18 +117,17 @@ defmodule Gyro.Arena do
   # introspect the state asynchronously. Once we have all members data, we can
   # continue on with the calculations.
   defp update_spinners(state = %{spinner_roster: spinner_roster}) do
-    spinners = Agent.get(spinner_roster, fn(spinners) ->
-      spinners
-      |> Enum.map(fn({_, pid}) ->
-        Task.async(fn -> Spinner.introspect(pid) end)
-      end)
-      |> Enum.map(&(Task.await(&1)))
-      |> Enum.reduce([], fn(spinner, acc) ->
-        case spinner do
-          nil -> acc
-          state -> [state | acc]
-        end
-      end)
+    spinners = spinner_roster
+    |> Agent.get(&(&1))
+    |> Enum.map(fn({_, pid}) ->
+      Task.async(fn -> Spinner.introspect(pid) end)
+    end)
+    |> Enum.map(&(Task.await(&1)))
+    |> Enum.reduce([], fn(spinner, acc) ->
+      case spinner do
+        nil -> acc
+        state -> [state | acc]
+      end
     end)
 
     state
