@@ -120,10 +120,8 @@ defmodule Gyro.Squad do
   listing map by key right now.
   """
   def handle_call({:delist, quitter_pid}, _from, state = %{members: members}) do
-    if Map.has_key?(members, quitter_pid) do
-      members = Map.delete(members, quitter_pid)
-      state = Map.put(state, :members, members)
-    end
+    members = Map.delete(members, quitter_pid)
+    state = Map.put(state, :members, members)
 
     {:reply, state, state}
   end

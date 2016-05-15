@@ -101,7 +101,6 @@ defmodule Gyro.Arena do
     {:noreply, state}
   end
 
-
   @doc """
   Handle the spinning which is where we update the state of the Arena at an
   interval.
