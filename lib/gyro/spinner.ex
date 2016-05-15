@@ -61,7 +61,6 @@ defmodule Gyro.Spinner do
   Stop the spinner GenServer with a given reason
   """
   def delist(spinner_pid, reason \\ :normal) do
-    Arena.delist(spinner_pid)
     GenServer.stop(spinner_pid, reason)
   end
 

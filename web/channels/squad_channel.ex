@@ -26,8 +26,8 @@ defmodule Gyro.SquadChannel do
   we want to remove the user from the squad they belong to as stored in the
   socket's `assigns` key.
   """
-  def terminate(_, %Socket{assigns: %{squad_pid: squad_pid, spinner_pid: spinner_pid}}) do
-    Squad.delist(squad_pid, spinner_pid)
+  def terminate(_, %Socket{assigns: %{squad_pid: _, spinner_pid: _}}) do
+    #
   end
 
   def handle_info(:init, socket) do
