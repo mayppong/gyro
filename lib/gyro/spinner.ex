@@ -39,6 +39,7 @@ defmodule Gyro.Spinner do
       introspect!(spinner_pid)
     catch
       :exit, {:noproc, _} -> nil
+      :exit, _ -> nil
     end
   end
 
