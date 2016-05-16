@@ -21,22 +21,25 @@ defmodule Gyro.SquadTest do
   end
 
   test "update state of a squad", %{squad_pid: squad_pid} do
-    state = GenServer.call(squad_pid, {:update, :score, 100})
+    GenServer.cast(squad_pid, {:update, :score, 100})
+    %{score: score} = GenServer.call(squad_pid, :introspect)
 
-    assert %Squad{@squad | score: 100} == state
+    assert 100 == score
   end
 
   test "enlist a spinner to a squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
-    %{members: members} = GenServer.call(squad_pid, {:enlist, spinner_pid})
+    GenServer.cast(squad_pid, {:enlist, spinner_pid})
+    %{members: members} = GenServer.call(squad_pid, :introspect)
 
     assert Map.has_key?(members, spinner_pid)
     assert is_member?(spinner_pid, squad_pid)
   end
 
   test "delist a spinner from a squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
-    GenServer.call(squad_pid, {:enlist, spinner_pid})
+    GenServer.cast(squad_pid, {:enlist, spinner_pid})
+    GenServer.cast(squad_pid, {:delist, spinner_pid})
 
-    %{members: members} = GenServer.call(squad_pid, {:delist, spinner_pid})
+    %{members: members} = GenServer.call(squad_pid, :introspect)
     assert %{} == members
     refute is_member?(spinner_pid, squad_pid)
   end
