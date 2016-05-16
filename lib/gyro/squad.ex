@@ -46,7 +46,7 @@ defmodule Gyro.Squad do
   def enlist(name, spinner_pid) do
     case form(name) do
       {:ok, squad_pid} ->
-        GenServer.call(squad_pid, {:enlist, spinner_pid})
+        GenServer.cast(squad_pid, {:enlist, spinner_pid})
         {:ok, squad_pid}
       error -> error
     end
@@ -64,7 +64,7 @@ defmodule Gyro.Squad do
   Remove the spinner from the given squad.
   """
   def delist(squad_pid, spinner_pid) do
-    GenServer.call(squad_pid, {:delist, spinner_pid})
+    GenServer.cast(squad_pid, {:delist, spinner_pid})
   end
 
   @doc """
@@ -102,31 +102,6 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  Handle adding a new spinner to the squad.
-  The new spinner is stored in the member list as a map.
-  """
-  def handle_call({:enlist, spinner_pid}, _from, state = %{members: members}) do
-    Process.monitor(spinner_pid)
-    members = Map.put(members, spinner_pid, spinner_pid)
-    state = Map.put(state, :members, members)
-    {:reply, state, state}
-  end
-
-  @doc """
-  Handle a member leaving the squad.
-  We need to remove the member from the member list. The ideal situation
-  would be to find the member from the list by map. However, since we're
-  using the spinner pid as "key"-ish right now, we can't look up the member
-  listing map by key right now.
-  """
-  def handle_call({:delist, quitter_pid}, _from, state = %{members: members}) do
-    members = Map.delete(members, quitter_pid)
-    state = Map.put(state, :members, members)
-
-    {:reply, state, state}
-  end
-
-  @doc """
   Handle a call to get the current state stored in the process.
   """
   def handle_call(:introspect, _from, state) do
@@ -142,12 +117,36 @@ defmodule Gyro.Squad do
   end
 
   @doc """
+  Handle adding a new spinner to the squad.
+  The new spinner is stored in the member list as a map.
+  """
+  def handle_cast({:enlist, spinner_pid}, state = %{members: members}) do
+    Process.monitor(spinner_pid)
+    members = Map.put(members, spinner_pid, spinner_pid)
+    state = Map.put(state, :members, members)
+    {:noreply, state}
+  end
+
+  @doc """
+  Handle a member leaving the squad.
+  We need to remove the member from the member list. The ideal situation
+  would be to find the member from the list by map. However, since we're
+  using the spinner pid as "key"-ish right now, we can't look up the member
+  listing map by key right now.
+  """
+  def handle_cast({:delist, quitter_pid}, state = %{members: members}) do
+    members = Map.delete(members, quitter_pid)
+    state = Map.put(state, :members, members)
+
+    {:noreply, state}
+  end
+
+  @doc """
   Handle the `:DOWN` message from the Spinners' process we monitor on enlist.
   If the Spinner process is downed, we delist them from the Squad.
   """
   def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
-    {:reply, _, state} = handle_call({:delist, spinner_pid}, self, state)
-    {:noreply, state}
+    handle_cast({:delist, spinner_pid}, state)
   end
 
   @doc """
