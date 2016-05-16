@@ -15,7 +15,9 @@ defmodule Gyro.ArenaTest do
 
   test "adding a new spinner" do
     {:ok, spinner_pid} = Spinner.start_link()
-    %{spinner_roster: spinner_roster} = Arena.enlist(spinner_pid)
+
+    Arena.enlist(spinner_pid)
+    %{spinner_roster: spinner_roster} = Arena.introspect()
     listed_pid = Agent.get(spinner_roster, fn(state) ->
       state
       |> Map.get(spinner_pid)
@@ -25,7 +27,8 @@ defmodule Gyro.ArenaTest do
   end
 
   test "removing a spinner", %{spinner_pid: spinner_pid} do
-    %{spinner_roster: spinner_roster} = Arena.delist(spinner_pid)
+    Arena.delist(spinner_pid)
+    %{spinner_roster: spinner_roster} = Arena.introspect()
     listed_pid = Agent.get(spinner_roster, fn(state) ->
       state
       |> Map.get(spinner_pid)

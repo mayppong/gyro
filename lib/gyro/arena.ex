@@ -18,14 +18,14 @@ defmodule Gyro.Arena do
   Add a new spinner to the spinner roster
   """
   def enlist(spinner_pid) do
-    GenServer.call(@pid, {:enlist, spinner_pid})
+    GenServer.cast(@pid, {:enlist, spinner_pid})
   end
 
   @doc """
   Remove a spinner from the spinner roster
   """
   def delist(spinner_pid) do
-    GenServer.call(@pid, {:delist, spinner_pid})
+    GenServer.cast(@pid, {:delist, spinner_pid})
   end
 
   @doc """
@@ -61,31 +61,6 @@ defmodule Gyro.Arena do
   end
 
   @doc """
-  Add the given spinner id to the spinner roster Agent.
-  """
-  def handle_call({:enlist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
-    Process.monitor(spinner_pid)
-    spinner_roster
-    |> Agent.update(fn(spinners) ->
-      Map.put(spinners, spinner_pid, spinner_pid)
-    end)
-
-    {:reply, state, state}
-  end
-
-  @doc """
-  Remove the given spinner id from the spinner roster Agent.
-  """
-  def handle_call({:delist, spinner_pid}, _from, state = %{spinner_roster: spinner_roster}) do
-    spinner_roster
-    |> Agent.update(fn(spinners) ->
-      Map.delete(spinners, spinner_pid)
-    end)
-
-    {:reply, state, state}
-  end
-
-  @doc """
   Handle the introspect call to get the current state of the Arena.
   """
   def handle_call(:introspect, _from, state) do
@@ -93,12 +68,37 @@ defmodule Gyro.Arena do
   end
 
   @doc """
+  Add the given spinner id to the spinner roster Agent.
+  """
+  def handle_cast({:enlist, spinner_pid}, state = %{spinner_roster: spinner_roster}) do
+    Process.monitor(spinner_pid)
+    spinner_roster
+    |> Agent.update(fn(spinners) ->
+      Map.put(spinners, spinner_pid, spinner_pid)
+    end)
+
+    {:noreply, state}
+  end
+
+  @doc """
+  Remove the given spinner id from the spinner roster Agent.
+  """
+  def handle_cast({:delist, spinner_pid}, state = %{spinner_roster: spinner_roster}) do
+    spinner_roster
+    |> Agent.update(fn(spinners) ->
+      Map.delete(spinners, spinner_pid)
+    end)
+
+    {:noreply, state}
+  end
+
+
+  @doc """
   Handle the `:DOWN` message from the Spinners' process we monitor on enlist.
   If the Spinner process is downed, we delist them from the Arna's roster.
   """
   def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
-    {:reply, _, state} = handle_call({:delist, spinner_pid}, self, state)
-    {:noreply, state}
+    handle_cast({:delist, spinner_pid}, state)
   end
 
   @doc """
