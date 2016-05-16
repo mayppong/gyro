@@ -21,9 +21,10 @@ defmodule Gyro.SquadTest do
   end
 
   test "update state of a squad", %{squad_pid: squad_pid} do
-    state = GenServer.call(squad_pid, {:update, :score, 100})
+    GenServer.cast(squad_pid, {:update, :score, 100})
+    %{score: score} = GenServer.call(squad_pid, :introspect)
 
-    assert %Squad{@squad | score: 100} == state
+    assert 100 == score
   end
 
   test "enlist a spinner to a squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do

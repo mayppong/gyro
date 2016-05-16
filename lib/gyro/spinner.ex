@@ -55,7 +55,7 @@ defmodule Gyro.Spinner do
   Update spinner data.
   """
   def update(spinner_pid, key, value) do
-    GenServer.call(spinner_pid, {:update, key, value})
+    GenServer.cast(spinner_pid, {:update, key, value})
   end
 
   @doc """
@@ -93,9 +93,9 @@ defmodule Gyro.Spinner do
   @doc """
   Handle updating a key in the current state.
   """
-  def handle_call({:update, key, value}, _from, state) do
+  def handle_cast({:update, key, value}, state) do
     state = Map.put(state, key, value)
-    {:reply, state, state}
+    {:noreply, state}
   end
 
   @doc """

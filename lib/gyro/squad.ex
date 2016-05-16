@@ -40,6 +40,13 @@ defmodule Gyro.Squad do
   end
 
   @doc """
+  Stop the given squad GenServer.
+  """
+  def disband(squad_pid, reason \\ :normal) do
+    GenServer.stop(squad_pid, reason)
+  end
+
+  @doc """
   Add the given spinner to a squad of a given name. If the squad doesn't
   already exist, also start it.
   """
@@ -75,13 +82,6 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  Stop the given squad GenServer.
-  """
-  def disband(squad_pid, reason \\ :normal) do
-    GenServer.stop(squad_pid, reason)
-  end
-
-  @doc """
   Start a new GenServer process for a squad.
   The GenServer will be registered in the global registry with the name. This
   means the squad name is unique and can be referenced by name from anywhere
@@ -111,9 +111,9 @@ defmodule Gyro.Squad do
   @doc """
   Handle updating a key in the current state.
   """
-  def handle_call({:update, key, value}, _, state) do
+  def handle_cast({:update, key, value}, state) do
     state = Map.put(state, key, value)
-    {:reply, state, state}
+    {:noreply, state}
   end
 
   @doc """
