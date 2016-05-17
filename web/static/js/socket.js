@@ -5,7 +5,7 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
 
-const spinRate = 200 // miliseconds
+const spinRate = 16 // milliseconds
 
 let socket = new Socket("/socket", {params: {token: window.userToken}})
 
@@ -58,35 +58,47 @@ socket.connect()
 // Now that you are connected, you can join channels with a topic:
 let arena = socket.channel("arenas:lobby", {})
 
-var spinnerScoreField = $('.spinner-score')
-
 arena.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-arena.on("introspect", resp => {
-  console.log(resp)
-  spinnerSpin(resp.spinner)
+import Vue from "vue"
+let spinnerScore = Vue.component('spinner-score', {
+  data: function() {
+    return {
+      score: 0,
+      spm: 0,
+      interval: null
+    };
+  },
+  ready: function() {
+    arena.on("introspect", resp => {
+      console.log(resp)
+      this.spin(resp.spinner)
+    })
+  },
+  computed: {
+    prettyScore: function() {
+      return this.score.toFixed(3)
+    }
+  },
+  methods: {
+    spin: function(state) {
+      this.score = state.score
+      this.spm = ((state.spm / 60) * (spinRate / 1000))
+
+      if (this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
+
+      this.interval = setInterval(() => {
+        this.score += this.spm
+      }, spinRate)
+    }
+  },
+  template: `<p>{{ prettyScore }}</p>`
 })
-
-let setSpinnerScore = (score) => {
-  spinnerScoreField.html(score.toFixed(3))
-}
-
-let spinnerInterval
-let spinnerSpin = (stat) => {
-  if (spinnerInterval) {
-    clearInterval(spinnerInterval);
-  }
-
-  setSpinnerScore(stat.score)
-
-  let localSpin = ((stat.spm / 60) * (spinRate / 1000))
-  spinnerInterval = setInterval(() => {
-    stat.score = stat.score + localSpin
-    setSpinnerScore(stat.score)
-  }, spinRate)
-}
 
 /**
  * Introduction
@@ -183,7 +195,7 @@ let squadSpin = (stat) => {
     clearInterval(squadInterval);
   }
 
-  setSpinnerScore(stat.score)
+  setSquadScore(stat.score)
 
   let localSpin = ((stat.spm / 60) * (spinRate / 1000))
   squadInterval = setInterval(() => {
