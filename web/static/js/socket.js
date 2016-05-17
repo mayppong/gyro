@@ -5,7 +5,7 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
 
-const spinRate = 200 // milliseconds
+const spinRate = 16 // milliseconds
 
 let socket = new Socket("/socket", {params: {token: window.userToken}})
 
