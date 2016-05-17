@@ -97,7 +97,7 @@ defmodule Gyro.Squad do
   For now, we just need to tell it to start spinning.
   """
   def init(state) do
-    :timer.send_interval(@timer, self, :spin)
+    send(self, :spin)
     {:ok, state}
   end
 
@@ -173,6 +173,7 @@ defmodule Gyro.Squad do
     |> update_score(spinners)
     |> update_latest(spinners)
 
+    Process.send_after(self, :spin, @timer)
     {:noreply, state}
   end
 

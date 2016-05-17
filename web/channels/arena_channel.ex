@@ -33,7 +33,6 @@ defmodule Gyro.ArenaChannel do
   """
   def handle_info(:init, socket) do
     send(self, :spin)
-    :timer.send_interval(@timer, :spin)
     {:noreply, socket}
   end
 
@@ -51,6 +50,7 @@ defmodule Gyro.ArenaChannel do
     |> Map.delete(:squad_roster)
 
     push socket, "introspect", %{arena: arena, spinner: spinner}
+    Process.send_after(self, :spin, @timer)
     {:noreply, socket}
   end
 

@@ -23,7 +23,6 @@ defmodule Gyro.SquadChannel do
 
   def handle_info(:init, socket) do
     send(self, :spin)
-    :timer.send_interval(@timer, :spin)
     {:noreply, socket}
   end
 
@@ -39,6 +38,7 @@ defmodule Gyro.SquadChannel do
     socket = assign(socket, :squad, squad)
 
     push socket, "introspect", squad
+    Process.send_after(self, :spin, @timer)
     {:noreply, socket}
   end
 
