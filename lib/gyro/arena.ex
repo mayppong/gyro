@@ -56,7 +56,7 @@ defmodule Gyro.Arena do
   For now, we just need to tell it to start spinning.
   """
   def init(state) do
-    :timer.send_interval(@timer, self, :spin)
+    send(self, :spin)
     {:ok, state}
   end
 
@@ -109,6 +109,7 @@ defmodule Gyro.Arena do
     state = state
     |> update_spinners
 
+    Process.send_after(self, :spin, @timer)
     {:noreply, state}
   end
 
