@@ -1,17 +1,12 @@
 <div class="jumbotron">
   <h2>Score</h2>
-  <spinner-score></spinner-score>
+  <score-counter></score-counter>
   <h2>Team Score</h2>
   <p class="squad-score">0</p>
 </div>
 
 <div class="row">
-  <p id="my-name"></p>
-  <form name="identity">
-    <label>INIT: <input type="text" name="name" class="name" maxlength="3" /></label>
-    <!--    <label>TEAM: <input type="text" name="squad" class="squad" maxlength="3" /></label> -->
-    <button type="button" class="save">Save</button>
-  </form>
+  <spinner-name><spinner-name>
 </div>
 
 <div class="row">

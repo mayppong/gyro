@@ -62,8 +62,8 @@ arena.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-import Vue from "vue"
-let spinnerScore = Vue.component('spinner-score', {
+import Vue from 'vue'
+let scoreCounter = Vue.component('score-counter', {
   data: function() {
     return {
       score: 0,
@@ -103,28 +103,25 @@ let spinnerScore = Vue.component('spinner-score', {
 /**
  * Introduction
  */
-let idForm = $("form[name=identity]")
-let name = $(".name", idForm)
-let squad = $(".squad", idForm)
-let save = $(".save", idForm)
-let set = () => {
-  return arena.push("intro", {name: name.val()})
-}
-let submit = event => {
-    set().receive("ok", resp => {
-      $("#my-name").text(resp.name)
-      $(".message-history").append("<li>Introducing " + resp.name + "</li>")
-    })
-    event.preventDefault()
-    return false
-};
-
-save.click(submit)
-idForm.submit(submit);
-name.on("keypress", event => {
-  if (event.keyCode === 13) {
-    submit(event)
-  }
+let spinnerName = Vue.component('spinner-name', {
+  data: function() {
+    return { name: '' };
+  },
+  methods: {
+    submit: function() {
+      arena
+        .push("intro", { name: this.name })
+        .receive("ok", resp => {
+          this.name = resp.name
+          $(".message-history").append("<li>Introducing " + resp.name + "</li>")
+        })
+    }
+  },
+  template: `<form v-on:submit.prevent="submit">
+      <label>Name: </label>
+      <input type="text" v-model="name" maxlength="3" placeholder="___" />
+      <button type="submit">Send</button>
+    </form>`
 });
 
 /**
