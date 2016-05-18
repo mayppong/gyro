@@ -140,8 +140,6 @@ defmodule Gyro.Arena do
   # collects the spinner data by iterating through the spinner roster and ask
   # for the current spinner state, then sort them by score before taking the
   # top 10 players.
-  # TODO: Currently, we have to remove the connected_at value from the
-  # spinner bacause we can't output it into a JSON format.
   defp update_heroic_spinners(state, spinners) do
     heroics = spinners
     |> Enum.sort(&(&1.score >= &2.score))

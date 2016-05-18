@@ -31,7 +31,6 @@ defmodule Gyro.UserSocket do
     # currently can't share socket data in assigns between channels, I had to
     # move the `Spinner.start/1` to the connection level. Data assigns to
     # socket at this level will be available to every channels.
-    # TODO: switch to using some other user id method.
     #{:ok, socket}
     {:ok, spinner_pid} = Spinner.enlist()
     {:ok, assign(socket, :spinner_pid, spinner_pid)}
