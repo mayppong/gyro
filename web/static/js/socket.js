@@ -62,8 +62,8 @@ arena.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-import Vue from "vue"
-let spinnerScore = Vue.component('spinner-score', {
+import Vue from 'vue'
+let scoreCounter = Vue.component('score-counter', {
   data: function() {
     return {
       score: 0,
