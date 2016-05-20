@@ -66,38 +66,47 @@ import Vue from 'vue'
 let scoreCounter = Vue.component('score-counter', {
   data: function() {
     return {
-      score: 0,
-      spm: 0,
       interval: null
     };
   },
-  ready: function() {
-    arena.on("introspect", resp => {
-      console.log(resp)
-      this.spin(resp.spinner)
-    })
+  props: {
+    score: { type: Number, required: true, default: 0 },
+    spm: { type: Number, default: 1 }
+  },
+  beforeCompile: function() {
+      this.interval = setInterval(() => {
+        this.score += this.increment
+      }, spinRate)
   },
   computed: {
     prettyScore: function() {
       return this.score.toFixed(3)
+    },
+    prettySPM: function() {
+      return this.spm.toFixed(1)
+    },
+    increment: function() {
+      return ((this.spm / 60) * (spinRate / 1000))
     }
   },
-  methods: {
-    spin: function(state) {
-      this.score = state.score
-      this.spm = ((state.spm / 60) * (spinRate / 1000))
+  template: `<p>Score: {{ prettyScore }}, SPM: {{ prettySPM }}</p>`
+})
 
-      if (this.interval) {
-        clearInterval(this.interval)
-        this.interval = null
-      }
-
-      this.interval = setInterval(() => {
-        this.score += this.spm
-      }, spinRate)
+let spinnerScore = Vue.component('spinner-score', {
+  data: function() {
+    return {
+      score: 0,
+      spm: 1
     }
   },
-  template: `<p>{{ prettyScore }}</p>`
+  beforeCompile: function() {
+    arena.on("introspect", resp => {
+      console.log(resp)
+      this.score = resp.spinner.score
+      this.spm = resp.spinner.spm
+    })
+  },
+  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
 })
 
 /**
@@ -200,6 +209,5 @@ let squadSpin = (stat) => {
     setSquadScore(stat.score)
   }, spinRate)
 }
-
 
 export default socket;
