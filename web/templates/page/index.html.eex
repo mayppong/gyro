@@ -11,11 +11,7 @@
 
 <div class="row">
   <p id="my-squad"></p>
-  <form name="squad">
-    <label>TEAM: <input type="text" name="name" class="name" maxlength="3" /></label>
-    <!--    <label>TEAM: <input type="text" name="squad" class="squad" maxlength="3" /></label> -->
-    <button type="button" class="join">Join</button>
-  </form>
+  <squad-name></squad-name>
 </div>
 
 <div class="row">

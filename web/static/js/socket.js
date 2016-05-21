@@ -62,34 +62,30 @@ import Vue from 'vue'
  * Squad
  */
 let squadChannel;
-let squadForm = $("form[name=squad]")
-let squadName = $(".name", squadForm)
 var squadScoreField = $('.squad-score')
 
-let join = $(".join", squadForm)
-let joining = () => {
-  if (squadChannel) {
-    squadChannel.leave()
-  }
-  squadChannel = socket.channel("arenas:squads:" + squadName.val())
+let squadName = Vue.component('squad-name', {
+  data: function() {
+    return { name: '' }
+  },
+  methods: {
+    // TODO: store the connection to the global state
+    submit: function() {
+      squadChannel = socket.channel("arenas:squads:" + this.name)
+      squadChannel.join().receive("ok", resp => {
+        console.log("Joined squads", resp)
+      })
+    }
+  },
+  template: `
+    <form v-on:submit.prevent="submit">
+      <label>Name: </label>
+      <input type="text" v-model="name" maxlength="3" placeholder="___" />
+      <button type="submit">Send</button>
+    </form>
+  `
+})
 
-  squadChannel.join().receive("ok", resp => {
-    console.log("Joined squads", resp)
-  })
-  squadChannel.on("introspect", (resp) => {
-    console.log(resp)
-    squadSpin(resp)
-  })
-}
-
-join.click(joining)
-squadName.on("keypress", event => {
-  if (event.keyCode === 13) {
-    joining()
-    event.preventDefault()
-    return false
-  }
-});
 
 let setSquadScore = (score) => {
   squadScoreField.html(score.toFixed(3))
