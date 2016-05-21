@@ -58,28 +58,6 @@ import Vue from 'vue'
 /**
  * Shouting
  */
-let messageHistory = $(".message-history")
-arena.on("shout", payload => {
-  messageHistory.append(`<li>[${Date()}] ${payload.message}</li>`)
-})
-
-let messageForm = $("form[name=shout]")
-let message = $(".message", messageForm)
-let send = $(".send", messageForm)
-let shout = () => {
-  return arena.push("shout", {message: message.val()})
-}
-
-send.click(shout)
-message.on("keypress", event => {
-  if (event.keyCode === 13) {
-    shout()
-    message.val('')
-    event.preventDefault()
-    return false
-  }
-});
-
 /**
  * Squad
  */

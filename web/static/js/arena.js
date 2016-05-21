@@ -45,3 +45,29 @@ let spinnerName = Vue.component('spinner-name', {
       <button type="submit">Send</button>
     </form>`
 });
+
+let arenaChat = Vue.component('arena-messages', {
+  data: function() {
+    return {
+      messages: [],
+      input: ''
+    }
+  },
+  beforeCompile: function() {
+    arena.on('shout', payload => {
+      this.messages.push(payload.message)
+    })
+  },
+  methods: {
+    submit: function() {
+      arena.push('shout', { message: this.input })
+      this.input = ''
+    }
+  },
+  template: `
+    <ul class="message-history">
+      <li v-for="message in messages">{{ message }}</li>
+    </ul>
+    <form v-on:submit.prevent="submit"><input type="text" v-model="input" /></form>
+  `
+})

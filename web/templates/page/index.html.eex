@@ -19,12 +19,7 @@
 </div>
 
 <div class="row">
-  <ul class="message-history">
-  </ul>
-  <form name="shout">
-    <label>SHOUT: <input type="text" name="message" class="message" /></label>
-    <button type="button" class="send">Send</button>
-  </form>
+  <arena-messages></arena-messages>
 </div>
 
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
