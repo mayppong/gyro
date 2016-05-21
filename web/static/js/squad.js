@@ -10,17 +10,16 @@ let squadName = Vue.component('squad-name', {
   props: ['squadChannel'],
   methods: {
     submit: function() {
-      this.squadChannel = socket.channel("arenas:squads:" + this.name)
-      this.squadChannel.join().receive("ok", resp => {
-        console.log("Joined squads", resp)
+      this.squadChannel = socket.channel('arenas:squads:' + this.name)
+      this.squadChannel.join().receive('ok', resp => {
+        console.log('Joined squads', resp)
       })
     }
   },
   template: `
-    <form v-on:submit.prevent="submit">
-      <label>Name: </label>
+    <form v-on:submit.prevent="submit" class="name">
       <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit">Send</button>
+      <button type="submit">»</button>
     </form>
   `
 })
@@ -41,7 +40,7 @@ let squadScore = Vue.component('squad-score', {
       })
     }
   },
-  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
+  template: `<score-counter v-bind:score="score" v-bind:spm="spm" class="squad-score"></score-counter>`
 })
 
 

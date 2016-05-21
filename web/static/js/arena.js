@@ -22,7 +22,7 @@ let spinnerScore = Vue.component('spinner-score', {
       this.spm = resp.spinner.spm
     })
   },
-  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
+  template: `<score-counter v-bind:score="score" v-bind:spm="spm" class="spinner-score"></score-counter>`
 })
 
 let spinnerName = Vue.component('spinner-name', {
@@ -39,10 +39,9 @@ let spinnerName = Vue.component('spinner-name', {
     }
   },
   template: `
-    <form v-on:submit.prevent="submit">
-      <label>Name: </label>
+    <form v-on:submit.prevent="submit" class="name">
       <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit">Send</button>
+      <button type="submit">»</button>
     </form>
   `
 });
@@ -71,7 +70,7 @@ let arenaChat = Vue.component('arena-messages', {
         <li v-for="message in messages">{{ message }}</li>
       </ul>
       <input type="text" v-model="input" />
-      <button type="submit">Send</button>
+      <button type="submit">»</button>
     </form>
   `
 })

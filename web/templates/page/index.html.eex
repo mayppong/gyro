@@ -1,17 +1,15 @@
-<div class="jumbotron">
+<div>
   <h2>Score</h2>
-  <spinner-score></spinner-score>
-  <h2>Team Score</h2>
-  <squad-score :squad-channel.sync="squadChannel"></squad-score>
-</div>
+  <div class="status">
+    <spinner-name></spinner-name>
+    <spinner-score></spinner-score>
+  </div>
 
-<div class="row">
-  <spinner-name><spinner-name>
-</div>
-
-<div class="row">
-  <p id="my-squad"></p>
-  <squad-name :squad-channel.sync="squadChannel"></squad-name>
+  <h2>Squad Score</h2>
+  <div class="status">
+    <squad-name :squad-channel.sync="squadChannel"></squad-name>
+    <squad-score :squad-channel.sync="squadChannel"></squad-score>
+  </div>
 </div>
 
 <div class="row">
