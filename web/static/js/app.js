@@ -20,6 +20,8 @@ import Vue from "vue"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
+import scoreboard from "./scoreboard"
+import arena from "./arena"
 
 new Vue({
   el: 'body'

@@ -5,8 +5,6 @@
 // and connect at the socket path in "lib/my_app/endpoint.ex":
 import {Socket} from "phoenix"
 
-const spinRate = 16 // milliseconds
-
 let socket = new Socket("/socket", {params: {token: window.userToken}})
 
 // When you connect, you'll often need to authenticate the client.
@@ -55,83 +53,7 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 
 socket.connect()
 
-// Now that you are connected, you can join channels with a topic:
-let arena = socket.channel("arenas:lobby", {})
-
-arena.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
-
 import Vue from 'vue'
-let scoreCounter = Vue.component('score-counter', {
-  data: function() {
-    return {
-      interval: null
-    };
-  },
-  props: {
-    score: { type: Number, required: true, default: 0 },
-    spm: { type: Number, default: 1 }
-  },
-  beforeCompile: function() {
-      this.interval = setInterval(() => {
-        this.score += this.increment
-      }, spinRate)
-  },
-  computed: {
-    prettyScore: function() {
-      return this.score.toFixed(3)
-    },
-    prettySPM: function() {
-      return this.spm.toFixed(1)
-    },
-    increment: function() {
-      return ((this.spm / 60) * (spinRate / 1000))
-    }
-  },
-  template: `<p>Score: {{ prettyScore }}, SPM: {{ prettySPM }}</p>`
-})
-
-let spinnerScore = Vue.component('spinner-score', {
-  data: function() {
-    return {
-      score: 0,
-      spm: 1
-    }
-  },
-  beforeCompile: function() {
-    arena.on("introspect", resp => {
-      console.log(resp)
-      this.score = resp.spinner.score
-      this.spm = resp.spinner.spm
-    })
-  },
-  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
-})
-
-/**
- * Introduction
- */
-let spinnerName = Vue.component('spinner-name', {
-  data: function() {
-    return { name: '' };
-  },
-  methods: {
-    submit: function() {
-      arena
-        .push("intro", { name: this.name })
-        .receive("ok", resp => {
-          this.name = resp.name
-          $(".message-history").append("<li>Introducing " + resp.name + "</li>")
-        })
-    }
-  },
-  template: `<form v-on:submit.prevent="submit">
-      <label>Name: </label>
-      <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit">Send</button>
-    </form>`
-});
 
 /**
  * Shouting
