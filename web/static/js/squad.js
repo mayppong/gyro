@@ -40,7 +40,7 @@ let squadScore = Vue.component('squad-score', {
       })
     }
   },
-  template: `<score-counter v-bind:score="score" v-bind:spm="spm" class="squad-score"></score-counter>`
+  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
 })
 
 

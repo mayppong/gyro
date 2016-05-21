@@ -1,4 +1,13 @@
+body {
+  margin: 0;
+}
+
+.alert {
+  position: fixed;
+}
+
 main {
+  color: white;
   font-family: 'VT323';
 }
 
@@ -10,8 +19,15 @@ form.name input {
 form.name button {
   background: transparent;
   border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
 }
 
+.spinner-detail {
+  border-left: 1px solid rgba(255, 255, 255, 0.7);
+  border-right: 1px solid rgba(255, 255, 255, 0.7);
+}
 .status {
   align-items: center;
   display: flex;

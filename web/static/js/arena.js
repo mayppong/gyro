@@ -22,7 +22,7 @@ let spinnerScore = Vue.component('spinner-score', {
       this.spm = resp.spinner.spm
     })
   },
-  template: `<score-counter v-bind:score="score" v-bind:spm="spm" class="spinner-score"></score-counter>`
+  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
 })
 
 let spinnerName = Vue.component('spinner-name', {

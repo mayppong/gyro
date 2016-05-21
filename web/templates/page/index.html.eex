@@ -1,17 +1,23 @@
-<div>
-  <h2>Score</h2>
-  <div class="status">
-    <spinner-name></spinner-name>
-    <spinner-score></spinner-score>
+<div class="row fill">
+  <div class="col padded dark-bg">
+    <arena-messages></arena-messages>
   </div>
 
-  <h2>Squad Score</h2>
-  <div class="status">
-    <squad-name :squad-channel.sync="squadChannel"></squad-name>
-    <squad-score :squad-channel.sync="squadChannel"></squad-score>
+  <div class="col align-end">
+    <div class="padded dark-bg spinner-detail">
+      <h2>Score</h2>
+      <div class="status">
+        <spinner-name></spinner-name>
+        <spinner-score></spinner-score>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <arena-messages></arena-messages>
+  <div class="col padded dark-bg">
+    <h2>Squad Score</h2>
+    <div class="status">
+      <squad-name :squad-channel.sync="squadChannel"></squad-name>
+      <squad-score :squad-channel.sync="squadChannel"></squad-score>
+    </div>
+  </div>
 </div>
