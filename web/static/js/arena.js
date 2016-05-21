@@ -35,15 +35,16 @@ let spinnerName = Vue.component('spinner-name', {
         .push('intro', { name: this.name })
         .receive('ok', resp => {
           this.name = resp.name
-          $(".message-history").append("<li>Introducing " + resp.name + "</li>")
         })
     }
   },
-  template: `<form v-on:submit.prevent="submit">
+  template: `
+    <form v-on:submit.prevent="submit">
       <label>Name: </label>
       <input type="text" v-model="name" maxlength="3" placeholder="___" />
       <button type="submit">Send</button>
-    </form>`
+    </form>
+  `
 });
 
 let arenaChat = Vue.component('arena-messages', {
@@ -65,9 +66,12 @@ let arenaChat = Vue.component('arena-messages', {
     }
   },
   template: `
-    <ul class="message-history">
-      <li v-for="message in messages">{{ message }}</li>
-    </ul>
-    <form v-on:submit.prevent="submit"><input type="text" v-model="input" /></form>
+    <form v-on:submit.prevent="submit">
+      <ul class="message-history">
+        <li v-for="message in messages">{{ message }}</li>
+      </ul>
+      <input type="text" v-model="input" />
+      <button type="submit">Send</button>
+    </form>
   `
 })
