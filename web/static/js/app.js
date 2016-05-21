@@ -24,5 +24,8 @@ import scoreboard from "./scoreboard"
 import arena from "./arena"
 
 new Vue({
-  el: 'body'
+  el: 'body',
+  data: {
+    squadChannel: null
+  }
 })

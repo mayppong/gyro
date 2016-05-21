@@ -62,17 +62,17 @@ import Vue from 'vue'
  * Squad
  */
 let squadChannel;
-var squadScoreField = $('.squad-score')
 
 let squadName = Vue.component('squad-name', {
   data: function() {
     return { name: '' }
   },
+  props: ['squadChannel'],
   methods: {
     // TODO: store the connection to the global state
     submit: function() {
-      squadChannel = socket.channel("arenas:squads:" + this.name)
-      squadChannel.join().receive("ok", resp => {
+      this.squadChannel = socket.channel("arenas:squads:" + this.name)
+      this.squadChannel.join().receive("ok", resp => {
         console.log("Joined squads", resp)
       })
     }
@@ -86,24 +86,24 @@ let squadName = Vue.component('squad-name', {
   `
 })
 
+let squadScore = Vue.component('squad-score', {
+  data: function() {
+    return {
+      score: 0,
+      spm: 0,
+    }
+  },
+  props: ['squadChannel'],
+  watch: {
+    squadChannel: function(channel) {
+      channel.on("introspect", resp => {
+        this.score = resp.score
+        this.spm = resp.spm
+      })
+    }
+  },
+  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
+})
 
-let setSquadScore = (score) => {
-  squadScoreField.html(score.toFixed(3))
-}
-
-let squadInterval
-let squadSpin = (stat) => {
-  if (squadInterval) {
-    clearInterval(squadInterval);
-  }
-
-  setSquadScore(stat.score)
-
-  let localSpin = ((stat.spm / 60) * (spinRate / 1000))
-  squadInterval = setInterval(() => {
-    stat.score = stat.score + localSpin
-    setSquadScore(stat.score)
-  }, spinRate)
-}
 
 export default socket;

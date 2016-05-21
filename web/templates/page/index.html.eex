@@ -2,7 +2,7 @@
   <h2>Score</h2>
   <spinner-score></spinner-score>
   <h2>Team Score</h2>
-  <p class="squad-score">0</p>
+  <squad-score :squad-channel.sync="squadChannel"></squad-score>
 </div>
 
 <div class="row">
@@ -11,7 +11,7 @@
 
 <div class="row">
   <p id="my-squad"></p>
-  <squad-name></squad-name>
+  <squad-name :squad-channel.sync="squadChannel"></squad-name>
 </div>
 
 <div class="row">
