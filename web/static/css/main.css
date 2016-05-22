@@ -50,3 +50,10 @@ form.name input {
   display: flex;
   flex-direction: row;
 }
+
+.scoreboard table {
+  width: 100%
+}
+.scoreboard table .name {
+  text-align: center;
+}

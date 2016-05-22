@@ -50,6 +50,20 @@ let arenaChat = Vue.component('arena-chat', {
     return { arenaChannel: arena }
   },
   template: `
-    <chat-room :channel.once="arenaChannel"></chat-room>
+    <chat-room v-bind:channel.once="arenaChannel"></chat-room>
+  `
+})
+
+let arenaScoreboard = Vue.component('arena-scoreboard', {
+  data: function() {
+    return { heroics: [] }
+  },
+  created: function() {
+    arena.on('introspect', resp => {
+      this.heroics = resp.arena.heroic_spinners
+    })
+  },
+  template: `
+    <scoreboard v-bind:heroics="heroics"></scoreboard>
   `
 })

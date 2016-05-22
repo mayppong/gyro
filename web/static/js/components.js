@@ -28,7 +28,7 @@ let scoreCounter = Vue.component('score-counter', {
       return ((this.spm / 60) * (spinRate / 1000))
     }
   },
-  template: `<p>Score: {{ prettyScore }}, SPM: {{ prettySPM }}</p>`
+  template: `<span>Score: {{ prettyScore }}, SPM: {{ prettySPM }}</span>`
 })
 
 let chatRoom = Vue.component('chat-room', {
@@ -67,6 +67,30 @@ let chatRoom = Vue.component('chat-room', {
         <input type="text" v-model="input" />
         <button type="submit" class="send"></button>
       </form>
+    </div>
+  `
+})
+
+let scoreboard = Vue.component('scoreboard', {
+  props: ['heroics'],
+  template: `
+    <div class="scoreboard">
+      <div class="tabs">
+        <h3>Heroics</h3>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <th>Name</th>
+            <th>Score</th>
+          </thead>
+          <tbody>
+            <tr v-for="hero in heroics">
+              <td class="name">{{ hero.name }}</td>
+              <td><score-counter v-bind:score="hero.score" v-bind:spm="hero.spm"></score-counter></td>
+            </tr>
+          </tbody>
+      </div>
     </div>
   `
 })
