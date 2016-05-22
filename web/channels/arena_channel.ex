@@ -50,7 +50,7 @@ defmodule Gyro.ArenaChannel do
     |> Map.delete(:spinner_roster)
     |> Map.delete(:squad_roster)
 
-    push socket, "introspect", %{arena: arena, spinner: spinner}
+    push socket, "introspect", %{"arena" => arena, "spinner" => spinner}
     Process.send_after(self, :spin, @timer)
     {:noreply, socket}
   end
@@ -65,7 +65,7 @@ defmodule Gyro.ArenaChannel do
   Event handler for spinners to send public message to every one in the room.
   """
   def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner: spinner}}) do
-    payload = %{message: message, from: spinner.name}
+    payload = %{"message" => message, "from" => spinner.name}
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
@@ -81,7 +81,7 @@ defmodule Gyro.ArenaChannel do
     Spinner.update(spinner_pid, :name, name)
     socket = assign(socket, :spinner, %{spinner | name: name})
 
-    broadcast socket, "shout", %{message: "Introducing #{name}", from: "ADMIN"}
+    broadcast socket, "shout", %{"message" => "Introducing #{name}", "from" => "ADMIN"}
     {:reply, {:ok, payload}, socket}
   end
 
