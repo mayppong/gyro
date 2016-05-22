@@ -75,6 +75,9 @@ defmodule Gyro.ArenaChannel do
   responding with the name that the spinner gave as confirmation.
   """
   def handle_in("intro", payload = %{"name" => name}, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+    name = name
+    |> String.slice(0, 3)
+
     Spinner.update(spinner_pid, :name, name)
 
     broadcast socket, "shout", %{message: "Introducing #{name}", from: "ADMIN"}

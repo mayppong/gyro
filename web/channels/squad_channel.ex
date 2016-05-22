@@ -13,7 +13,10 @@ defmodule Gyro.SquadChannel do
   """
   def join("arenas:squads:" <> name, payload, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     if authorized?(payload) do
-      {:ok, squad_pid} = Squad.enlist(name, spinner_pid)
+      {:ok, squad_pid} = name
+      |> String.slice(0, 3)
+      |> Squad.enlist(spinner_pid)
+
       send(self, :init)
       {:ok, assign(socket, :squad_pid, squad_pid)}
     else
