@@ -12,6 +12,7 @@ defmodule Gyro.SquadChannel do
   The name of the squad is defined by the user which is then by Squad GenServer
   to look up with.
   """
+  def join("arenas:squads:", _, _), do: {:error, %{reason: "invalid name"}}
   def join("arenas:squads:" <> name, payload, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     if authorized?(payload) do
       {:ok, squad_pid} = name

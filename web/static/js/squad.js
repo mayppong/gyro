@@ -10,9 +10,15 @@ let squadName = Vue.component('squad-name', {
   props: ['squadChannel'],
   methods: {
     submit: function() {
-      this.squadChannel = socket.channel('arenas:squads:' + this.name)
-      this.squadChannel.join().receive('ok', resp => {
-      })
+      if (this.name != '') {
+        this.squadChannel = socket.channel('arenas:squads:' + this.name)
+        this.squadChannel.join()
+          .receive('ok', resp => {
+          })
+          .receive('error', resp => {
+            this.squadChannel = null
+          })
+      }
     }
   },
   template: `
