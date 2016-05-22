@@ -74,11 +74,12 @@ defmodule Gyro.ArenaChannel do
   Event handler for spinners to change their name. Currently we're just
   responding with the name that the spinner gave as confirmation.
   """
-  def handle_in("intro", payload = %{"name" => name}, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+  def handle_in("intro", payload = %{"name" => name}, socket = %Socket{assigns: %{spinner_pid: spinner_pid, spinner: spinner}}) do
     name = name
     |> String.slice(0, 3)
 
     Spinner.update(spinner_pid, :name, name)
+    socket = assign(socket, :spinner, %{spinner | name: name})
 
     broadcast socket, "shout", %{message: "Introducing #{name}", from: "ADMIN"}
     {:reply, {:ok, payload}, socket}
