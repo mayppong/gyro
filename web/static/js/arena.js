@@ -47,36 +47,9 @@ let spinnerName = Vue.component('spinner-name', {
 
 let arenaChat = Vue.component('arena-chat', {
   data: function() {
-    return {
-      messages: [],
-      input: ''
-    }
-  },
-  computed: {
-    timestamp: function() {
-      return (new Date()).toUTCString()
-    }
-  },
-  methods: {
-    submit: function() {
-      arena.push('shout', { message: this.input })
-      this.input = ''
-    }
-  },
-  created: function() {
-    arena.on('shout', payload => {
-      this.messages.push(payload)
-    })
+    return { arenaChannel: arena }
   },
   template: `
-    <div class="chat">
-      <ul class="chat-history">
-        <li v-for="message in messages">[{{ timestamp }}] {{ message.from || '___' }}: {{ message.message }}</li>
-      </ul>
-      <form v-on:submit.prevent="submit" class="chat-input">
-        <input type="text" v-model="input" />
-        <button type="submit" class="send"></button>
-      </form>
-    </div>
+    <chat-room :channel.once="arenaChannel"></chat-room>
   `
 })

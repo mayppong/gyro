@@ -21,7 +21,7 @@ import Vue from "vue"
 
 import socket from "./socket"
 
-import scoreboard from "./scoreboard"
+import components from "./components"
 import arena from "./arena"
 import squad from "./squad"
 
