@@ -1,7 +1,9 @@
 <div class="row fill">
   <div class="col padded dark-bg">
-    <h2>Chat</h2>
-    <arena-chat></arena-chat>
+    <div>
+      <h2>Chat</h2>
+      <arena-chat></arena-chat>
+    </div>
   </div>
 
   <div class="col align-end">
@@ -15,10 +17,17 @@
   </div>
 
   <div class="col padded dark-bg">
-    <h2>Squad Score</h2>
-    <div class="status">
-      <squad-name :squad-channel.sync="squadChannel"></squad-name>
-      <squad-score :squad-channel.sync="squadChannel"></squad-score>
+    <div>
+      <h2>Squad Score</h2>
+      <div class="status">
+        <squad-name :squad-channel.sync="squadChannel"></squad-name>
+        <squad-score :squad-channel.sync="squadChannel"></squad-score>
+      </div>
+    </div>
+
+    <div v-if="squadChannel">
+      <h2>Chat</h2>
+      <chat-room :channel.sync="squadChannel"></chat-room>
     </div>
   </div>
 </div>

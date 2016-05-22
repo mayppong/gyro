@@ -2,6 +2,7 @@ defmodule Gyro.SquadChannel do
   use Gyro.Web, :channel
   alias Phoenix.Socket
   alias Gyro.Squad
+  alias Gyro.Spinner
 
   @timer 5000
 
@@ -53,7 +54,9 @@ defmodule Gyro.SquadChannel do
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (squads:lobby).
-  def handle_in("shout", payload, socket) do
+  def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+    spinner = Spinner.introspect(spinner_pid)
+    payload = %{message: message, from: spinner.name}
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
