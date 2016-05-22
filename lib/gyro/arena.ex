@@ -133,7 +133,7 @@ defmodule Gyro.Arena do
 
     state
     |> update_heroic_spinners(spinners)
-    |> update_legendary_spinners
+    #|> update_legendary_spinners
   end
 
   # This method is used for updating the heroic_spinners during the spin. It
