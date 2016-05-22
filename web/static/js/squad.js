@@ -19,7 +19,7 @@ let squadName = Vue.component('squad-name', {
   template: `
     <form v-on:submit.prevent="submit" class="name">
       <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit">»</button>
+      <button type="submit" class="send"></button>
     </form>
   `
 })

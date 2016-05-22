@@ -9,7 +9,7 @@
 }
 
 .col {
-  flex-grow: 1;
+  flex: 0 0 33.33%;
 }
 
 .align-end {
@@ -17,5 +17,6 @@
 }
 
 .padded {
+  box-sizing: border-box;
   padding: 1rem;
 }

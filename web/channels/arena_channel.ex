@@ -43,7 +43,8 @@ defmodule Gyro.ArenaChannel do
   def handle_info(:spin, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     spinner = Spinner.introspect(spinner_pid)
     |> Map.delete(:connected_at)
-    assign(socket, :spinner, spinner)
+
+    socket = assign(socket, :spinner, spinner)
 
     arena = Arena.introspect()
     |> Map.delete(:spinner_roster)
@@ -63,7 +64,8 @@ defmodule Gyro.ArenaChannel do
   @doc """
   Event handler for spinners to send public message to every one in the room.
   """
-  def handle_in("shout", payload, socket) do
+  def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner: spinner}}) do
+    payload = %{message: message, from: spinner.name}
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
@@ -83,7 +85,7 @@ defmodule Gyro.ArenaChannel do
   trash-talking. The room should then broadcase a notification message
   to let everyone know which spinner is trash-talking which spinner.
   """
-  def handle_in("taunt", payload, socket) do
+  def handle_in("taunt", _, socket) do
     broadcast socket, "taunt", %{"message" => "Someone's been taunted."}
     {:noreply, socket}
   end

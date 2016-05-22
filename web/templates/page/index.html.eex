@@ -1,6 +1,7 @@
 <div class="row fill">
   <div class="col padded dark-bg">
-    <arena-messages></arena-messages>
+    <h2>Chat</h2>
+    <arena-chat></arena-chat>
   </div>
 
   <div class="col align-end">

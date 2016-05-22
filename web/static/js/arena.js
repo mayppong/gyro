@@ -41,22 +41,27 @@ let spinnerName = Vue.component('spinner-name', {
   template: `
     <form v-on:submit.prevent="submit" class="name">
       <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit">»</button>
+      <button type="submit" class="send"></button>
     </form>
   `
 });
 
-let arenaChat = Vue.component('arena-messages', {
+let arenaChat = Vue.component('arena-chat', {
   data: function() {
     return {
       messages: [],
       input: ''
     }
   },
-  beforeCompile: function() {
+  created: function() {
     arena.on('shout', payload => {
-      this.messages.push(payload.message)
+      this.messages.push(payload)
     })
+  },
+  computed: {
+    timestamp: function() {
+      return (new Date()).toUTCString()
+    }
   },
   methods: {
     submit: function() {
@@ -65,12 +70,14 @@ let arenaChat = Vue.component('arena-messages', {
     }
   },
   template: `
-    <form v-on:submit.prevent="submit">
-      <ul class="message-history">
-        <li v-for="message in messages">{{ message }}</li>
+    <div class="chat">
+      <ul class="chat-history">
+        <li v-for="message in messages">[{{ timestamp }}] {{ message.from || '___' }}: {{ message.message }}</li>
       </ul>
-      <input type="text" v-model="input" />
-      <button type="submit">»</button>
-    </form>
+      <form v-on:submit.prevent="submit" class="chat-input">
+        <input type="text" v-model="input" />
+        <button type="submit" class="send"></button>
+      </form>
+    </div>
   `
 })

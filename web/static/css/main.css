@@ -11,19 +11,36 @@ main {
   font-family: 'VT323';
 }
 
-form.name input {
-  font-family: inherit;
-  font-size: inherit;
-  width: 2em;
-}
-form.name button {
+.send {
   background: transparent;
   border: none;
   color: inherit;
   font-family: inherit;
   font-size: inherit;
+  margin-right: 1rem;
+}
+.send:after {
+  content: "»";
 }
 
+form.name input {
+  font-family: inherit;
+  font-size: inherit;
+  width: 2em;
+}
+
+.chat-history {
+  height: 25vh;
+  list-style: none;
+  padding-left: 0;
+  overflow-y: auto;
+}
+.chat-input {
+  display: flex;
+}
+.chat-input input {
+  flex-grow: 1;
+}
 .spinner-detail {
   border-left: 1px solid rgba(255, 255, 255, 0.7);
   border-right: 1px solid rgba(255, 255, 255, 0.7);
