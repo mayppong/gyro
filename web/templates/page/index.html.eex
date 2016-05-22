@@ -2,11 +2,11 @@
   <div class="col padded dark-bg">
     <div>
       <h2>Scoreboard</h2>
-      <arena-scoreboard></arena-scoreboard>
+      <arena-scoreboard :board="arena"></arena-scoreboard>
     </div>
     <div>
       <h2>Chat</h2>
-      <arena-chat></arena-chat>
+      <chat-room v-bind:channel.once="arenaChannel"></chat-room>
     </div>
   </div>
 
@@ -14,8 +14,8 @@
     <div class="padded dark-bg spinner-detail">
       <h2>Score</h2>
       <div class="status">
-        <spinner-name></spinner-name>
-        <spinner-score></spinner-score>
+        <spinner-name :channel.once="arenaChannel"></spinner-name>
+        <spinner-score :channel.once="arenaChannel"></spinner-score>
       </div>
     </div>
   </div>

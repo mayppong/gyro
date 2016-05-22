@@ -28,6 +28,42 @@ import squad from "./squad"
 new Vue({
   el: 'body',
   data: {
-    squadChannel: null
+    socket: socket,
+    arenaChannel: null,
+    squadChannel: null,
+    store: {
+      arena: {},
+      spinner: {},
+      squad: {}
+    },
+  },
+  computed: {
+    arena: function() {
+      return this.store.arena
+    },
+    spinner: function() {
+      return this.store.spinner
+    },
+    squad: function() {
+      return this.store.squad
+    }
+  },
+  created: function() {
+    this._init()
+  },
+  methods: {
+    _init() {
+      var self = this
+      this.arenaChannel = this.socket.channel('arenas:lobby', {})
+
+      this.arenaChannel.join()
+        .receive('ok', resp => { console.log('Joined successfully', resp) })
+        .receive('error', resp => { console.log('Unable to join', resp) })
+
+      this.arenaChannel.on('introspect', (resp) => {
+        self.store.spinner = resp.spinner
+        self.store.arena = resp.arena
+      })
+    }
   }
 })

@@ -1,12 +1,4 @@
-import socket from './socket'
 import Vue from 'vue'
-
-// Now that you are connected, you can join channels with a topic:
-let arena = socket.channel("arenas:lobby", {})
-
-arena.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
 
 let spinnerScore = Vue.component('spinner-score', {
   data: function() {
@@ -15,8 +7,9 @@ let spinnerScore = Vue.component('spinner-score', {
       spm: 1
     }
   },
+  props: ['channel'],
   created: function() {
-    arena.on('introspect', resp => {
+    this.channel.on('introspect', resp => {
       this.score = resp.spinner.score
       this.spm = resp.spinner.spm
     })
@@ -28,9 +21,10 @@ let spinnerName = Vue.component('spinner-name', {
   data: function() {
     return { name: '' };
   },
+  props: ['channel'],
   methods: {
     submit: function() {
-      arena
+      this.channel
         .push('intro', { name: this.name })
         .receive('ok', resp => {
           this.name = resp.name
@@ -45,25 +39,9 @@ let spinnerName = Vue.component('spinner-name', {
   `
 });
 
-let arenaChat = Vue.component('arena-chat', {
-  data: function() {
-    return { arenaChannel: arena }
-  },
-  template: `
-    <chat-room v-bind:channel.once="arenaChannel"></chat-room>
-  `
-})
-
 let arenaScoreboard = Vue.component('arena-scoreboard', {
-  data: function() {
-    return { heroics: [] }
-  },
-  created: function() {
-    arena.on('introspect', resp => {
-      this.heroics = resp.arena.heroic_spinners
-    })
-  },
+  props: ['board'],
   template: `
-    <scoreboard v-bind:heroics="heroics"></scoreboard>
+    <scoreboard v-bind:heroics="board.heroic_spinners"></scoreboard>
   `
 })
