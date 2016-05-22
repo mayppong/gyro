@@ -15,9 +15,8 @@ let spinnerScore = Vue.component('spinner-score', {
       spm: 1
     }
   },
-  beforeCompile: function() {
+  created: function() {
     arena.on('introspect', resp => {
-      console.log(resp)
       this.score = resp.spinner.score
       this.spm = resp.spinner.spm
     })
@@ -53,11 +52,6 @@ let arenaChat = Vue.component('arena-chat', {
       input: ''
     }
   },
-  created: function() {
-    arena.on('shout', payload => {
-      this.messages.push(payload)
-    })
-  },
   computed: {
     timestamp: function() {
       return (new Date()).toUTCString()
@@ -68,6 +62,11 @@ let arenaChat = Vue.component('arena-chat', {
       arena.push('shout', { message: this.input })
       this.input = ''
     }
+  },
+  created: function() {
+    arena.on('shout', payload => {
+      this.messages.push(payload)
+    })
   },
   template: `
     <div class="chat">

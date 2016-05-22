@@ -12,7 +12,6 @@ let squadName = Vue.component('squad-name', {
     submit: function() {
       this.squadChannel = socket.channel('arenas:squads:' + this.name)
       this.squadChannel.join().receive('ok', resp => {
-        console.log('Joined squads', resp)
       })
     }
   },
@@ -42,5 +41,3 @@ let squadScore = Vue.component('squad-score', {
   },
   template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
 })
-
-
