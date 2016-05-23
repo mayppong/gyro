@@ -20,9 +20,7 @@ import Vue from "vue"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
-
 import components from "./components"
-import squad from "./squad"
 
 new Vue({
   el: 'body',
@@ -76,6 +74,9 @@ new Vue({
         this.squadChannel = this.socket.channel('arenas:squads:' + this.squad.name)
         this.squadChannel.join()
           .receive('ok', resp => {
+            self.squadChannel.on('introspect', resp => {
+              self.store.squad = resp
+            })
           })
           .receive('error', resp => {
             self.squadChannel = null

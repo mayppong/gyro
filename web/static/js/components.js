@@ -20,7 +20,7 @@ let scoreCounter = Vue.component('score-counter', {
   },
   props: {
     score: { type: Number, required: true, default: 0 },
-    spm: { type: Number, default: 1 }
+    spm: { type: Number, default: 0 }
   },
   beforeCompile: function() {
       this.interval = setInterval(() => {

@@ -25,7 +25,7 @@
       <h2>Squad Score</h2>
       <div class="status">
         <name-form :name.sync="squad.name" v-on:submit.prevent="join"></name-form>
-        <squad-score :squad-channel.sync="squadChannel"></squad-score>
+        <score-counter v-bind:score="squad.score" v-bind:spm="squad.spm"></score-counter>
       </div>
     </div>
 
