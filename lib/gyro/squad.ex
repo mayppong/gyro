@@ -4,8 +4,9 @@ defmodule Gyro.Squad do
   alias Gyro.Spinner
   alias Gyro.Squad
 
-  defstruct name: nil, spm: 0, score: 0, latest: [],
-    formed_at: :calendar.universal_time(), members: %{}
+  defstruct name: nil, spm: 0, score: 0,
+    formed_at: :calendar.universal_time(), members: %{},
+    heroic_spinners: [], latest: []
 
   @timer 5000
 
@@ -171,6 +172,7 @@ defmodule Gyro.Squad do
 
     state = state
     |> update_score(spinners)
+    |> update_heroic_spinners(spinners)
     |> update_latest(spinners)
 
     Process.send_after(self, :spin, @timer)
@@ -188,6 +190,19 @@ defmodule Gyro.Squad do
     state
     |> Map.put(:score, squad_score)
     |> Map.put(:spm, squad_spm)
+  end
+
+  # This method is used for updating the heroic_spinners during the spin. It
+  # collects the spinner data by iterating through the spinner roster and ask
+  # for the current spinner state, then sort them by score before taking the
+  # top 10 players.
+  defp update_heroic_spinners(state, spinners) do
+    heroics = spinners
+    |> Enum.sort(&(&1.score >= &2.score))
+    |> Enum.take(10)
+    |> minify
+
+    Map.put(state, :heroic_spinners, heroics)
   end
 
   # Private method for finding the newest spinners in the squad.

@@ -30,6 +30,11 @@
     </div>
 
     <div v-if="squadChannel">
+      <h2>Scoreboard</h2>
+      <scoreboard :heroics="squad.heroic_spinners"></scoreboard>
+    </div>
+
+    <div v-if="squadChannel">
       <h2>Chat</h2>
       <chat-room :channel.sync="squadChannel"></chat-room>
     </div>
