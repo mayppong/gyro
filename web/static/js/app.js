@@ -22,7 +22,6 @@ import Vue from "vue"
 import socket from "./socket"
 
 import components from "./components"
-import arena from "./arena"
 import squad from "./squad"
 
 new Vue({
@@ -64,6 +63,24 @@ new Vue({
         self.store.spinner = resp.spinner
         self.store.arena = resp.arena
       })
+    },
+    intro() {
+      if (this.spinner.name != '') {
+        this.arenaChannel
+          .push('intro', { name: this.spinner.name })
+      }
+    },
+    join() {
+      if (this.squad.name != '') {
+        var self = this
+        this.squadChannel = this.socket.channel('arenas:squads:' + this.squad.name)
+        this.squadChannel.join()
+          .receive('ok', resp => {
+          })
+          .receive('error', resp => {
+            self.squadChannel = null
+          })
+      }
     }
   }
 })

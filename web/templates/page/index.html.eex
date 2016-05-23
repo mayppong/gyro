@@ -14,7 +14,7 @@
     <div class="padded dark-bg spinner-detail">
       <h2>Score</h2>
       <div class="status">
-        <spinner-name :channel.once="arenaChannel"></spinner-name>
+        <name-form :name.sync="spinner.name" v-on:submit.prevent="intro"></name-form>
         <score-counter v-bind:score="spinner.score" v-bind:spm="spinner.spm"></score-counter>
       </div>
     </div>
@@ -24,7 +24,7 @@
     <div>
       <h2>Squad Score</h2>
       <div class="status">
-        <squad-name :squad-channel.sync="squadChannel"></squad-name>
+        <name-form :name.sync="squad.name" v-on:submit.prevent="join"></name-form>
         <squad-score :squad-channel.sync="squadChannel"></squad-score>
       </div>
     </div>
