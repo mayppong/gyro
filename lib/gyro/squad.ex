@@ -159,16 +159,11 @@ defmodule Gyro.Squad do
   """
   def handle_info(:spin, state = %{members: members}) do
     spinners = members
-    |> Enum.map(fn({_, pid}) ->
+    |> Stream.map(fn({_, pid}) ->
       Task.async(fn -> Spinner.introspect(pid) end)
     end)
-    |> Enum.map(&(Task.await(&1)))
-    |> Enum.reduce([], fn(spinner, acc) ->
-      case spinner do
-        nil -> acc
-        member -> [member | acc]
-      end
-    end)
+    |> Stream.map(&(Task.await(&1)))
+    |> Enum.filter(&(!is_nil(&1)))
 
     state = state
     |> update_score(spinners)

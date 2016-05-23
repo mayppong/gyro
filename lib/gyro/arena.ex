@@ -120,16 +120,11 @@ defmodule Gyro.Arena do
   defp update_spinners(state = %{spinner_roster: spinner_roster}) do
     spinners = spinner_roster
     |> Agent.get(&(&1))
-    |> Enum.map(fn({_, pid}) ->
+    |> Stream.map(fn({_, pid}) ->
       Task.async(fn -> Spinner.introspect(pid) end)
     end)
-    |> Enum.map(&(Task.await(&1)))
-    |> Enum.reduce([], fn(spinner, acc) ->
-      case spinner do
-        nil -> acc
-        state -> [state | acc]
-      end
-    end)
+    |> Stream.map(&(Task.await(&1)))
+    |> Enum.filter(&(!is_nil(&1)))
 
     state
     |> update_heroic_spinners(spinners)
