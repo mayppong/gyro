@@ -42,7 +42,7 @@ defmodule Gyro.ArenaChannel do
   """
   def handle_info(:spin, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     spinner = Spinner.introspect(spinner_pid)
-    |> Map.delete(:connected_at)
+    |> Map.delete(:created_at)
 
     socket = assign(socket, :spinner, spinner)
 

@@ -37,7 +37,7 @@ defmodule Gyro.SquadChannel do
   """
   def handle_info(:spin, socket = %Socket{assigns: %{squad_pid: squad_pid}}) do
     squad = Squad.introspect(squad_pid)
-    |> Map.delete(:formed_at)
+    |> Map.delete(:created_at)
     |> Map.delete(:members)
 
     socket = assign(socket, :squad, squad)

@@ -5,7 +5,7 @@ defmodule Gyro.Spinner do
   alias Gyro.Spinner
 
   defstruct name: nil, spm: 1, score: 0,
-    connected_at: :calendar.universal_time()
+    created_at: :calendar.universal_time()
 
   @timer 1000
 

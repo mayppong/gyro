@@ -5,7 +5,7 @@ defmodule Gyro.Squad do
   alias Gyro.Squad
 
   defstruct name: nil, spm: 0, score: 0,
-    formed_at: :calendar.universal_time(), members: %{},
+    created_at: :calendar.universal_time(), members: %{},
     heroic_spinners: [], latest: []
 
   @timer 5000
@@ -210,7 +210,7 @@ defmodule Gyro.Squad do
   # time, and take only the first 10 from the list.
   defp update_latest(state, spinners) do
     latest = spinners
-    |> Enum.sort(&(&1.connected_at > &2.connected_at))
+    |> Enum.sort(&(&1.created_at > &2.created_at))
     |> Enum.take(10)
     |> minify
 
@@ -226,7 +226,7 @@ defmodule Gyro.Squad do
     members
     |> Enum.map(fn(spinner) ->
       spinner
-      |> Map.delete(:connected_at)
+      |> Map.delete(:created_at)
     end)
   end
 end

@@ -171,7 +171,7 @@ defmodule Gyro.Arena do
     spinners
     |> Enum.map(fn(spinner) ->
       spinner
-      |> Map.delete(:connected_at)
+      |> Map.delete(:created_at)
     end)
   end
 
