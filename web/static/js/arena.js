@@ -1,22 +1,5 @@
 import Vue from 'vue'
 
-let spinnerScore = Vue.component('spinner-score', {
-  data: function() {
-    return {
-      score: 0,
-      spm: 1
-    }
-  },
-  props: ['channel'],
-  created: function() {
-    this.channel.on('introspect', resp => {
-      this.score = resp.spinner.score
-      this.spm = resp.spinner.spm
-    })
-  },
-  template: `<score-counter v-bind:score="score" v-bind:spm="spm"></score-counter>`
-})
-
 let spinnerName = Vue.component('spinner-name', {
   data: function() {
     return { name: '' };

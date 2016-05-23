@@ -15,7 +15,7 @@
       <h2>Score</h2>
       <div class="status">
         <spinner-name :channel.once="arenaChannel"></spinner-name>
-        <spinner-score :channel.once="arenaChannel"></spinner-score>
+        <score-counter v-bind:score="spinner.score" v-bind:spm="spinner.spm"></score-counter>
       </div>
     </div>
   </div>
