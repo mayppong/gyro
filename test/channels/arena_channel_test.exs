@@ -19,8 +19,8 @@ defmodule Gyro.ArenaChannelTest do
   end
 
   test "shout broadcasts to arenas:lobby", %{socket: socket} do
-    push socket, "shout", %{"hello" => "all"}
-    assert_broadcast "shout", %{"hello" => "all"}
+    push socket, "shout", %{"message" => "hello"}
+    assert_broadcast "shout", %{"message" => "hello", "from" => nil}
   end
 
   test "broadcasts are pushed to the client", %{socket: socket} do

@@ -57,7 +57,7 @@ defmodule Gyro.SquadChannel do
   # broadcast to everyone in the current topic (squads:lobby).
   def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     spinner = Spinner.introspect(spinner_pid)
-    payload = %{message: message, from: spinner.name}
+    payload = %{"message" => message, "from" => spinner.name}
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
