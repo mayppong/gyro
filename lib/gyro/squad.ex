@@ -3,6 +3,7 @@ defmodule Gyro.Squad do
 
   alias Gyro.Spinner
   alias Gyro.Squad
+  alias Gyro.Scoreboard
 
   defstruct name: nil, spm: 0, score: 0,
     created_at: :calendar.universal_time(), members: %{},
@@ -167,8 +168,7 @@ defmodule Gyro.Squad do
 
     state = state
     |> update_score(spinners)
-    |> update_heroic_spinners(spinners)
-    |> update_latest(spinners)
+    |> Scoreboard.build(spinners)
 
     Process.send_after(self, :spin, @timer)
     {:noreply, state}
@@ -187,41 +187,4 @@ defmodule Gyro.Squad do
     |> Map.put(:spm, squad_spm)
   end
 
-  # This method is used for updating the heroic_spinners during the spin. It
-  # collects the spinner data by iterating through the spinner roster and ask
-  # for the current spinner state, then sort them by score before taking the
-  # top 10 players.
-  defp update_heroic_spinners(state, spinners) do
-    heroics = spinners
-    |> Enum.sort(&(&1.score >= &2.score))
-    |> Enum.take(10)
-    |> minify
-
-    Map.put(state, :heroic_spinners, heroics)
-  end
-
-  # Private method for finding the newest spinners in the squad.
-  # This is done by iterating through members, sort them by their connected
-  # time, and take only the first 10 from the list.
-  defp update_latest(state, spinners) do
-    latest = spinners
-    |> Enum.sort(&(&1.created_at > &2.created_at))
-    |> Enum.take(10)
-    |> minify
-
-    Map.put(state, :latest, latest)
-  end
-
-  # Private method for cleaning up spinner state before we add them to the
-  # list. There are some data in each spinner where we might not care for.
-  # This is a good place where we can clean them up and store just the data
-  # we need.
-  # TODO: once we can JSONify this, we won't need this method any more
-  defp minify(members) do
-    members
-    |> Enum.map(fn(spinner) ->
-      spinner
-      |> Map.delete(:created_at)
-    end)
-  end
 end
