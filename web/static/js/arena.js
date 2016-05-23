@@ -38,10 +38,3 @@ let spinnerName = Vue.component('spinner-name', {
     </form>
   `
 });
-
-let arenaScoreboard = Vue.component('arena-scoreboard', {
-  props: ['board'],
-  template: `
-    <scoreboard v-bind:heroics="board.heroic_spinners"></scoreboard>
-  `
-})
