@@ -5,9 +5,9 @@ defmodule Gyro.Squad do
   alias Gyro.Squad
   alias Gyro.Scoreboard
 
-  defstruct name: nil, spm: 0, score: 0,
-    created_at: :calendar.universal_time(), members: %{},
-    heroic_spinners: [], latest: []
+  defstruct name: nil, created_at: :calendar.universal_time(), members: %{},
+    score: 0, spm: 0,
+    heroic_spinners: [], latest_spinners: []
 
   @timer 5000
 

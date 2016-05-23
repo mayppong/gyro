@@ -3,8 +3,8 @@ defmodule Gyro.Scoreboard do
 
   def build(state, list) do
     state
-    |> build_heroics(list)
     |> build_latest(list)
+    |> build_heroics(list)
   end
 
   # Private method for finding the newest spinners in the squad.
@@ -16,7 +16,7 @@ defmodule Gyro.Scoreboard do
     |> Enum.take(10)
     |> minify
 
-    Map.put(state, :latest, latest)
+    Map.put(state, :latest_spinners, latest)
   end
 
   # This method is used for updating the heroic_spinners during the spin. It

@@ -7,9 +7,7 @@ defmodule Gyro.Arena do
   alias Gyro.Scoreboard
 
   defstruct spinner_roster: nil, squad_roster: nil,
-    legendary_spinners: [], legendary_squads: [],
-    heroic_spinners: [], heroic_squads: [],
-    loudest_squads: []
+    heroic_spinners: [], latest_spinners: []
 
   @name :arena
   @pid {:global, @name}
