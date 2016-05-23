@@ -4,11 +4,10 @@ defmodule Gyro.Arena do
   alias Gyro.Arena
   alias Gyro.Spinner
   alias Gyro.Squad
+  alias Gyro.Scoreboard
 
   defstruct spinner_roster: nil, squad_roster: nil,
-    legendary_spinners: [], legendary_squads: [],
-    heroic_spinners: [], heroic_squads: [],
-    loudest_squads: []
+    heroic_spinners: [], latest_spinners: []
 
   @name :arena
   @pid {:global, @name}
@@ -120,59 +119,14 @@ defmodule Gyro.Arena do
   defp update_spinners(state = %{spinner_roster: spinner_roster}) do
     spinners = spinner_roster
     |> Agent.get(&(&1))
-    |> Enum.map(fn({_, pid}) ->
+    |> Stream.map(fn({_, pid}) ->
       Task.async(fn -> Spinner.introspect(pid) end)
     end)
-    |> Enum.map(&(Task.await(&1)))
-    |> Enum.reduce([], fn(spinner, acc) ->
-      case spinner do
-        nil -> acc
-        state -> [state | acc]
-      end
-    end)
+    |> Stream.map(&(Task.await(&1)))
+    |> Enum.filter(&(!is_nil(&1)))
 
     state
-    |> update_heroic_spinners(spinners)
-    #|> update_legendary_spinners
-  end
-
-  # This method is used for updating the heroic_spinners during the spin. It
-  # collects the spinner data by iterating through the spinner roster and ask
-  # for the current spinner state, then sort them by score before taking the
-  # top 10 players.
-  defp update_heroic_spinners(state, spinners) do
-    heroics = spinners
-    |> Enum.sort(&(&1.score >= &2.score))
-    |> Enum.take(10)
-    |> minify
-
-    Map.put(state, :heroic_spinners, heroics)
-  end
-
-  # This method updates the legendary spinner list based on the new heroic
-  # spinners. Unlike heroic, legendary spinners are an all-time score, so we
-  # need to compare the score against existing legendary as well, even if the
-  # spinner has left the system.
-  defp update_legendary_spinners(state = %{heroic_spinners: heroes, legendary_spinners: legends}) do
-    legends = legends
-    |> Enum.concat(heroes)
-    |> Enum.sort(&(&1.score >= &2.score))
-    |> Enum.take(10)
-
-    Map.put(state, :legendary_spinners, legends)
-  end
-
-  # Private method for cleaning up spinner state before we add them to the
-  # list. There are some data in each spinner where we might not care for.
-  # This is a good place where we can clean them up and store just the data
-  # we need.
-  # TODO: once we can JSONify this, we won't need this method any more
-  defp minify(spinners) do
-    spinners
-    |> Enum.map(fn(spinner) ->
-      spinner
-      |> Map.delete(:created_at)
-    end)
+    |> Scoreboard.build(spinners)
   end
 
 end
