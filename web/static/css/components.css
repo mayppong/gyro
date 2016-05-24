@@ -1,16 +1,8 @@
-body {
-  margin: 0;
+form.name input {
+  font-family: inherit;
+  font-size: inherit;
+  width: 2em;
 }
-
-.alert {
-  position: fixed;
-}
-
-main {
-  color: white;
-  font-family: 'VT323';
-}
-
 .send {
   background: transparent;
   border: none;
@@ -21,12 +13,6 @@ main {
 }
 .send:after {
   content: "»";
-}
-
-form.name input {
-  font-family: inherit;
-  font-size: inherit;
-  width: 2em;
 }
 
 .chat-history {
@@ -41,19 +27,16 @@ form.name input {
 .chat-input input {
   flex-grow: 1;
 }
-.spinner-detail {
-  border-left: 1px solid rgba(255, 255, 255, 0.7);
-  border-right: 1px solid rgba(255, 255, 255, 0.7);
-}
-.status {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-}
 
 .scoreboard table {
   width: 100%
 }
 .scoreboard table .name {
   text-align: center;
+}
+
+.status {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
 }

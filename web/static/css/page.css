@@ -1,0 +1,9 @@
+#page-index {
+  color: white;
+  font-family: 'VT323';
+}
+
+.spinner-detail {
+  border-left: 1px solid rgba(255, 255, 255, 0.7);
+  border-right: 1px solid rgba(255, 255, 255, 0.7);
+}
