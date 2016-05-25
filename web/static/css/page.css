@@ -1,4 +1,6 @@
 #page-index {
+  background-image: url('../images/gyro-1080p.png');
+  background-size: 100%;
   color: white;
   font-family: 'VT323';
 }

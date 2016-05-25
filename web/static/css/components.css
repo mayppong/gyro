@@ -1,3 +1,7 @@
+.alert {
+  position: fixed;
+}
+
 form.name input {
   font-family: inherit;
   font-size: inherit;
