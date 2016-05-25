@@ -85,10 +85,11 @@ let scoreboard = Vue.component('scoreboard', {
   props: ['heroics'],
   template: `
     <div class="scoreboard">
-      <div class="tabs">
-        <h3>Heroics</h3>
-      </div>
-      <div>
+      <ul class="tabs h-tabs">
+        <li>Heroics</li>
+        <li>Latest</li>
+      </ul>
+      <div class="tab-content">
         <table>
           <thead>
             <th>Name</th>

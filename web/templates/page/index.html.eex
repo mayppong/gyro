@@ -1,4 +1,4 @@
-<div class="row fill">
+<div id="page-index" class="row fill">
   <div class="col padded dark-bg">
     <div>
       <h2>Scoreboard</h2>
