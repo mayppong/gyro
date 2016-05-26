@@ -55,6 +55,7 @@ defmodule Gyro.Scoreboard do
     |> Enum.map(fn(item) ->
       item
       |> Map.delete(:created_at)
+      |> Map.delete(:squad_pid)
     end)
   end
 

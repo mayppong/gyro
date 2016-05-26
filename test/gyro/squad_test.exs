@@ -60,6 +60,9 @@ defmodule Gyro.SquadTest do
   test "enlist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
     Squad.enlist(@squad.name, spinner_pid)
     assert is_member?(spinner_pid, squad_pid)
+
+    %{squad_pid: result} = Spinner.introspect(spinner_pid)
+    assert @pid == result
   end
 
   test "delist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
@@ -67,6 +70,9 @@ defmodule Gyro.SquadTest do
     Squad.delist(squad_pid, spinner_pid)
 
     refute is_member?(spinner_pid, squad_pid)
+
+    %{squad_pid: result} = Spinner.introspect(spinner_pid)
+    assert nil == result
   end
 
   @tag :skip

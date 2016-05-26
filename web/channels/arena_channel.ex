@@ -42,15 +42,17 @@ defmodule Gyro.ArenaChannel do
   """
   def handle_info(:spin, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     spinner = Spinner.introspect(spinner_pid)
-    |> Map.delete(:created_at)
-
     socket = assign(socket, :spinner, spinner)
 
     arena = Arena.introspect()
     |> Map.delete(:spinner_roster)
     |> Map.delete(:squad_roster)
 
-    push socket, "introspect", %{"arena" => arena, "spinner" => spinner}
+    spinner_state = spinner
+    |> Map.delete(:squad_pid)
+    |> Map.delete(:created_at)
+
+    push socket, "introspect", %{"arena" => arena, "spinner" => spinner_state}
     Process.send_after(self, :spin, @timer)
     {:noreply, socket}
   end
