@@ -59,11 +59,4 @@ defmodule Gyro.SpinnerTest do
     assert name == "MAY"
   end
 
-  @tag :skip
-  test "delist a spinner", %{spinner_pid: spinner_pid} do
-    :ok = Spinner.delist(spinner_pid)
-
-    assert GenServer.whereis(spinner_pid) == nil
-  end
-
 end
