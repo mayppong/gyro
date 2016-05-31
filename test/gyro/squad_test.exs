@@ -65,6 +65,13 @@ defmodule Gyro.SquadTest do
     assert @pid == result
   end
 
+  test "delist a spinner from squad stored in its state", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
+    Squad.enlist(squad_pid, spinner_pid)
+    Squad.delist(spinner_pid)
+
+    refute is_member?(spinner_pid, squad_pid)
+  end
+
   test "delist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
     Squad.enlist(@squad.name, spinner_pid)
     Squad.delist(squad_pid, spinner_pid)

@@ -53,6 +53,7 @@ defmodule Gyro.Squad do
   already exist, also start it.
   """
   def enlist(name, spinner_pid) do
+    delist(spinner_pid)
     case form(name) do
       {:ok, squad_pid} ->
         squad_pid |> GenServer.cast({:enlist, spinner_pid})
@@ -68,6 +69,17 @@ defmodule Gyro.Squad do
   def exists?(name) when is_bitstring(name), do: exists?({:global, name})
   def exists?(name) do
     nil != GenServer.whereis(name)
+  end
+
+  @doc """
+  Remove the given spinner from the squad stored in its state.
+  """
+  def delist(spinner_pid) do
+    %{squad_pid: squad_pid} = Spinner.introspect(spinner_pid)
+    case is_pid(squad_pid) do
+      true -> delist(squad_pid, spinner_pid)
+      _ -> true
+    end
   end
 
   @doc """
