@@ -69,7 +69,9 @@ new Vue({
       }
     },
     join() {
-      if (this.squad.name != '') {
+      this.leave()
+
+      if (this.squad.name) {
         var self = this
         this.squadChannel = this.socket.channel('arenas:squads:' + this.squad.name)
         this.squadChannel.join()
@@ -81,6 +83,13 @@ new Vue({
           .receive('error', resp => {
             self.squadChannel = null
           })
+      }
+    },
+    leave() {
+      if (this.squadChannel) {
+        this.squadChannel.leave()
+        this.squadChannel = null;
+        this.store.squad = { name: this.squad.name }
       }
     }
   }

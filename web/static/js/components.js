@@ -95,12 +95,14 @@ let scoreboard = Vue.component('scoreboard', {
             <th>Name</th>
             <th>Score</th>
           </thead>
+
           <tbody>
             <tr v-for="hero in heroics">
               <td class="name">{{ hero.name }}</td>
               <td><score-counter v-bind:score="hero.score" v-bind:spm="hero.spm"></score-counter></td>
             </tr>
           </tbody>
+
       </div>
     </div>
   `
