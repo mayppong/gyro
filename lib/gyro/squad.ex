@@ -25,10 +25,7 @@ defmodule Gyro.Squad do
       true ->
         {:ok, {:global, name}}
       false ->
-        import Supervisor.Spec
-
-        child = worker(Squad, [%Squad{name: name}, {:global, name}], [name: {:global, name}])
-        case Supervisor.start_child(Gyro.Supervisor, child) do
+        case Gyro.Squad.Supervisor.start_child(name) do
           {:ok, squad_pid} ->
             {:ok, squad_pid}
           {:error, {:already_started, squad_pid}} ->

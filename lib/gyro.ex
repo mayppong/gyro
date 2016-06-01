@@ -14,6 +14,7 @@ defmodule Gyro do
       # Here you could define other workers and supervisors as children
       # worker(Gyro.Worker, [arg1, arg2, arg3]),
       worker(Gyro.Arena, []),
+      supervisor(Gyro.Squad.Supervisor, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
