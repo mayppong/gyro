@@ -24,3 +24,8 @@ To run the unit tests:
   2. Run `mix test`.
 
 The general benchmark of the application is done by stress-testing using [tsung](http://tsung.erlang-projects.org/). Of which, the config file for it is included in the `./test` folder of the project.
+
+
+## Contribute
+
+We are looking for contributors, and there are many ways you can contribute. If you are looking to get some hands on, please feel free to pick up tickets, and submit pull requests! Otherwise, submitting tickets for any issues or improvements would be appreciated.
