@@ -9,8 +9,7 @@ defmodule Gyro.Arena do
   defstruct spinner_roster: nil, squad_roster: nil,
     heroic_spinners: [], latest_spinners: []
 
-  @name :arena
-  @pid {:global, @name}
+  @pid {:global, __MODULE__}
   @timer 1000
 
   @doc """
@@ -46,7 +45,7 @@ defmodule Gyro.Arena do
     {:ok, squad_roster} <- Agent.start_link((fn() -> %{} end))
     do
       state = %{state | spinner_roster: spinner_roster, squad_roster: squad_roster}
-      GenServer.start_link(__MODULE__, state, name: {:global, @name})
+      GenServer.start_link(__MODULE__, state, name: @pid)
     end
   end
 
