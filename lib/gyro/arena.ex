@@ -3,7 +3,6 @@ defmodule Gyro.Arena do
 
   alias Gyro.Arena
   alias Gyro.Spinner
-  alias Gyro.Squad
   alias Gyro.Scoreboard
 
   defstruct spinner_roster: nil, squad_roster: nil,

@@ -20,8 +20,8 @@ defmodule Gyro.Squad.Supervisor do
   deciding on the initial state. For now, the client API won't have access to
   set the initial state of the Squad.
   """
-  def start_child(name) do
-    Supervisor.start_child(@pid, [%Squad{name: name}, {:global, name}])
+  def start_child(name, state) do
+    Supervisor.start_child(@pid, [{:global, name}, state])
   end
 
   @doc """

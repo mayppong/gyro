@@ -25,7 +25,7 @@ defmodule Gyro.Squad do
       true ->
         {:ok, {:global, name}}
       false ->
-        case Gyro.Squad.Supervisor.start_child(name) do
+        case Gyro.Squad.Supervisor.start_child(name, %Squad{name: name}) do
           {:ok, squad_pid} ->
             {:ok, squad_pid}
           {:error, {:already_started, squad_pid}} ->
@@ -100,7 +100,7 @@ defmodule Gyro.Squad do
   means the squad name is unique and can be referenced by name from anywhere
   in the system without the process id.
   """
-  def start_link(state, name) do
+  def start_link(name, state) do
     GenServer.start_link(__MODULE__, state, name: name)
   end
 

@@ -9,7 +9,7 @@ defmodule Gyro.SquadTest do
 
   setup do
     {:ok, spinner_pid} = Spinner.start_link()
-    {:ok, squad_pid} = Squad.start_link(@squad, @pid)
+    {:ok, squad_pid} = Squad.start_link(@pid, @squad)
 
     {:ok, spinner_pid: spinner_pid, squad_pid: squad_pid}
   end
