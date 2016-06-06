@@ -6,7 +6,7 @@ defmodule Gyro.Arena do
   alias Gyro.Scoreboard
 
   defstruct spinner_roster: nil, squad_roster: nil,
-    heroic_spinners: [], latest_spinners: []
+    scoreboard: %Scoreboard{}
 
   @pid {:global, __MODULE__}
   @timer 1000
@@ -123,8 +123,8 @@ defmodule Gyro.Arena do
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
 
-    state
-    |> Scoreboard.build(spinners)
+    scoreboard = Scoreboard.build(state.scoreboard, spinners)
+    Map.put(state, :scoreboard, scoreboard)
   end
 
 end

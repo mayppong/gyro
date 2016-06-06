@@ -7,7 +7,7 @@ defmodule Gyro.Squad do
 
   defstruct name: nil, created_at: :calendar.universal_time(), members: %{},
     score: 0, spm: 0,
-    heroic_spinners: [], latest_spinners: []
+    scoreboard: %Scoreboard{}
 
   @timer 5000
 
@@ -176,9 +176,10 @@ defmodule Gyro.Squad do
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
 
+    scoreboard = Scoreboard.build(spinners)
     state = state
     |> update_score(spinners)
-    |> Scoreboard.build(spinners)
+    |> Map.put(:scoreboard, scoreboard)
 
     Process.send_after(self, :spin, @timer)
     {:noreply, state}
