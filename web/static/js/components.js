@@ -82,7 +82,17 @@ let chatRoom = Vue.component('chat-room', {
 })
 
 let scoreboard = Vue.component('scoreboard', {
-  props: ['heroics'],
+  props: {
+    scoreboard: {
+      required: true,
+      default: function() { return {} }
+    }
+  },
+  computed: {
+    heroics: function() {
+      return this.scoreboard.heroics
+    }
+  },
   template: `
     <div class="scoreboard">
       <ul class="tabs h-tabs">
