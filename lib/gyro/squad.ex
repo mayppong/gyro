@@ -5,6 +5,7 @@ defmodule Gyro.Squad do
   alias Gyro.Squad
   alias Gyro.Scoreboard
 
+  @derive {Poison.Encoder, except: [:created_at, :members]}
   defstruct name: nil, created_at: :calendar.universal_time(), members: %{},
     score: 0, spm: 0,
     scoreboard: %Scoreboard{}

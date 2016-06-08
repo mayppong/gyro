@@ -5,6 +5,7 @@ defmodule Gyro.Arena do
   alias Gyro.Spinner
   alias Gyro.Scoreboard
 
+  @derive {Poison.Encoder, except: [:spinner_roster, :squad_roster]}
   defstruct spinner_roster: nil, squad_roster: nil,
     scoreboard: %Scoreboard{}
 

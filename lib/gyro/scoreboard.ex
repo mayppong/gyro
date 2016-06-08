@@ -18,7 +18,6 @@ defmodule Gyro.Scoreboard do
     latest = list
     |> Enum.sort(&(&1.created_at > &2.created_at))
     |> Enum.take(10)
-    |> minify
 
     %Scoreboard{board | latest: latest}
   end
@@ -31,7 +30,6 @@ defmodule Gyro.Scoreboard do
     heroics = list
     |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.take(10)
-    |> minify
 
     %Scoreboard{board | heroics: heroics}
   end
@@ -51,20 +49,6 @@ defmodule Gyro.Scoreboard do
     |> Enum.take(10)
 
     %Scoreboard{board | legendaries: legends}
-  end
-
-  # Private method for cleaning up spinner state before we add them to the
-  # list. There are some data in each spinner where we might not care for.
-  # This is a good place where we can clean them up and store just the data
-  # we need.
-  # TODO: once we can JSONify this, we won't need this method any more
-  defp minify(list) do
-    list
-    |> Enum.map(fn(item) ->
-      item
-      |> Map.delete(:created_at)
-      |> Map.delete(:squad_pid)
-    end)
   end
 
 end
