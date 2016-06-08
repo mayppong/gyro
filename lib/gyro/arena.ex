@@ -114,7 +114,7 @@ defmodule Gyro.Arena do
   # To update spinner state,  new process is spun up for each member to
   # introspect the state asynchronously. Once we have all members data, we can
   # continue on with the calculations.
-  defp update_spinners(state = %{spinner_roster: spinner_roster}) do
+  defp update_spinners(state = %{spinner_roster: spinner_roster, scoreboard: scoreboard}) do
     spinners = spinner_roster
     |> Agent.get(&(&1))
     |> Stream.map(fn({_, pid}) ->
@@ -123,7 +123,7 @@ defmodule Gyro.Arena do
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
 
-    scoreboard = Scoreboard.build(state.scoreboard, spinners)
+    scoreboard = Scoreboard.build(scoreboard, spinners)
     Map.put(state, :scoreboard, scoreboard)
   end
 

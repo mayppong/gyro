@@ -8,6 +8,7 @@ defmodule Gyro.Scoreboard do
     board
     |> build_latest(list)
     |> build_heroics(list)
+    |> build_legendaries
   end
 
   # Private method for finding the newest spinners in the squad.
@@ -39,8 +40,12 @@ defmodule Gyro.Scoreboard do
   # spinners. Unlike heroic, legendary spinners are an all-time score, so we
   # need to compare the score against existing legendary as well, even if the
   # spinner has left the system.
+  def build_legendaries(board = %{heroics: heroes}), do: build_legendaries(board, heroes)
   def build_legendaries(board = %{legendaries: legends}, heroes) do
     legends = legends
+    |> Enum.reject(fn(legend) ->
+      Enum.any?(heroes, &(&1.id == legend.id))
+    end)
     |> Enum.concat(heroes)
     |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.take(10)

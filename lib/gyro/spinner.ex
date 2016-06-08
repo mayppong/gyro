@@ -4,7 +4,7 @@ defmodule Gyro.Spinner do
   alias Gyro.Arena
   alias Gyro.Spinner
 
-  defstruct name: nil, spm: 1, score: 0,
+  defstruct id: nil, name: nil, spm: 1, score: 0,
     squad_pid: nil, created_at: :calendar.universal_time()
 
   @timer 1000
@@ -79,6 +79,7 @@ defmodule Gyro.Spinner do
   For now, we just need to tell it to start spinning.
   """
   def init(state) do
+    state = Map.put(state, :id, :erlang.pid_to_list(self))
     :timer.send_interval(@timer, self, :spin)
     {:ok, state}
   end

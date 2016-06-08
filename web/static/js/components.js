@@ -91,6 +91,9 @@ let scoreboard = Vue.component('scoreboard', {
   computed: {
     heroics: function() {
       return this.scoreboard.heroics
+    },
+    legendaries: function() {
+      return this.scoreboard.legendaries
     }
   },
   template: `
@@ -110,6 +113,11 @@ let scoreboard = Vue.component('scoreboard', {
             <tr v-for="hero in heroics">
               <td class="name">{{ hero.name }}</td>
               <td><score-counter v-bind:score="hero.score" v-bind:spm="hero.spm"></score-counter></td>
+            </tr>
+
+            <tr v-for="legend in legendaries">
+              <td class="name">{{ legend.name }}</td>
+              <td><score-counter v-bind:score="legend.score" v-bind:spm="legend.spm"></score-counter></td>
             </tr>
           </tbody>
 
