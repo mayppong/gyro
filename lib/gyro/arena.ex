@@ -5,8 +5,9 @@ defmodule Gyro.Arena do
   alias Gyro.Spinner
   alias Gyro.Scoreboard
 
+  @derive {Poison.Encoder, except: [:spinner_roster, :squad_roster]}
   defstruct spinner_roster: nil, squad_roster: nil,
-    heroic_spinners: [], latest_spinners: []
+    scoreboard: %Scoreboard{}
 
   @pid {:global, __MODULE__}
   @timer 1000
@@ -114,7 +115,7 @@ defmodule Gyro.Arena do
   # To update spinner state,  new process is spun up for each member to
   # introspect the state asynchronously. Once we have all members data, we can
   # continue on with the calculations.
-  defp update_spinners(state = %{spinner_roster: spinner_roster}) do
+  defp update_spinners(state = %{spinner_roster: spinner_roster, scoreboard: scoreboard}) do
     spinners = spinner_roster
     |> Agent.get(&(&1))
     |> Stream.map(fn({_, pid}) ->
@@ -123,8 +124,8 @@ defmodule Gyro.Arena do
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
 
-    state
-    |> Scoreboard.build(spinners)
+    scoreboard = Scoreboard.build(scoreboard, spinners)
+    Map.put(state, :scoreboard, scoreboard)
   end
 
 end

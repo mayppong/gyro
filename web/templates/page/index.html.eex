@@ -2,7 +2,7 @@
   <div class="col padded dark-bg">
     <div>
       <h2>Scoreboard</h2>
-      <scoreboard :heroics="arena.heroic_spinners"></scoreboard>
+      <scoreboard :scoreboard="arena.scoreboard"></scoreboard>
     </div>
     <div>
       <h2>Chat</h2>
@@ -31,7 +31,7 @@
 
     <div v-if="squadChannel">
       <h2>Scoreboard</h2>
-      <scoreboard :heroics="squad.heroic_spinners"></scoreboard>
+      <scoreboard :scoreboard="squad.scoreboard"></scoreboard>
     </div>
 
     <div v-if="squadChannel">

@@ -82,12 +82,32 @@ let chatRoom = Vue.component('chat-room', {
 })
 
 let scoreboard = Vue.component('scoreboard', {
-  props: ['heroics'],
+  data: function() {
+    return { view: 'heroics' }
+  },
+  props: {
+    scoreboard: {
+      required: true,
+      default: function() { return {} }
+    }
+  },
+  computed: {
+    heroics: function() {
+      return this.scoreboard.heroics
+    },
+    legendaries: function() {
+      return this.scoreboard.legendaries
+    },
+    latest: function() {
+      return this.scoreboard.latest
+    }
+  },
   template: `
     <div class="scoreboard">
       <ul class="tabs h-tabs">
-        <li>Heroics</li>
-        <li>Latest</li>
+        <li class="clickable" v-on:click="view = 'heroics'" v-bind:class="{selected: view == 'heroics'}">Heroics</li>
+        <li class="clickable" v-on:click="view = 'legendaries'" v-bind:class="{selected: view == 'legendaries'}">Legendaries</li>
+        <li class="clickable" v-on:click="view = 'latest'" v-bind:class="{selected: view == 'latest'}">Latest</li>
       </ul>
       <div class="tab-content">
         <table>
@@ -96,10 +116,24 @@ let scoreboard = Vue.component('scoreboard', {
             <th>Score</th>
           </thead>
 
-          <tbody>
+          <tbody v-if="view == 'heroics'">
             <tr v-for="hero in heroics">
               <td class="name">{{ hero.name }}</td>
               <td><score-counter v-bind:score="hero.score" v-bind:spm="hero.spm"></score-counter></td>
+            </tr>
+          </tbody>
+
+          <tbody v-if="view == 'legendaries'">
+            <tr v-for="legend in legendaries">
+              <td class="name">{{ legend.name }}</td>
+              <td><score-counter v-bind:score="legend.score" v-bind:spm="legend.spm"></score-counter></td>
+            </tr>
+          </tbody>
+
+          <tbody v-if="view == 'latest'">
+            <tr v-for="last in latest">
+              <td class="name">{{ last.name }}</td>
+              <td><score-counter v-bind:score="last.score" v-bind:spm="last.spm"></score-counter></td>
             </tr>
           </tbody>
 
