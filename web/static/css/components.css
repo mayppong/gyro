@@ -45,6 +45,13 @@ form.name input {
   flex-direction: row;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
+.tabs .selected {
+  font-weight: bolder;
+}
 ul.tabs {
   display: flex;
   list-style: none;

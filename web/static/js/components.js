@@ -105,9 +105,9 @@ let scoreboard = Vue.component('scoreboard', {
   template: `
     <div class="scoreboard">
       <ul class="tabs h-tabs">
-        <li v-on:click="view = 'heroics'">Heroics</li>
-        <li v-on:click="view = 'legendaries'">Legendaries</li>
-        <li v-on:click="view = 'latest'">Latest</li>
+        <li class="clickable" v-on:click="view = 'heroics'" v-bind:class="{selected: view == 'heroics'}">Heroics</li>
+        <li class="clickable" v-on:click="view = 'legendaries'" v-bind:class="{selected: view == 'legendaries'}">Legendaries</li>
+        <li class="clickable" v-on:click="view = 'latest'" v-bind:class="{selected: view == 'latest'}">Latest</li>
       </ul>
       <div class="tab-content">
         <table>
