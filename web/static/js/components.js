@@ -74,7 +74,7 @@ let chatRoom = Vue.component('chat-room', {
 	template: `
 <div class="messages fill">
 	<message v-for="message in messages"
-		v-bind:message="message"></message>
+		:message="message"></message>
 </div>`
 });
 
@@ -96,8 +96,8 @@ let message = Vue.component('message', {
 	">
 	<div class="message_header">
 		<span class="timestamp">12:34</span>
-		<identity v-bind:name="name"
-			v-bind:troupe="troupe"></identity>
+		<identity :name="name"
+			:troupe="troupe"></identity>
 	</div>
 	<div class="message_body">{{ body }}</div>
 </div>
@@ -159,24 +159,24 @@ let scoreboard = Vue.component('scoreboard', {
 	<tbody v-if="view == 'heroics'">
 		<tr v-for="hero in heroics">
 			<td class="rank">{{ $index }}</td>
-			<td><identity v-bind:name="hero.name"></identity></td>
-			<td><spinner v-bind:score="hero.score" v-bind:spm="hero.spm"></spinner></td>
+			<td><identity :name="hero.name"></identity></td>
+			<td><spinner :score="hero.score" :spm="hero.spm"></spinner></td>
 		</tr>
 	</tbody>
 
 	<tbody v-if="view == 'legendaries'">
 		<tr v-for="legend in legendaries">
 			<td class="rank">{{ $index }}</td>
-			<td><identity v-bind:name="legend.name"></identity></td>
-			<td><spinner v-bind:score="legend.score" v-bind:spm="legend.spm"></spinner></td>
+			<td><identity :name="legend.name"></identity></td>
+			<td><spinner :score="legend.score" :spm="legend.spm"></spinner></td>
 		</tr>
 	</tbody>
 
 	<tbody v-if="view == 'latest'">
 		<tr v-for="last in latest">
 			<td class="rank">{{ $index }}</td>
-			<td><identity v-bind:name="last.name"></identity></td>
-			<td><spinner v-bind:score="last.score" v-bind:spm="last.spm"></spinner></td>
+			<td><identity :name="last.name"></identity></td>
+			<td><spinner :score="last.score" :spm="last.spm"></spinner></td>
 		</tr>
 	</tbody>
 </table>`

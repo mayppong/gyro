@@ -8,7 +8,6 @@
     <meta name="author" content="">
 
     <title>Shawarmaspin</title>
-    <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/reset.css") %>">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/style.css") %>">
   </head>
@@ -33,12 +32,11 @@
 		<div class="score-box dark-bg">
 			<div class="own-score">
 				YOU:
-				<spinner v-bind:score="spinner.score" v-bind:spm="spinner.spm"></spinner>
+				<spinner :score="spinner.score" :spm="spinner.spm"></spinner>
 			</div>
 			<div class="troupe-score">
-				<identity v-bind:troupe="squad.name"></identity>:
-				<spinner v-bind:score="squad.score"
-					v-bind:spm="squad.spm"></spinner>
+				<identity :troupe="squad.name"></identity>:
+				<spinner :score="squad.score" :spm="squad.spm"></spinner>
 			</div>
 		</div>
 		<div class="social dark-bg">
@@ -52,7 +50,7 @@
 
 	<div class="col right v-fill dark-bg">
 		<div class="col_header">
-			Troupe: <identity v-bind:troupe="troupe"></identity>
+			Troupe: <identity :troupe="troupe"></identity>
 		</div>
 		<button type="button" class="abandon">Abandon</button>
 		
