@@ -1,0 +1,68 @@
+@font-face { font-family: 'emulogic'; src: url("fonts/emulogic.eot"); src: local(""), url("emulogic.woff") format("woff"), url("emulogic.ttf") format("truetype"), url("emulogic.svg") format("svg"); font-style: normal; font-weight: normal; }
+/* VIDEO */
+.fullscreen-background { -moz-transform: translateX(-50%) translateY(-50%); -ms-transform: translateX(-50%) translateY(-50%); -o-transform: translateX(-50%) translateY(-50%); -webkit-transform: translateX(-50%) translateY(-50%); background-image: url("../img/1080p.png"); background-position: 50% 50%; background-repeat: no-repeat; background-size: cover; left: 50%; min-height: 100%; min-width: 100%; position: fixed; top: 50%; transform: translateX(-50%) translateY(-50%); z-index: -100; }
+
+body { -webkit-font-smoothing: none; bottom: 0; color: white; font-family: 'emulogic', sans; font-smooth: never; height: 100%; position: relative; }
+
+/* Layout */
+.h-fill, .v-fill { display: flex; }
+.h-fill > *, .v-fill > * { flex-grow: 0; }
+.h-fill > .fill, .v-fill > .fill { flex-grow: 1; }
+
+.h-fill { flex-direction: row; }
+
+.v-fill { flex-direction: column; }
+
+.col { bottom: 0; height: 100%; position: fixed; top: 0; }
+.col.left { left: 0; right: 67%; }
+.col.middle { left: 33%; right: 33%; }
+.col.right { left: 67%; right: 0; }
+
+.col_header { margin: 1rem 0; font-size: large; text-align: center; }
+
+.score-box { left: 1rem; right: 1rem; top: 0; position: absolute; text-align: center; font-size: large; padding: 0 1rem; }
+.score-box .own-score { font-size: large; line-height: 3rem; }
+.score-box .own-score .score { font-size: xx-large; }
+.score-box .troupe-score { margin-bottom: 1rem; line-height: 1rem; }
+.score-box .disconnected { font-size: xx-large; color: #e74c3c; }
+.score-box .message { font-size: small; }
+
+.social { left: 1rem; right: 1rem; bottom: 0; height: 2rem; position: absolute; text-align: center; line-height: 2rem; }
+.social .social-button { text-decoration: none; cursor: pointer; background-color: #999; background-color: rgba(0, 0, 0, 0.5); color: white; cursor: pointer; }
+.social .social-button:hover { background-color: #ccc; color: black; }
+.social .social-button:active { background-color: white; }
+
+.dark-bg { background-color: #333; background-color: rgba(0, 0, 0, 0.7); }
+
+.tabs { position: relative; text-align: center; width: 100%; }
+.tabs .tab { border-bottom: 1px solid white; bottom: -1px; color: white; display: inline-block; font-size: small; line-height: 2rem; padding: 0 1rem; position: relative; cursor: pointer; }
+.tabs .tab.selected { border-bottom-width: 2px; bottom: -1px; font-weight: bold; padding: 0; cursor: default; }
+.tabs .tab:hover { background-color: rgba(0, 0, 0, 0.5); }
+.tabs .tab:hover.selected { background: none; }
+
+/* Stats table */
+.stats { margin: 1rem 0; width: 100%; }
+.stats thead { font-size: small; border-bottom: 1px solid white; }
+.stats tr { line-height: 1.5rem; text-align: left; }
+.stats td, .stats th { text-align: left; }
+.stats td.rank, .stats th.rank { text-align: center; }
+
+.messages { overflow-y: scroll; }
+.messages .message { padding: 1rem 0.5rem; line-height: 1.5rem; }
+.messages .message .message_header { font-size: small; text-decoration: underline; }
+.messages .message.same-team { color: #9b59b6; }
+.messages .message.admin { color: #3498db; }
+.messages .message:hover { background-color: #999; background-color: rgba(0, 0, 0, 0.5); color: white; }
+
+textarea, input, button { outline: none; }
+
+.new_message, .name_picker { min-height: 2rem; }
+.new_message input, .name_picker input { border: 2px solid white; border-width: 0 0 2px 0; background-color: #999; background-color: rgba(0, 0, 0, 0.5); padding: 0.5rem; color: white; }
+.new_message button, .name_picker button { border: 2px solid white; border-width: 0 0 2px 0; background-color: #999; background-color: rgba(0, 0, 0, 0.5); color: white; cursor: pointer; }
+.new_message button:hover, .name_picker button:hover { background-color: #ccc; color: black; }
+.new_message button:active, .name_picker button:active { background-color: white; }
+.new_message > *, .name_picker > * { font-family: 'emulogic', sans; font-size: inherit; line-height: inherit; }
+
+.abandon { display: block; width: 100%; border: 0; margin-bottom: 1rem; background-color: #e74c3c; color: white; font-size: large; font-family: emulogic; }
+
+/*# sourceMappingURL=style.css.map */

@@ -7,22 +7,62 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Gyro!</title>
+    <title>Shawarmaspin</title>
     <link href='https://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/reset.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/style.css") %>">
   </head>
 
   <body>
-    <div class="container">
+	<div class="fullscreen-background"></div>
+	<div class="col left v-fill dark-bg">
+		<div class="col_header">
+			Arena: <identity :name="spinner.name"></identity>
+		</div>
+		<scoreboard :scoreboard="arena.scoreboard"></scoreboard>
 
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+		<div class="col_header">Arena Chat</div>
+		<chat-room v-bind:channel.once="arenaChannel"></chat-room>
+		<div class="new_message h-fill">
+			<input class="fill" type="text" />
+			<button type="button">&gt;&gt;</button>
+		</div>
+	</div>
+		
+	<div class="col middle">
+		<div class="score-box dark-bg">
+			<div class="own-score">
+				YOU:
+				<spinner v-bind:score="spinner.score" v-bind:spm="spinner.spm"></spinner>
+			</div>
+			<div class="troupe-score">
+				<identity v-bind:troupe="squad.name"></identity>:
+				<spinner v-bind:score="squad.score"
+					v-bind:spm="squad.spm"></spinner>
+			</div>
+		</div>
+		<div class="social dark-bg">
+			<a href="" class="social-button">[FB]</a>
+			<a href="" class="social-button">[TW]</a>
+			<a href="" class="social-button">[RD]</a>
+			<a href="" class="social-button">[G+]</a>
+			<a href="" class="social-button">[LI]</a>
+		</div>
+	</div>
 
-      <main role="main">
-        <%= render @view_module, @view_template, assigns %>
-      </main>
-
-    </div> <!-- /container -->
+	<div class="col right v-fill dark-bg">
+		<div class="col_header">
+			Troupe: <identity v-bind:troupe="troupe"></identity>
+		</div>
+		<button type="button" class="abandon">Abandon</button>
+		
+		<div class="col_header">Troupe Chat</div>
+		<chat-room :channel.sync="squadChannel"></chat-room>
+		<div class="new_message h-fill">
+			<input class="fill" type="text" />
+			<button type="button">&gt;&gt;</button>
+		</div>
+	</div>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
