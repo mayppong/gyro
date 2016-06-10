@@ -63,21 +63,6 @@ let identity = Vue.component('identity', {
 	template: `<span class="identity">{{ identity }}</span>`
 });
 
-let chatRoom = Vue.component('chat-room', {
-	data: function() {
-		return {
-			messages: [],
-			input: ''
-		}
-	},
-	props: ['channel'],
-	template: `
-<div class="messages fill">
-	<message v-for="message in messages"
-		:message="message"></message>
-</div>`
-});
-
 let message = Vue.component('message', {
 	data: function(){
 		return {
@@ -103,7 +88,21 @@ let message = Vue.component('message', {
 </div>
 	`
 });
-	
+
+let chatRoom = Vue.component('chat-room', {
+	data: function() {
+		return {
+			messages: [],
+			input: ''
+		}
+	},
+	props: ['channel'],
+	template: `
+<div class="messages fill">
+	<message v-for="message in messages"
+		:message="message"></message>
+</div>`
+});
 
 let scoreboard = Vue.component('scoreboard', {
 	data: function() {

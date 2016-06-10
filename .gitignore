@@ -1,3 +1,4 @@
+.sass-cache
 /_build
 /deps
 erl_crash.dump
@@ -5,7 +6,7 @@ erl_crash.dump
 
 /node_modules
 /priv/static
-
+*.map
 .vagrant
 *.swp
 
