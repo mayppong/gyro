@@ -24,6 +24,13 @@ defmodule Gyro.Spinner do
   end
 
   @doc """
+  Stop the spinner GenServer with a given reason
+  """
+  def delist(spinner_pid, reason \\ :normal) do
+    GenServer.stop(spinner_pid, reason)
+  end
+
+  @doc """
   Check if spinner pid is still alive.
   """
   def exists?(nil), do: false
@@ -59,13 +66,6 @@ defmodule Gyro.Spinner do
   """
   def update(spinner_pid, key, value) do
     GenServer.cast(spinner_pid, {:update, key, value})
-  end
-
-  @doc """
-  Stop the spinner GenServer with a given reason
-  """
-  def delist(spinner_pid, reason \\ :normal) do
-    GenServer.stop(spinner_pid, reason)
   end
 
   @doc """

@@ -62,19 +62,9 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  Check if squad is still alive.
-  """
-  def exists?(nil), do: false
-  def exists?(name) when is_bitstring(name), do: exists?({:global, name})
-  def exists?(pid) when is_pid(pid) do
-    nil != Process.alive?(pid)
-  end
-  def exists?(name), do: GenServer.whereis(name) |> exists?
-
-  @doc """
   Remove the given spinner from the squad stored in its state.
   """
-  def delist(spinner_pid) do
+  def delist(spinner_pid) when is_pid(spinner_pid) do
     %{squad_pid: squad_pid} = Spinner.introspect(spinner_pid)
     case is_pid(squad_pid) do
       true -> delist(squad_pid, spinner_pid)
@@ -89,6 +79,16 @@ defmodule Gyro.Squad do
     GenServer.cast(squad_pid, {:delist, spinner_pid})
     spinner_pid |> Spinner.update(:squad_pid, nil)
   end
+
+  @doc """
+  Check if squad is still alive.
+  """
+  def exists?(nil), do: false
+  def exists?(name) when is_bitstring(name), do: exists?({:global, name})
+  def exists?(pid) when is_pid(pid) do
+    nil != Process.alive?(pid)
+  end
+  def exists?(name), do: GenServer.whereis(name) |> exists?
 
   @doc """
   Inspect the current state of the given squad.
@@ -124,14 +124,6 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  Handle updating a key in the current state.
-  """
-  def handle_cast({:update, key, value}, state) do
-    state = Map.put(state, key, value)
-    {:noreply, state}
-  end
-
-  @doc """
   Handle adding a new spinner to the squad.
   The new spinner is stored in the member list as a map.
   """
@@ -153,6 +145,14 @@ defmodule Gyro.Squad do
     members = Map.delete(members, quitter_pid)
     state = Map.put(state, :members, members)
 
+    {:noreply, state}
+  end
+
+  @doc """
+  Handle updating a key in the current state.
+  """
+  def handle_cast({:update, key, value}, state) do
+    state = Map.put(state, key, value)
     {:noreply, state}
   end
 
