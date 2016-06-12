@@ -1,5 +1,6 @@
 defmodule Gyro.Scoreboard do
   alias Gyro.Scoreboard
+  alias Gyro.Spinner
 
   defstruct name: nil, score: 0, spm: 0,
     legendaries: [], heroics: [], latest: []
@@ -47,6 +48,16 @@ defmodule Gyro.Scoreboard do
     |> Enum.concat(heroes)
     |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.take(10)
+    |> Enum.map(fn(spinner = %{id: pid, spm: spm}) ->
+      if spm != 0 do
+        case Process.alive?(pid) do
+          false -> %Spinner{spinner | spm: 0}
+          true -> spinner
+        end
+      else
+        spinner
+      end
+    end)
 
     %Scoreboard{board | legendaries: legends}
   end
