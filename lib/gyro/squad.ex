@@ -64,10 +64,12 @@ defmodule Gyro.Squad do
   @doc """
   Check if squad is still alive.
   """
+  def exists?(nil), do: false
   def exists?(name) when is_bitstring(name), do: exists?({:global, name})
-  def exists?(name) do
-    nil != GenServer.whereis(name)
+  def exists?(pid) when is_pid(pid) do
+    nil != Process.alive?(pid)
   end
+  def exists?(name), do: GenServer.whereis(name) |> exists?
 
   @doc """
   Remove the given spinner from the squad stored in its state.
