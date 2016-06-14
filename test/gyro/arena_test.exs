@@ -17,22 +17,16 @@ defmodule Gyro.ArenaTest do
     {:ok, spinner_pid} = Spinner.start_link()
 
     Arena.enlist(spinner_pid)
-    %{spinner_roster: spinner_roster} = Arena.introspect()
-    listed_pid = Agent.get(spinner_roster, fn(state) ->
-      state
-      |> Map.get(spinner_pid)
-    end)
+    %{members: members} = Arena.introspect()
+    listed_pid = Map.get(members, spinner_pid)
 
     assert spinner_pid == listed_pid
   end
 
   test "removing a spinner", %{spinner_pid: spinner_pid} do
     Arena.delist(spinner_pid)
-    %{spinner_roster: spinner_roster} = Arena.introspect()
-    listed_pid = Agent.get(spinner_roster, fn(state) ->
-      state
-      |> Map.get(spinner_pid)
-    end)
+    %{members: members} = Arena.introspect()
+    listed_pid = Map.get(members, spinner_pid)
 
     assert listed_pid == nil
   end
@@ -40,18 +34,7 @@ defmodule Gyro.ArenaTest do
   test "inspecting the arena" do
     state = Arena.introspect()
 
-    assert is_pid(state.spinner_roster)
-    assert is_pid(state.squad_roster)
-  end
-
-  @tag :skip
-  test "arena update spinners" do
-    {:ok, spinner_pid} = Spinner.start_link()
-    Arena.enlist(spinner_pid)
-    %{legendary_spinners: legends, heroic_spinners: heroes} = Arena.introspect()
-
-    assert Enum.count(legends) == 2
-    assert Enum.count(heroes) == 2
+    assert Map.has_key?(state, :members)
   end
 
 end

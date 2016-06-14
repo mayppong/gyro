@@ -20,10 +20,8 @@ defmodule Gyro.SpinnerTest do
 
   test "enlist a spinner add them to arena" do
     {:ok, spinner_pid} = Spinner.enlist()
-    %{spinner_roster: spinner_roster} = Arena.introspect()
-    found_pid = Agent.get(spinner_roster, fn(state) ->
-      Map.get(state, spinner_pid)
-    end)
+    %{members: members} = Arena.introspect()
+    found_pid = Map.get(members, spinner_pid)
 
     assert spinner_pid == found_pid
   end
