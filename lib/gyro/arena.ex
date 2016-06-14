@@ -7,7 +7,7 @@ defmodule Gyro.Arena do
 
   @derive {Poison.Encoder, except: [:spinner_roster, :squad_roster]}
   defstruct spinner_roster: nil, squad_roster: nil,
-    scoreboard: %Scoreboard{}
+    score: 0, spm: 0, scoreboard: %Scoreboard{}
 
   @pid {:global, __MODULE__}
   @timer 1000
