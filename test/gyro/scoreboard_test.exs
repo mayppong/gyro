@@ -28,14 +28,14 @@ defmodule Gyro.ScoreboardTest do
   end
 
   test "building a list of latest", %{spinner: spinner, another: another} do
-    %{latest: latest} = Scoreboard.build_latest(%Scoreboard{}, [another, spinner])
+    latest = Scoreboard.latest([another, spinner])
     order = Enum.map(latest, &(&1.created_at))
 
     assert order == [spinner.created_at, another.created_at]
   end
 
   test "building a list of heroics", %{spinner: spinner, another: another} do
-    %{heroics: heroics} = Scoreboard.build_heroics(%Scoreboard{}, [another, spinner])
+    heroics = Scoreboard.heroics([another, spinner])
     order = Enum.map(heroics, &(&1.score))
 
     assert order == [spinner.score, another.score]

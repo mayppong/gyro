@@ -6,9 +6,10 @@ defmodule Gyro.Scoreboard do
     legendaries: [], heroics: [], latest: []
 
   def build(board \\ %Scoreboard{}, list) do
-    board
-    |> build_latest(list)
-    |> build_heroics(list)
+    latest = latest(list)
+    heroics = heroics(list)
+
+    %Scoreboard{board | latest: latest, heroics: heroics}
     |> build_legendaries
   end
 
@@ -23,27 +24,27 @@ defmodule Gyro.Scoreboard do
     end)
   end
 
-  # Private method for finding the newest spinners in the squad.
-  # This is done by iterating through members, sort them by their connected
-  # time, and take only the first 10 from the list.
-  def build_latest(board, list) do
-    latest = list
+  @doc """
+  A method for finding the newest spinners in the squad.
+  This is done by iterating through members, sort them by their connected
+  time, and take only the first 10 from the list.
+  """
+  def latest(list) do
+    list
     |> Enum.sort(&(&1.created_at > &2.created_at))
     |> Enum.take(10)
-
-    %Scoreboard{board | latest: latest}
   end
 
-  # This method is used for updating the heroic_spinners during the spin. It
-  # collects the spinner data by iterating through the spinner roster and ask
-  # for the current spinner state, then sort them by score before taking the
-  # top 10 players.
-  def build_heroics(board, list) do
-    heroics = list
+  @doc """
+  This method is used for updating the heroic_spinners during the spin. It
+  collects the spinner data by iterating through the spinner roster and ask
+  for the current spinner state, then sort them by score before taking the
+  top 10 players.
+  """
+  def heroics(list) do
+    list
     |> Enum.sort(&(&1.score >= &2.score))
     |> Enum.take(10)
-
-    %Scoreboard{board | heroics: heroics}
   end
 
   # This method updates the legendary spinner list based on the new heroic
