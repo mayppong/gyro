@@ -20,7 +20,13 @@ defmodule Gyro.ScoreboardTest do
     {:ok, spinner: spinner, another: another, spinners: spinners}
   end
 
-  @tag :skip
+  test "calculate total", %{spinner: spinner, another: another} do
+    {score, spm} = Scoreboard.total([spinner, another])
+
+    assert spinner.score + another.score == score
+    assert spinner.spm + another.spm == spm
+  end
+
   test "building a list of latest", %{spinner: spinner, another: another} do
     %{latest: latest} = Scoreboard.build_latest(%Scoreboard{}, [another, spinner])
     order = Enum.map(latest, &(&1.created_at))
@@ -35,7 +41,6 @@ defmodule Gyro.ScoreboardTest do
     assert order == [spinner.score, another.score]
   end
 
-  @tag :skip
   test "building a list of legendaries", %{spinner: spinner, another: another} do
     board = %Scoreboard{legendaries: [spinner]}
     %{legendaries: legendaries} = Scoreboard.build_legendaries(board, [another, spinner])

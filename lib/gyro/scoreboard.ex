@@ -12,6 +12,17 @@ defmodule Gyro.Scoreboard do
     |> build_legendaries
   end
 
+  @doc """
+  A method for iterating through a given list and return the sum of score and
+  spm.
+  """
+  def total(list) do
+    list
+    |> Enum.reduce({0, 0}, fn(%{score: score, spm: spm}, {acc_score, acc_spm}) ->
+      {acc_score + score, acc_spm + spm}
+    end)
+  end
+
   # Private method for finding the newest spinners in the squad.
   # This is done by iterating through members, sort them by their connected
   # time, and take only the first 10 from the list.

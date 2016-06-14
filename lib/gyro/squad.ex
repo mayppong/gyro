@@ -180,22 +180,13 @@ defmodule Gyro.Squad do
     |> Enum.filter(&(!is_nil(&1)))
 
     scoreboard_task = Task.async(fn -> Scoreboard.build(spinners) end)
-    score_task = Task.async(fn -> update_score(spinners) end)
+    score_task = Task.async(fn -> Scoreboard.total(spinners) end)
 
     {score, spm} = Task.await(score_task)
     scoreboard  = Task.await(scoreboard_task)
 
     Process.send_after(self, :spin, @timer)
     {:noreply, %{state | score: score, spm: spm, scoreboard: scoreboard}}
-  end
-
-  # Private method for iterating through all members and summing up their
-  # score.
-  defp update_score(spinners) do
-    spinners
-    |> Enum.reduce({0, 0}, fn(%{score: score, spm: spm}, {acc_score, acc_spm}) ->
-      {acc_score + score, acc_spm + spm}
-    end)
   end
 
 end
