@@ -172,13 +172,7 @@ defmodule Gyro.Squad do
   calculations.
   """
   def handle_info(:spin, state = %{members: members}) do
-    spinners = members
-    |> Stream.map(fn({_, pid}) ->
-      Task.async(fn -> Spinner.introspect(pid) end)
-    end)
-    |> Stream.map(&(Task.await(&1)))
-    |> Enum.filter(&(!is_nil(&1)))
-
+    spinners = inspect_members(members)
     scoreboard_task = Task.async(fn -> Scoreboard.build(spinners) end)
     score_task = Task.async(fn -> Scoreboard.total(spinners) end)
 
@@ -187,6 +181,17 @@ defmodule Gyro.Squad do
 
     Process.send_after(self, :spin, @timer)
     {:noreply, %{state | score: score, spm: spm, scoreboard: scoreboard}}
+  end
+
+  # A private method for getting the latest state of processes in a given
+  # list.
+  defp inspect_members(members) do
+    spinners = members
+    |> Stream.map(fn({_, pid}) ->
+      Task.async(fn -> Spinner.introspect(pid) end)
+    end)
+    |> Stream.map(&(Task.await(&1)))
+    |> Enum.filter(&(!is_nil(&1)))
   end
 
 end

@@ -90,28 +90,25 @@ defmodule Gyro.Arena do
   Handle the spinning which is where we update the state of the Arena at an
   interval.
   """
-  def handle_info(:spin, state) do
-    state = state
-    |> update_spinners
+  def handle_info(:spin, state = %{members: members, scoreboard: scoreboard}) do
+    scoreboard = members
+    |> inspect_members
+    |> Scoreboard.build
 
+    state = %{state | scoreboard: scoreboard}
     Process.send_after(self, :spin, @timer)
     {:noreply, state}
   end
 
-  # This is a generic function for updating spinner-related stats
-  # To update spinner state,  new process is spun up for each member to
-  # introspect the state asynchronously. Once we have all members data, we can
-  # continue on with the calculations.
-  defp update_spinners(state = %{members: members, scoreboard: scoreboard}) do
+  # A private method for getting the latest state of processes in a given
+  # list.
+  defp inspect_members(members) do
     spinners = members
     |> Stream.map(fn({_, pid}) ->
       Task.async(fn -> Spinner.introspect(pid) end)
     end)
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
-
-    scoreboard = Scoreboard.build(scoreboard, spinners)
-    Map.put(state, :scoreboard, scoreboard)
   end
 
 end
