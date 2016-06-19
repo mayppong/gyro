@@ -103,7 +103,7 @@ defmodule Gyro.Arena do
   # A private method for getting the latest state of processes in a given
   # list.
   defp inspect_members(members) do
-    spinners = members
+    members
     |> Stream.map(fn({_, pid}) ->
       Task.async(fn -> Spinner.introspect(pid) end)
     end)

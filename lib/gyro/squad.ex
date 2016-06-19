@@ -1,5 +1,5 @@
 defmodule Gyro.Squad do
-  use GenServer
+  use Gyro.Arena.Spinnable
 
   alias Gyro.Spinner
   alias Gyro.Squad
@@ -7,8 +7,7 @@ defmodule Gyro.Squad do
 
   @derive {Poison.Encoder, except: [:created_at, :members]}
   defstruct name: nil, created_at: :calendar.universal_time(), members: %{},
-    score: 0, spm: 0,
-    scoreboard: %Scoreboard{}
+    score: 0, spm: 0, scoreboard: %Scoreboard{}
 
   @timer 5000
 
@@ -78,23 +77,6 @@ defmodule Gyro.Squad do
   def delist(squad_pid, spinner_pid) do
     GenServer.cast(squad_pid, {:delist, spinner_pid})
     spinner_pid |> Spinner.update(:squad_pid, nil)
-  end
-
-  @doc """
-  Check if squad is still alive.
-  """
-  def exists?(nil), do: false
-  def exists?(name) when is_bitstring(name), do: exists?({:global, name})
-  def exists?(pid) when is_pid(pid) do
-    nil != Process.alive?(pid)
-  end
-  def exists?(name), do: GenServer.whereis(name) |> exists?
-
-  @doc """
-  Inspect the current state of the given squad.
-  """
-  def introspect(squad_pid) do
-    GenServer.call(squad_pid, :introspect)
   end
 
   @doc """
@@ -186,7 +168,7 @@ defmodule Gyro.Squad do
   # A private method for getting the latest state of processes in a given
   # list.
   defp inspect_members(members) do
-    spinners = members
+    members
     |> Stream.map(fn({_, pid}) ->
       Task.async(fn -> Spinner.introspect(pid) end)
     end)
