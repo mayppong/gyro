@@ -1,8 +1,8 @@
 defmodule Gyro.Spinner do
-  use GenServer
+  use Gyro.Arena.Spinnable
 
+  alias __MODULE__
   alias Gyro.Arena
-  alias Gyro.Spinner
 
   @derive {Poison.Encoder, except: [:id, :squad_pid, :created_at]}
   defstruct id: nil, name: nil, spm: 1, score: 0,
@@ -28,37 +28,6 @@ defmodule Gyro.Spinner do
   """
   def delist(spinner_pid, reason \\ :normal) do
     GenServer.stop(spinner_pid, reason)
-  end
-
-  @doc """
-  Check if spinner pid is still alive.
-  """
-  def exists?(nil), do: false
-  def exists?(pid) when is_pid(pid) do
-    nil != Process.alive?(pid)
-  end
-  def exists?(name), do: GenServer.whereis(name) |> exists?
-
-  @doc """
-  Inspect the current state of the specified spinner. If the spinner is not
-  found, the function will catch the error message thrown by GenServer and
-  return `nil` value as a result instead.
-  """
-  def introspect(spinner_pid) do
-    try do
-      introspect!(spinner_pid)
-    catch
-      :exit, {:noproc, _} -> nil
-      :exit, _ -> nil
-    end
-  end
-
-  @doc """
-  Inspect the current state of the specified spinner. If the spinner is not
-  found, GenServer will, by default, throw a message.
-  """
-  def introspect!(spinner_pid) do
-    GenServer.call(spinner_pid, :introspect)
   end
 
   @doc """
