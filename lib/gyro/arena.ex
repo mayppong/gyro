@@ -1,8 +1,8 @@
 defmodule Gyro.Arena do
   use GenServer
 
-  alias Gyro.Arena
-  alias Gyro.Spinner
+  alias __MODULE__
+  alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
   @derive {Poison.Encoder, except: [:members]}
@@ -105,7 +105,7 @@ defmodule Gyro.Arena do
   defp inspect_members(members) do
     members
     |> Stream.map(fn({_, pid}) ->
-      Task.async(fn -> Spinner.introspect(pid) end)
+      Task.async(fn -> Spinnable.introspect(pid) end)
     end)
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
