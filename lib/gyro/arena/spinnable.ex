@@ -13,11 +13,12 @@ defmodule Gyro.Arena.Spinnable do
 
   @doc """
   Check if spinner pid is still alive.
+  The function is a convenient function for resolving
   """
   def exists?(nil), do: false
   def exists?(name) when is_bitstring(name), do: exists?({:global, name})
   def exists?(pid) when is_pid(pid) do
-    nil != Process.alive?(pid)
+    Process.alive?(pid)
   end
   def exists?(name), do: GenServer.whereis(name) |> exists?
 

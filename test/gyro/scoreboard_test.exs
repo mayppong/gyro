@@ -42,11 +42,9 @@ defmodule Gyro.ScoreboardTest do
   end
 
   test "building a list of legendaries", %{spinner: spinner, another: another} do
-    board = %Scoreboard{legendaries: [spinner]}
-    %{legendaries: legendaries} = Scoreboard.build_legendaries(board, [another, spinner])
-    order = Enum.map(legendaries, &(&1.score))
+    legendaries = Scoreboard.legendaries([another, spinner], [])
 
-    assert order == [spinner.score, another.score]
+    assert legendaries == [spinner, another]
   end
 
   test "building scoreboard", %{spinner: spinner, another: another} do
