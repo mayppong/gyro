@@ -7,20 +7,19 @@ wget http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb && sudo d
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 
 sudo apt-get update
-sudo apt-get install -y git elixir erlang-ssl erlang-inets inotify-tools
-sudo apt-get install -y nodejs
-sudo apt-get install -y postgresql
+sudo apt-get install -y git elixir esl-erlang nodejs postgresql inotify-tools
 
-sudo -u postgres psql postgres
-<< EOF
-\password postgres;
-ALTER ROLE postgres LOGIN;
-ALTER ROLE postgres CREATEDB;
-EOF
-
-mix local.hex
-mix archive.install https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez
+mix local.hex --force
+mix archive.install --force https://github.com/phoenixframework/archives/raw/master/phoenix_new.ez
 SCRIPT
+
+# postgress password can be setup using the command below:
+# sudo -u postgres psql postgres
+# << EOF
+# \password postgres;
+# ALTER ROLE postgres LOGIN;
+# ALTER ROLE postgres CREATEDB;
+# EOF
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
