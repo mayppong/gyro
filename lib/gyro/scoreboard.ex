@@ -1,6 +1,7 @@
 defmodule Gyro.Scoreboard do
   alias __MODULE__
   alias Gyro.Spinner
+  alias Gyro.Arena.Spinnable
 
   defstruct name: nil, score: 0, spm: 0,
     legendaries: [], heroics: [], latest: []
@@ -86,16 +87,19 @@ defmodule Gyro.Scoreboard do
   # Set spinnables spm to 0 if their process is no longer in the system.
   defp mark_dead(spinnables) do
     spinnables
-    |> Enum.map(fn(spinnable = %{id: pid, spm: spm}) ->
+    |> Stream.map(fn(spinnable = %{id: pid, spm: spm}) ->
       if spm != 0 do
-        case Process.alive?(pid) do
-          false -> %Spinner{spinnable | spm: 0}
-          true -> spinnable
-        end
+        Task.async(fn ->
+          case Spinnable.exists?(pid) do
+            false -> %Spinner{spinnable | spm: 0}
+            true -> spinnable
+          end
+        end)
       else
         spinnable
       end
     end)
+    |> Stream.map(&(Task.await(&1)))
   end
 
 end
