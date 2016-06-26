@@ -57,13 +57,13 @@ defmodule Gyro.Scoreboard do
   which is most likely to be the bottleneck in the entire process since we
   have to message multiple GenServer processes to gather the states.
   """
+  def legendaries(list, []), do: list |> heroics
   def legendaries(list, legends) do
     legends
     |> dedup(list)
     |> mark_dead
     |> Enum.concat(list)
-    |> by_score
-    |> chop
+    |> heroics
   end
 
   # Sort spinnables by their created at time.
@@ -79,7 +79,7 @@ defmodule Gyro.Scoreboard do
   defp dedup([], _), do: []
   defp dedup(old, current) do
     old
-    |> Enum.filter(fn(item) ->
+    |> Enum.reject(fn(item) ->
       Enum.any?(current, &(&1.id == item.id))
     end)
   end
@@ -88,16 +88,16 @@ defmodule Gyro.Scoreboard do
   defp mark_dead(spinnables) do
     spinnables
     |> Stream.map(fn(spinnable = %{id: pid, spm: spm}) ->
-      if spm != 0 do
-        Task.async(fn ->
+      Task.async(fn ->
+        if spm != 0 do
           case Spinnable.exists?(pid) do
             false -> %Spinner{spinnable | spm: 0}
             true -> spinnable
           end
-        end)
-      else
-        spinnable
-      end
+        else
+          spinnable
+        end
+      end)
     end)
     |> Stream.map(&(Task.await(&1)))
   end

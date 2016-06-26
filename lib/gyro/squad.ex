@@ -1,8 +1,9 @@
 defmodule Gyro.Squad do
   use Gyro.Arena.Spinnable
 
+  alias __MODULE__
+  alias Gyro.Arena.Spinnable
   alias Gyro.Spinner
-  alias Gyro.Squad
   alias Gyro.Scoreboard
 
   @derive {Poison.Encoder, except: [:members]}
@@ -153,10 +154,12 @@ defmodule Gyro.Squad do
   asynchronously. Once we have all members data, we can continue on with the
   calculations.
   """
-  def handle_info(:spin, state = %{members: members}) do
-    spinners = inspect_members(members)
-    scoreboard_task = Task.async(fn -> Scoreboard.build(spinners) end)
-    score_task = Task.async(fn -> Scoreboard.total(spinners) end)
+  def handle_info(:spin, state = %{members: pids, scoreboard: scoreboard}) do
+    members = pids
+    |> inspect_members
+
+    scoreboard_task = Task.async(fn -> Scoreboard.build(scoreboard, members) end)
+    score_task = Task.async(fn -> Scoreboard.total(members) end)
 
     {score, spm} = Task.await(score_task)
     scoreboard  = Task.await(scoreboard_task)
@@ -170,7 +173,7 @@ defmodule Gyro.Squad do
   defp inspect_members(members) do
     members
     |> Stream.map(fn({_, pid}) ->
-      Task.async(fn -> Spinner.introspect(pid) end)
+      Task.async(fn -> Spinnable.introspect(pid) end)
     end)
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))

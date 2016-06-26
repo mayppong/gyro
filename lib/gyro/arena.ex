@@ -90,10 +90,11 @@ defmodule Gyro.Arena do
   Handle the spinning which is where we update the state of the Arena at an
   interval.
   """
-  def handle_info(:spin, state = %{members: members}) do
-    scoreboard = members
+  def handle_info(:spin, state = %{members: pids, scoreboard: scoreboard}) do
+    members = pids
     |> inspect_members
-    |> Scoreboard.build
+
+    scoreboard = Scoreboard.build(scoreboard, members)
 
     state = %{state | scoreboard: scoreboard}
     Process.send_after(self, :spin, @timer)
