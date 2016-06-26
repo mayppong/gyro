@@ -4,9 +4,9 @@ defmodule Gyro.Spinner do
   alias __MODULE__
   alias Gyro.Arena
 
-  @derive {Poison.Encoder, except: [:id, :squad_pid, :created_at]}
+  @derive {Poison.Encoder, except: [:id, :squad_pid]}
   defstruct id: nil, name: nil, spm: 1, score: 0,
-    squad_pid: nil, created_at: :calendar.universal_time()
+    squad_pid: nil, created_at: DateTime.utc_now()
 
   @timer 1000
 
