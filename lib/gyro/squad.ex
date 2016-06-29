@@ -99,13 +99,6 @@ defmodule Gyro.Squad do
   end
 
   @doc """
-  Handle a call to get the current state stored in the process.
-  """
-  def handle_call(:introspect, _from, state) do
-    {:reply, state, state}
-  end
-
-  @doc """
   Handle adding a new spinnable to the squad.
   The new spinnable is stored in the member list as a map.
   """
@@ -127,14 +120,6 @@ defmodule Gyro.Squad do
     members = Map.delete(members, quitter_pid)
     state = Map.put(state, :members, members)
 
-    {:noreply, state}
-  end
-
-  @doc """
-  Handle updating a key in the current state.
-  """
-  def handle_cast({:update, key, value}, state) do
-    state = Map.put(state, key, value)
     {:noreply, state}
   end
 

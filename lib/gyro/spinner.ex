@@ -50,21 +50,6 @@ defmodule Gyro.Spinner do
   end
 
   @doc """
-  Handle a call to get the current state stored in the process.
-  """
-  def handle_call(:introspect, _from, state) do
-    {:reply, state, state}
-  end
-
-  @doc """
-  Handle updating a key in the current state.
-  """
-  def handle_cast({:update, key, value}, state) do
-    state = Map.put(state, key, value)
-    {:noreply, state}
-  end
-
-  @doc """
   Handle `spinning` which is where we update the current state of a spinner
   at a set interval.
   """

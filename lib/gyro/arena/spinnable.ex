@@ -10,6 +10,21 @@ defmodule Gyro.Arena.Spinnable do
       def exists?(pid), do: Spinnable.exists?(pid)
       def update(pid, key, value), do: Spinnable.update(pid, key, value)
 
+      @doc """
+      Handle a call to get the current state stored in the process.
+      """
+      def handle_call(:introspect, _from, state) do
+        {:reply, state, state}
+      end
+
+      @doc """
+      Handle updating a key in the current state.
+      """
+      def handle_cast({:update, key, value}, state) do
+        state = Map.put(state, key, value)
+        {:noreply, state}
+      end
+
       defoverridable [ introspect: 1, exists?: 1, update: 3 ]
     end
   end
