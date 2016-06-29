@@ -8,6 +8,7 @@ defmodule Gyro.Arena.Spinnable do
 
       def introspect(pid), do: Spinnable.introspect(pid)
       def exists?(pid), do: Spinnable.exists?(pid)
+      def update(pid, key, value), do: Spinnable.update(pid, key, value)
     end
   end
 
@@ -56,5 +57,11 @@ defmodule Gyro.Arena.Spinnable do
     GenServer.call(pid, :introspect)
   end
 
+  @doc """
+  Update spinnable data.
+  """
+  def update(spinner_pid, key, value) do
+    GenServer.cast(spinner_pid, {:update, key, value})
+  end
 
 end

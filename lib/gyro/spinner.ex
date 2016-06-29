@@ -31,13 +31,6 @@ defmodule Gyro.Spinner do
   end
 
   @doc """
-  Update spinner data.
-  """
-  def update(spinner_pid, key, value) do
-    GenServer.cast(spinner_pid, {:update, key, value})
-  end
-
-  @doc """
   Start a new GenServer for the current spinner. The server is registered
   as an unnamed since we don't worry about duplicating name in this case,
   unlike with squads where we want to allow only a team of the same name.
