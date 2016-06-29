@@ -9,6 +9,8 @@ defmodule Gyro.Arena.Spinnable do
       def introspect(pid), do: Spinnable.introspect(pid)
       def exists?(pid), do: Spinnable.exists?(pid)
       def update(pid, key, value), do: Spinnable.update(pid, key, value)
+
+      defoverridable [ introspect: 1, exists?: 1, update: 3 ]
     end
   end
 
