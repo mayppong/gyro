@@ -79,8 +79,9 @@ defmodule Gyro.Arena do
 
 
   @doc """
-  Handle the `:DOWN` message from the Spinners' process we monitor on enlist.
-  If the Spinner process is downed, we delist them from the Arna's roster.
+  Handle the `:DOWN` message from the Spinnables' processes we monitor on
+  enlist.
+  If the Spinnable's process is downed, we delist them from the Arna's roster.
   """
   def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
     handle_cast({:delist, spinner_pid}, state)

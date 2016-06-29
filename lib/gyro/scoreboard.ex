@@ -1,6 +1,5 @@
 defmodule Gyro.Scoreboard do
   alias __MODULE__
-  alias Gyro.Spinner
   alias Gyro.Arena.Spinnable
 
   defstruct name: nil, score: 0, spm: 0,
@@ -91,7 +90,7 @@ defmodule Gyro.Scoreboard do
       Task.async(fn ->
         if spm != 0 do
           case Spinnable.exists?(pid) do
-            false -> %Spinner{spinnable | spm: 0}
+            false -> %{spinnable | spm: 0}
             true -> spinnable
           end
         else
