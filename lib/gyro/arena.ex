@@ -7,7 +7,8 @@ defmodule Gyro.Arena do
 
   @derive {Poison.Encoder, except: [:members]}
   defstruct members: %{},
-    score: 0, spm: 0, scoreboard: %Scoreboard{}
+    score: 0, spm: 0, size: 0,
+    scoreboard: %Scoreboard{}
 
   @pid {:global, __MODULE__}
   @timer 1000
@@ -63,17 +64,17 @@ defmodule Gyro.Arena do
   @doc """
   Add the given spinner id to member list in the state
   """
-  def handle_cast({:enlist, spinner_pid}, state = %{members: members}) do
+  def handle_cast({:enlist, spinner_pid}, state = %{members: members, size: size}) do
     Process.monitor(spinner_pid)
-    state = %{state | members: Map.put(members, spinner_pid, spinner_pid)}
+    state = %{state | members: Map.put(members, spinner_pid, spinner_pid), size: size + 1}
     {:noreply, state}
   end
 
   @doc """
   Remove the given spinner id from the member list in the state
   """
-  def handle_cast({:delist, spinner_pid}, state = %{members: members}) do
-    state = %{state | members: Map.delete(members, spinner_pid)}
+  def handle_cast({:delist, spinner_pid}, state = %{members: members, size: size}) do
+    state = %{state | members: Map.delete(members, spinner_pid), size: size - 1}
     {:noreply, state}
   end
 
@@ -97,7 +98,7 @@ defmodule Gyro.Arena do
 
     scoreboard = Scoreboard.build(scoreboard, members)
 
-    state = %{state | scoreboard: scoreboard}
+    state = %{state | scoreboard: scoreboard, score: scoreboard.score, spm: scoreboard.spm}
     Process.send_after(self, :spin, @timer)
     {:noreply, state}
   end
