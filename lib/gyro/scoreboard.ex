@@ -2,7 +2,7 @@ defmodule Gyro.Scoreboard do
   alias __MODULE__
   alias Gyro.Arena.Spinnable
 
-  defstruct name: nil, score: 0, spm: 0,
+  defstruct name: nil, score: 0, spm: 0, size: 0,
     legendaries: [], heroics: [], latest: []
 
   @size 10
@@ -12,11 +12,12 @@ defmodule Gyro.Scoreboard do
   spinnable states.
   """
   def build(board \\ %Scoreboard{}, list) do
+    size = list |> size
     latest = list |> latest
     heroics = list |> heroics
     legendaries = heroics |> legendaries(board.legendaries)
 
-    %Scoreboard{board | latest: latest, heroics: heroics, legendaries: legendaries}
+    %Scoreboard{board | size: size, latest: latest, heroics: heroics, legendaries: legendaries}
   end
 
   @doc """
@@ -29,6 +30,12 @@ defmodule Gyro.Scoreboard do
       {acc_score + score, acc_spm + spm}
     end)
   end
+
+  @doc """
+  Counting number of members. It's currently just calling the `Enum.count`
+  directly. However, we might want to expand in the future to 
+  """
+  def size(list), do: list |> Enum.count
 
   @doc """
   A method for finding the newest spinnables in the squad.
