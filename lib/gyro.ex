@@ -13,7 +13,8 @@ defmodule Gyro do
       supervisor(Gyro.Repo, []),
       # Here you could define other workers and supervisors as children
       # worker(Gyro.Worker, [arg1, arg2, arg3]),
-      worker(Gyro.Arena, []),
+      worker(Gyro.Arena, [:spinners], [id: :spinners]),
+      worker(Gyro.Arena, [:squads], [id: :squads]),
       supervisor(Gyro.Squad.Supervisor, []),
     ]
 

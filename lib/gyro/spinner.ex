@@ -16,7 +16,7 @@ defmodule Gyro.Spinner do
   def enlist() do
     case start_link do
       {:ok, spinner_pid} ->
-        Arena.enlist(spinner_pid)
+        Arena.enlist(:spinners, spinner_pid)
         {:ok, spinner_pid}
       {:error, _} ->
         {:error, %{reason: "Unable to start spinner process"}}

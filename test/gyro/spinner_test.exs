@@ -10,9 +10,6 @@ defmodule Gyro.SpinnerTest do
     {:ok, spinner_pid: spinner_pid}
   end
 
-  test "handle `:introspect` message call" do
-  end
-
   test "enlist a new spinner" do
     {:ok, pid} = Spinner.enlist()
     assert is_pid(pid)
@@ -20,7 +17,7 @@ defmodule Gyro.SpinnerTest do
 
   test "enlist a spinner add them to arena" do
     {:ok, spinner_pid} = Spinner.enlist()
-    %{members: members} = Arena.introspect()
+    %{members: members} = Arena.introspect(:spinners)
     found_pid = Map.get(members, spinner_pid)
 
     assert spinner_pid == found_pid

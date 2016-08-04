@@ -16,23 +16,23 @@ defmodule Gyro.ArenaTest do
   test "adding a new spinner" do
     {:ok, spinner_pid} = Spinner.start_link()
 
-    Arena.enlist(spinner_pid)
-    %{members: members} = Arena.introspect()
+    Arena.enlist(:spinners, spinner_pid)
+    %{members: members} = Arena.introspect(:spinners)
     listed_pid = Map.get(members, spinner_pid)
 
     assert spinner_pid == listed_pid
   end
 
   test "removing a spinner", %{spinner_pid: spinner_pid} do
-    Arena.delist(spinner_pid)
-    %{members: members} = Arena.introspect()
+    Arena.delist(:spinners, spinner_pid)
+    %{members: members} = Arena.introspect(:spinners)
     listed_pid = Map.get(members, spinner_pid)
 
     assert listed_pid == nil
   end
 
   test "inspecting the arena" do
-    state = Arena.introspect()
+    state = Arena.introspect(:spinners)
 
     assert Map.has_key?(state, :members)
   end
