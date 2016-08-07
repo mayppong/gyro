@@ -38,6 +38,16 @@ let spinner = Vue.component('spinner', {
   template: `<span class="score">{{ prettyScore }}</span>&gt;<span class="spm">{{ prettySPM }}</span>`
 });
 
+let nameForm = Vue.component('name-form', {
+  props: ['name'],    
+  template: `   
+    <form class="name">   
+      <input type="text" v-model="name" maxlength="3" placeholder="___" />    
+      <button type="submit" class="send"></button>    
+    </form>   
+  `   
+});
+
 let identity = Vue.component('identity', {
   data: function(){
     return {
@@ -45,7 +55,6 @@ let identity = Vue.component('identity', {
       troupe: ''
     }
   },
-  props: ['name', 'troupe'],
   computed: {
     identity: function(){
       let s = '';

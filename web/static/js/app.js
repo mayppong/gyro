@@ -63,17 +63,23 @@ new Vue({
       })
     },
     intro() {
-      if (this.spinner.name != '') {
+      if (this.spinner.newName != '') {
+        var self = this
         this.arenaChannel
-          .push('intro', { name: this.spinner.name })
+          .push('intro', { name: this.spinner.newName })
+          .receive('ok', resp => {
+            self.store.spinner.name = resp.name
+            console.log('name set', resp)
+          })
+          .receive('error', resp => { console.log('Unable to set name', resp) })
       }
     },
     join() {
       this.leave()
 
-      if (this.squad.name) {
+      if (this.squad.newName) {
         var self = this
-        this.squadChannel = this.socket.channel('arenas:squads:' + this.squad.name)
+        this.squadChannel = this.socket.channel('arenas:squads:' + this.squad.newName)
         this.squadChannel.join()
           .receive('ok', resp => {
             self.squadChannel.on('introspect', resp => {
