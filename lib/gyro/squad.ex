@@ -2,11 +2,12 @@ defmodule Gyro.Squad do
   use Gyro.Arena.Spinnable
 
   alias __MODULE__
+  alias Gyro.Arena
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
-  @derive {Poison.Encoder, except: [:members]}
-  defstruct name: nil, created_at: DateTime.utc_now(), members: %{},
+  @derive {Poison.Encoder, except: [:id, :members]}
+  defstruct id: nil, name: nil, created_at: DateTime.utc_now(), members: %{},
     score: 0, spm: 0, scoreboard: %Scoreboard{}
 
   @timer 5000
@@ -27,6 +28,7 @@ defmodule Gyro.Squad do
       false ->
         case Gyro.Squad.Supervisor.start_child(name, %Squad{name: name}) do
           {:ok, squad_pid} ->
+            Arena.enlist(:squads, squad_pid)
             {:ok, squad_pid}
           {:error, {:already_started, squad_pid}} ->
             {:ok, squad_pid}
@@ -93,7 +95,8 @@ defmodule Gyro.Squad do
   Once the GenServer is started successfully, the init function is invoked.
   For now, we just need to tell it to start spinning.
   """
-  def init(state) do
+  def init(state = %{name: name}) do
+    state = Map.put(state, :id, {:global, name})
     send(self, :spin)
     {:ok, state}
   end

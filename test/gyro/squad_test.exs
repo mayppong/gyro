@@ -4,8 +4,8 @@ defmodule Gyro.SquadTest do
   alias Gyro.Spinner
   alias Gyro.Squad
 
-  @squad %Squad{name: "TIM"}
   @pid {:global, "TIM"}
+  @squad %Squad{id: @pid, name: "TIM"}
 
   setup do
     {:ok, spinner_pid} = Spinner.start_link()
