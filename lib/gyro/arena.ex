@@ -10,28 +10,38 @@ defmodule Gyro.Arena do
     score: 0, spm: 0, size: 0,
     scoreboard: %Scoreboard{}
 
-  @pid {:global, __MODULE__}
+  @spinners_pid {:global, :spinners}
+  @squads_pid {:global, :squads}
   @timer 1000
 
   @doc """
   Add a new spinner to the spinner roster
   """
-  def enlist(spinner_pid) do
-    GenServer.cast(@pid, {:enlist, spinner_pid})
+  def enlist(:spinners, spinnable_pid) do
+    GenServer.cast(@spinners_pid, {:enlist, spinnable_pid})
+  end
+  def enlist(:squads, spinnable_pid) do
+    GenServer.cast(@squads_pid, {:enlist, spinnable_pid})
   end
 
   @doc """
   Remove a spinner from the spinner roster
   """
-  def delist(spinner_pid) do
-    GenServer.cast(@pid, {:delist, spinner_pid})
+  def delist(:spinners, spinnable_pid) do
+    GenServer.cast(@spinners_pid, {:delist, spinnable_pid})
+  end
+  def delist(:squads, spinnable_pid) do
+    GenServer.cast(@squads_pid, {:delist, spinnable_pid})
   end
 
   @doc """
   Get the current state of the Arena
   """
-  def introspect() do
-    GenServer.call(@pid, :introspect)
+  def introspect(:spinners) do
+    GenServer.call(@spinners_pid, :introspect)
+  end
+  def introspect(:squads) do
+    GenServer.call(@squads_pid, :introspect)
   end
 
   @doc """
@@ -41,8 +51,12 @@ defmodule Gyro.Arena do
   If either of the Agents fails to start, it returns the error from that
   Agent and not starts the arena GenServer.
   """
-  def start_link(state \\ %Arena{}) do
-    GenServer.start_link(__MODULE__, state, name: @pid)
+  def start_link(name, state \\ %Arena{})
+  def start_link(:spinners, state) do
+    GenServer.start_link(__MODULE__, state, name: @spinners_pid)
+  end
+  def start_link(:squads, state) do
+    GenServer.start_link(__MODULE__, state, name: @squads_pid)
   end
 
   @doc """

@@ -44,7 +44,7 @@ defmodule Gyro.ArenaChannel do
     spinner = Spinner.introspect(spinner_pid)
     socket = assign(socket, :spinner, spinner)
 
-    arena = Arena.introspect()
+    arena = Arena.introspect(:spinners)
 
     push socket, "introspect", %{"arena" => arena, "spinner" => spinner}
     Process.send_after(self, :spin, @timer)
