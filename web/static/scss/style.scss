@@ -1,7 +1,6 @@
 @font-face {
 	font-family: 'emulogic';
-	src: url('fonts/emulogic.eot');
-	src: local(''), url('emulogic.woff') format('woff'), url('emulogic.ttf') format('truetype'), url('emulogic.svg') format('svg');
+	src: url('/fonts/emulogic.ttf') format('truetype');
 	font-style: normal;
 	font-weight: normal;
 }
@@ -12,7 +11,7 @@
 	-ms-transform: translateX(-50%) translateY(-50%);
 	-o-transform: translateX(-50%) translateY(-50%);
 	-webkit-transform: translateX(-50%) translateY(-50%);
-	background-image: url("../images/1080p.png");
+	background-image: url("/images/1080p.png");
 	background-position: 50% 50%;
 	background-repeat:  no-repeat;
 	background-size: cover;
