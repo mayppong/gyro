@@ -31,7 +31,7 @@ defmodule Gyro.Squad.Supervisor do
   Supervisor.
   """
   def init(:ok) do
-    children = [worker(Gyro.Squad, [], restart: :temporary)]
+    children = [worker(Squad, [], restart: :temporary)]
     supervise(children, strategy: :simple_one_for_one)
   end
 end

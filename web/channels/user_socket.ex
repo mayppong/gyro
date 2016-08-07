@@ -25,7 +25,7 @@ defmodule Gyro.UserSocket do
   # performing token verification on connect.
   def connect(_params, socket) do
     socket = socket
-    |> assign(:created, :calendar.universal_time())
+    |> assign(:connected, DateTime.utc_now())
 
     # For the SquadChannel to work, it needs to know the spinner pid. Since we
     # currently can't share socket data in assigns between channels, I had to

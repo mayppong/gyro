@@ -1,12 +1,12 @@
 defmodule Gyro.Spinner do
-  use GenServer
+  use Gyro.Arena.Spinnable
 
+  alias __MODULE__
   alias Gyro.Arena
-  alias Gyro.Spinner
 
-  @derive {Poison.Encoder, except: [:id, :squad_pid, :created_at]}
+  @derive {Poison.Encoder, except: [:id, :squad_pid]}
   defstruct id: nil, name: nil, spm: 1, score: 0,
-    squad_pid: nil, created_at: :calendar.universal_time()
+    squad_pid: nil, created_at: DateTime.utc_now()
 
   @timer 1000
 
@@ -21,42 +21,6 @@ defmodule Gyro.Spinner do
       {:error, _} ->
         {:error, %{reason: "Unable to start spinner process"}}
     end
-  end
-
-  @doc """
-  Check if spinner pid is still alive.
-  """
-  def exists?(spinner_pid) do
-    nil != GenServer.whereis(spinner_pid)
-  end
-
-  @doc """
-  Inspect the current state of the specified spinner. If the spinner is not
-  found, the function will catch the error message thrown by GenServer and
-  return `nil` value as a result instead.
-  """
-  def introspect(spinner_pid) do
-    try do
-      introspect!(spinner_pid)
-    catch
-      :exit, {:noproc, _} -> nil
-      :exit, _ -> nil
-    end
-  end
-
-  @doc """
-  Inspect the current state of the specified spinner. If the spinner is not
-  found, GenServer will, by default, throw a message.
-  """
-  def introspect!(spinner_pid) do
-    GenServer.call(spinner_pid, :introspect)
-  end
-
-  @doc """
-  Update spinner data.
-  """
-  def update(spinner_pid, key, value) do
-    GenServer.cast(spinner_pid, {:update, key, value})
   end
 
   @doc """
@@ -83,21 +47,6 @@ defmodule Gyro.Spinner do
     state = Map.put(state, :id, self)
     :timer.send_interval(@timer, self, :spin)
     {:ok, state}
-  end
-
-  @doc """
-  Handle a call to get the current state stored in the process.
-  """
-  def handle_call(:introspect, _from, state) do
-    {:reply, state, state}
-  end
-
-  @doc """
-  Handle updating a key in the current state.
-  """
-  def handle_cast({:update, key, value}, state) do
-    state = Map.put(state, key, value)
-    {:noreply, state}
   end
 
   @doc """

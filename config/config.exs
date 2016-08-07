@@ -8,7 +8,6 @@ use Mix.Config
 # Configures the endpoint
 config :gyro, Gyro.Endpoint,
   url: [host: "localhost"],
-  root: Path.dirname(__DIR__),
   secret_key_base: "rds/k0cS4P9e20n5ovNm5zQMTmMo7sPJSFZYcTWA4JhFBxY8yYd/dAg1KF5J0CLd",
   render_errors: [accepts: ~w(html json)],
   pubsub: [name: Gyro.PubSub,
@@ -27,3 +26,5 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+config :gyro, ecto_repos: [Gyro.Repo]

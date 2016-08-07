@@ -1,12 +1,13 @@
 defmodule Gyro.Arena do
   use GenServer
 
-  alias Gyro.Arena
-  alias Gyro.Spinner
+  alias __MODULE__
+  alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
-  @derive {Poison.Encoder, except: [:spinner_roster, :squad_roster]}
-  defstruct spinner_roster: nil, squad_roster: nil,
+  @derive {Poison.Encoder, except: [:members]}
+  defstruct members: %{},
+    score: 0, spm: 0, size: 0,
     scoreboard: %Scoreboard{}
 
   @pid {:global, __MODULE__}
@@ -41,12 +42,7 @@ defmodule Gyro.Arena do
   Agent and not starts the arena GenServer.
   """
   def start_link(state \\ %Arena{}) do
-    with {:ok, spinner_roster} <- Agent.start_link((fn() -> %{} end)),
-    {:ok, squad_roster} <- Agent.start_link((fn() -> %{} end))
-    do
-      state = %{state | spinner_roster: spinner_roster, squad_roster: squad_roster}
-      GenServer.start_link(__MODULE__, state, name: @pid)
-    end
+    GenServer.start_link(__MODULE__, state, name: @pid)
   end
 
   @doc """
@@ -66,34 +62,27 @@ defmodule Gyro.Arena do
   end
 
   @doc """
-  Add the given spinner id to the spinner roster Agent.
+  Add the given spinner id to member list in the state
   """
-  def handle_cast({:enlist, spinner_pid}, state = %{spinner_roster: spinner_roster}) do
+  def handle_cast({:enlist, spinner_pid}, state = %{members: members, size: size}) do
     Process.monitor(spinner_pid)
-    spinner_roster
-    |> Agent.update(fn(spinners) ->
-      Map.put(spinners, spinner_pid, spinner_pid)
-    end)
-
+    state = %{state | members: Map.put(members, spinner_pid, spinner_pid), size: size + 1}
     {:noreply, state}
   end
 
   @doc """
-  Remove the given spinner id from the spinner roster Agent.
+  Remove the given spinner id from the member list in the state
   """
-  def handle_cast({:delist, spinner_pid}, state = %{spinner_roster: spinner_roster}) do
-    spinner_roster
-    |> Agent.update(fn(spinners) ->
-      Map.delete(spinners, spinner_pid)
-    end)
-
+  def handle_cast({:delist, spinner_pid}, state = %{members: members, size: size}) do
+    state = %{state | members: Map.delete(members, spinner_pid), size: size - 1}
     {:noreply, state}
   end
 
 
   @doc """
-  Handle the `:DOWN` message from the Spinners' process we monitor on enlist.
-  If the Spinner process is downed, we delist them from the Arna's roster.
+  Handle the `:DOWN` message from the Spinnables' processes we monitor on
+  enlist.
+  If the Spinnable's process is downed, we delist them from the Arna's roster.
   """
   def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
     handle_cast({:delist, spinner_pid}, state)
@@ -103,29 +92,26 @@ defmodule Gyro.Arena do
   Handle the spinning which is where we update the state of the Arena at an
   interval.
   """
-  def handle_info(:spin, state) do
-    state = state
-    |> update_spinners
+  def handle_info(:spin, state = %{members: pids, scoreboard: scoreboard}) do
+    members = pids
+    |> inspect_members
 
+    scoreboard = Scoreboard.build(scoreboard, members)
+
+    state = %{state | scoreboard: scoreboard, score: scoreboard.score, spm: scoreboard.spm}
     Process.send_after(self, :spin, @timer)
     {:noreply, state}
   end
 
-  # This is a generic function for updating spinner-related stats
-  # To update spinner state,  new process is spun up for each member to
-  # introspect the state asynchronously. Once we have all members data, we can
-  # continue on with the calculations.
-  defp update_spinners(state = %{spinner_roster: spinner_roster, scoreboard: scoreboard}) do
-    spinners = spinner_roster
-    |> Agent.get(&(&1))
+  # A private method for getting the latest state of processes in a given
+  # list.
+  defp inspect_members(members) do
+    members
     |> Stream.map(fn({_, pid}) ->
-      Task.async(fn -> Spinner.introspect(pid) end)
+      Task.async(fn -> Spinnable.introspect(pid) end)
     end)
     |> Stream.map(&(Task.await(&1)))
     |> Enum.filter(&(!is_nil(&1)))
-
-    scoreboard = Scoreboard.build(scoreboard, spinners)
-    Map.put(state, :scoreboard, scoreboard)
   end
 
 end
