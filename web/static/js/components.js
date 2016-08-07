@@ -2,30 +2,27 @@ import Vue from 'vue'
 
 const spinRate = 16 // milliseconds
 
-let nameForm = Vue.component('name-form', {
-  props: ['name'],
-  template: `
-    <form class="name">
-      <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit" class="send"></button>
-    </form>
-  `
-});
-
-let scoreCounter = Vue.component('score-counter', {
+let spinner = Vue.component('spinner', {
   data: function() {
     return {
       interval: null
     };
   },
   props: {
-    score: { type: Number, required: true, default: 0 },
-    spm: { type: Number, default: 0 }
+    score: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    spm: {
+      type: Number,
+      default: 0
+    }
   },
   beforeCompile: function() {
-      this.interval = setInterval(() => {
-        this.score += this.increment
-      }, spinRate)
+    this.interval = setInterval(() => {
+      this.score += this.increment
+    }, spinRate)
   },
   computed: {
     prettyScore: function() {
@@ -38,8 +35,57 @@ let scoreCounter = Vue.component('score-counter', {
       return ((this.spm / 60) * (spinRate / 1000))
     }
   },
-  template: `<span>Score: {{ prettyScore }}, SPM: {{ prettySPM }}</span>`
-})
+  template: `<span class="score">{{ prettyScore }}</span>&gt;<span class="spm">{{ prettySPM }}</span>`
+});
+
+let identity = Vue.component('identity', {
+  data: function(){
+    return {
+      name: '',
+      troupe: ''
+    }
+  },
+  props: ['name', 'troupe'],
+  computed: {
+    identity: function(){
+      let s = '';
+      if (this.name){
+        s += '@'+this.name;
+      }
+      if (this.troupe){
+        s += '#'+this.troupe;
+      }
+      return s;
+    }
+  },
+  template: `<span class="identity">{{ identity }}</span>`
+});
+
+let message = Vue.component('message', {
+  data: function(){
+    return {
+      body: '',
+      time: '',
+      name: '',
+      troupe: '',
+    }
+  },
+  props: ['message'],
+  template: `
+<div class="message"
+  v-bind:class="{
+    'same-team': same_team,
+    'admin': is_admin}
+  ">
+  <div class="message_header">
+    <span class="timestamp">12:34</span>
+    <identity :name="name"
+      :troupe="troupe"></identity>
+  </div>
+  <div class="message_body">{{ body }}</div>
+</div>
+  `
+});
 
 let chatRoom = Vue.component('chat-room', {
   data: function() {
@@ -49,37 +95,12 @@ let chatRoom = Vue.component('chat-room', {
     }
   },
   props: ['channel'],
-  computed: {
-    timestamp: {
-      cache: false,
-      get: function() {
-        return (new Date()).toUTCString()
-      }
-    }
-  },
-  methods: {
-    submit: function() {
-      this.channel.push('shout', { message: this.input })
-      this.input = ''
-    }
-  },
-  created: function() {
-    this.channel.on('shout', payload => {
-      this.messages.push(payload)
-    })
-  },
   template: `
-    <div class="chat">
-      <ul class="chat-history">
-        <li v-for="message in messages">[{{ timestamp }}] {{ message.from || '___' }}: {{ message.message }}</li>
-      </ul>
-      <form v-on:submit.prevent="submit" class="chat-input">
-        <input type="text" v-model="input" />
-        <button type="submit" class="send"></button>
-      </form>
-    </div>
-  `
-})
+<div class="messages fill">
+  <message v-for="message in messages"
+    :message="message"></message>
+</div>`
+});
 
 let scoreboard = Vue.component('scoreboard', {
   data: function() {
@@ -88,7 +109,9 @@ let scoreboard = Vue.component('scoreboard', {
   props: {
     scoreboard: {
       required: true,
-      default: function() { return {} }
+      default: function() {
+        return {};
+      }
     }
   },
   computed: {
@@ -103,41 +126,55 @@ let scoreboard = Vue.component('scoreboard', {
     }
   },
   template: `
-    <div class="scoreboard">
-      <ul class="tabs h-tabs">
-        <li class="clickable" v-on:click="view = 'heroics'" v-bind:class="{selected: view == 'heroics'}">Heroics</li>
-        <li class="clickable" v-on:click="view = 'legendaries'" v-bind:class="{selected: view == 'legendaries'}">Legendaries</li>
-        <li class="clickable" v-on:click="view = 'latest'" v-bind:class="{selected: view == 'latest'}">Latest</li>
-      </ul>
-      <div class="tab-content">
-        <table>
-          <thead>
-            <th>Name</th>
-            <th>Score</th>
-          </thead>
+<ul class="tabs">
+  <li class="tab"
+    v-if="view != 'legendaries'"
+    v-on:click="view = 'legendaries'">Legends</li>
+  <li class="tab selected"
+    v-if="view == 'legendaries'">&gt;Legends&lt;</li>
+  <li class="tab"
+    v-if="view != 'heroics'"
+    v-on:click="view = 'heroics'">Heroes</li>
+  <li class="tab selected"
+    v-if="view == 'heroics'">&gt;Heroes&lt;</li>
+  <li class="tab"
+    v-if="view != 'latest'"
+    v-on:click="view = 'latest'">Latest</li>
+  <li class="tab selected"
+    v-if="view == 'latest'">&gt;Latest&lt;</li>
+</ul>
 
-          <tbody v-if="view == 'heroics'">
-            <tr v-for="hero in heroics">
-              <td class="name">{{ hero.name }}</td>
-              <td><score-counter v-bind:score="hero.score" v-bind:spm="hero.spm"></score-counter></td>
-            </tr>
-          </tbody>
+<table class="stats">
+  <thead>
+    <tr>
+      <th class="rank">Rank</th>
+      <th>Name</th>
+      <th>Score</th>
+    </tr>
+  </thead>
 
-          <tbody v-if="view == 'legendaries'">
-            <tr v-for="legend in legendaries">
-              <td class="name">{{ legend.name }}</td>
-              <td><score-counter v-bind:score="legend.score" v-bind:spm="legend.spm"></score-counter></td>
-            </tr>
-          </tbody>
+  <tbody v-if="view == 'heroics'">
+    <tr v-for="hero in heroics">
+      <td class="rank">{{ $index }}</td>
+      <td><identity :name="hero.name"></identity></td>
+      <td><spinner :score="hero.score" :spm="hero.spm"></spinner></td>
+    </tr>
+  </tbody>
 
-          <tbody v-if="view == 'latest'">
-            <tr v-for="last in latest">
-              <td class="name">{{ last.name }}</td>
-              <td><score-counter v-bind:score="last.score" v-bind:spm="last.spm"></score-counter></td>
-            </tr>
-          </tbody>
+  <tbody v-if="view == 'legendaries'">
+    <tr v-for="legend in legendaries">
+      <td class="rank">{{ $index }}</td>
+      <td><identity :name="legend.name"></identity></td>
+      <td><spinner :score="legend.score" :spm="legend.spm"></spinner></td>
+    </tr>
+  </tbody>
 
-      </div>
-    </div>
-  `
-})
+  <tbody v-if="view == 'latest'">
+    <tr v-for="last in latest">
+      <td class="rank">{{ $index }}</td>
+      <td><identity :name="last.name"></identity></td>
+      <td><spinner :score="last.score" :spm="last.spm"></spinner></td>
+    </tr>
+  </tbody>
+</table>`
+});
