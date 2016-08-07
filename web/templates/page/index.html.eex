@@ -1,42 +1,47 @@
-<div id="page-index" class="row fill">
-  <div class="col padded dark-bg">
-    <div>
-      <h2>Scoreboard</h2>
-      <scoreboard :scoreboard="arena.scoreboard"></scoreboard>
+<div class="col left v-fill dark-bg">
+    <div class="col_header">
+      Arena: <identity :name="spinner.name"></identity>
     </div>
-    <div>
-      <h2>Chat</h2>
-      <chat-room v-bind:channel.once="arenaChannel"></chat-room>
+    <scoreboard :scoreboard="arena.scoreboard"></scoreboard>
+
+    <div class="col_header">Arena Chat</div>
+    <chat-room v-bind:channel.once="arenaChannel"></chat-room>
+    <div class="new_message h-fill">
+      <input class="fill" type="text" />
+      <button type="button">&gt;&gt;</button>
     </div>
   </div>
-
-  <div class="col align-end">
-    <div class="padded dark-bg spinner-detail">
-      <h2>Score</h2>
-      <div class="status">
-        <name-form :name.sync="spinner.name" v-on:submit.prevent="intro"></name-form>
-        <score-counter v-bind:score="spinner.score" v-bind:spm="spinner.spm"></score-counter>
+    
+  <div class="col middle">
+    <div class="score-box dark-bg">
+      <div class="own-score">
+        YOU:
+        <spinner :score="spinner.score" :spm="spinner.spm"></spinner>
+      </div>
+      <div class="troupe-score">
+        <identity :troupe="squad.name"></identity>:
+        <spinner :score="squad.score" :spm="squad.spm"></spinner>
       </div>
     </div>
-  </div>
-
-  <div class="col padded dark-bg">
-    <div>
-      <h2>Squad Score</h2>
-      <div class="status">
-        <name-form :name.sync="squad.name" v-on:submit.prevent="join"></name-form>
-        <score-counter v-bind:score="squad.score" v-bind:spm="squad.spm"></score-counter>
-      </div>
-    </div>
-
-    <div v-if="squadChannel">
-      <h2>Scoreboard</h2>
-      <scoreboard :scoreboard="squad.scoreboard"></scoreboard>
-    </div>
-
-    <div v-if="squadChannel">
-      <h2>Chat</h2>
-      <chat-room :channel.sync="squadChannel"></chat-room>
+    <div class="social dark-bg">
+      <a href="" class="social-button">[FB]</a>
+      <a href="" class="social-button">[TW]</a>
+      <a href="" class="social-button">[RD]</a>
+      <a href="" class="social-button">[G+]</a>
+      <a href="" class="social-button">[LI]</a>
     </div>
   </div>
-</div>
+
+  <div class="col right v-fill dark-bg">
+    <div class="col_header">
+      Troupe: <identity :troupe="troupe"></identity>
+    </div>
+    <button type="button" class="abandon">Abandon</button>
+    
+    <div class="col_header">Troupe Chat</div>
+    <chat-room :channel.sync="squadChannel"></chat-room>
+    <div class="new_message h-fill">
+      <input class="fill" type="text" />
+      <button type="button">&gt;&gt;</button>
+    </div>
+  </div>
