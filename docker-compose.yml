@@ -1,0 +1,24 @@
+version: "2"
+services:
+  postgres:
+    image: "postgres:9.4"
+    environment:
+      POSTGRES_USER: postgres
+
+  # the main image, this is the application
+  elixir:
+    build: .
+    command: "mix phoenix.server"
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./:/gyro
+    depends_on:
+      - postgres
+
+  node:
+    image: "node:7"
+    working_dir: "/gyro"
+    command: "./node_modules/.bin/brunch watch"
+    volumes:
+      - ./:/gyro
