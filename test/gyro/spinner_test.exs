@@ -10,6 +10,11 @@ defmodule Gyro.SpinnerTest do
     {:ok, spinner_pid: spinner_pid}
   end
 
+  test "handle spin" do
+    {:noreply, state} = Spinner.handle_info(:spin, %Spinner{})
+    assert state.score == 1/60
+  end
+
   test "enlist a new spinner" do
     {:ok, pid} = Spinner.enlist()
     assert is_pid(pid)
