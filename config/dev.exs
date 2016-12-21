@@ -40,5 +40,5 @@ config :gyro, Gyro.Repo,
   username: "postgres",
   password: "postgres",
   database: "gyro_dev",
-  hostname: "localhost",
+  hostname: "postgres",
   pool_size: 10
