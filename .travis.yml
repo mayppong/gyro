@@ -7,6 +7,8 @@ otp_release:
 sudo: false
 notifications:
   email: false
+services:
+  - postgresql
 
 before_script:
   - mix deps.get --only test

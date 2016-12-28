@@ -14,6 +14,31 @@ defmodule Gyro.SquadTest do
     {:ok, spinner_pid: spinner_pid, squad_pid: squad_pid}
   end
 
+  test "handle enlist" do
+    {:ok, spinner_pid} = Spinner.start_link()
+    {:noreply, state} = Squad.handle_cast({:enlist, spinner_pid}, %Squad{})
+
+    assert state.members == Map.put(%{}, spinner_pid, spinner_pid)
+  end
+
+  test "handle delist" do
+    {:ok, spinner_pid} = Spinner.start_link()
+    {:noreply, enlisted_state} = Squad.handle_cast({:enlist, spinner_pid}, %Squad{})
+
+    {:noreply, delisted_state} = Squad.handle_cast({:delist, spinner_pid}, enlisted_state)
+
+    assert delisted_state.members == %{}
+  end
+
+  test "handle process down" do
+    {:ok, spinner_pid} = Spinner.start_link()
+    {:noreply, enlisted_state} = Squad.handle_cast({:enlist, spinner_pid}, %Squad{})
+
+    {:noreply, delisted_state} = Squad.handle_info({:DOWN, nil, :process, spinner_pid, nil}, enlisted_state)
+
+    assert delisted_state.members == %{}
+  end
+
   test "introspect a squad", %{squad_pid: squad_pid} do
     state = GenServer.call(squad_pid, :introspect)
 
