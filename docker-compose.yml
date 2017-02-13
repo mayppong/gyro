@@ -7,7 +7,10 @@ services:
 
   # the main image, this is the application
   elixir:
-    build: .
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile
+    image: "gyro:beta"
     command: "mix phoenix.server"
     ports:
       - "4000:4000"
