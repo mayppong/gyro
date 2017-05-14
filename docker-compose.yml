@@ -36,3 +36,15 @@ services:
     command: bash -c "./node_modules/brunch/bin/brunch b -p && mix deps.get && mix phoenix.digest && mix release --env=prod"
     volumes:
       - ./:/gyro
+
+  release:
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile.release
+    image: "gyro:0.1"
+    environment:
+      MIX_ENV: "prod"
+      MIX_VERSION: "0.0.1"
+    working_dir: /gyro
+    volumes:
+      - ./:/gyro
