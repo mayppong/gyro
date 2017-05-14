@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile
-    image: "gyro:beta"
+    image: "gyro:dev"
     command: "mix phoenix.server"
     ports:
       - "4000:4000"
@@ -23,5 +23,16 @@ services:
     image: "node:7"
     working_dir: "/gyro"
     command: "./node_modules/.bin/brunch watch"
+    volumes:
+      - ./:/gyro
+
+  build:
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile
+    image: "gyro:dev"
+    environment:
+      MIX_ENV: prod
+    command: bash -c "./node_modules/brunch/bin/brunch b -p && mix deps.get && mix phoenix.digest && mix release --env=prod"
     volumes:
       - ./:/gyro

@@ -17,7 +17,7 @@
   </div>
   <name-form :name.sync="spinner.newName" v-on:submit.prevent="intro"></name-form>
 </div>
-  
+
 <div class="col middle">
   <div class="score-box dark-bg">
     <div class="own-score">
@@ -43,7 +43,7 @@
     Troupe: <identity :troupe="troupe"></identity>
   </div>
   <button type="button" class="abandon">Abandon</button>
-  
+
   <div class="col_header">Troupe Chat</div>
   <chat-room :channel.sync="squadChannel"></chat-room>
   <div class="new_message h-fill">
