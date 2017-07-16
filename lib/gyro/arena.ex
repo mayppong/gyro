@@ -1,7 +1,6 @@
 defmodule Gyro.Arena do
   use GenServer
 
-  alias __MODULE__
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
@@ -51,7 +50,7 @@ defmodule Gyro.Arena do
   If either of the Agents fails to start, it returns the error from that
   Agent and not starts the arena GenServer.
   """
-  def start_link(name, state \\ %Arena{})
+  def start_link(name, state \\ %__MODULE__{})
   def start_link(:spinners, state) do
     GenServer.start_link(__MODULE__, state, name: @spinners_pid)
   end
