@@ -8,8 +8,7 @@
     <meta name="author" content="">
 
     <title>Shawarmaspin</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/reset.css") %>">
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/style.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>

@@ -39,13 +39,13 @@ let spinner = Vue.component('spinner', {
 });
 
 let nameForm = Vue.component('name-form', {
-  props: ['name'],    
-  template: `   
-    <form class="name">   
-      <input type="text" v-model="name" maxlength="3" placeholder="___" />    
-      <button type="submit" class="send"></button>    
-    </form>   
-  `   
+  props: ['name'],
+  template: `
+    <form class="name">
+      <input type="text" v-model="name" maxlength="3" placeholder="___" />
+      <button type="submit" class="send"></button>
+    </form>
+  `
 });
 
 let identity = Vue.component('identity', {
