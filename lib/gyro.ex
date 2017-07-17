@@ -3,6 +3,13 @@ defmodule Gyro do
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
+  @doc """
+  Start the arena GenServer by first starts 2 Agents: one for tracking active
+  spinners, and another for tracking active squads in the system. One both
+  Agents are started successfully, we then start the Arena GenServer.
+  If either of the Agents fails to start, it returns the error from that
+  Agent and not starts the arena GenServer.
+  """
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
