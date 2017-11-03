@@ -1,13 +1,14 @@
-FROM elixir:1.3
+FROM elixir:1.5-alpine
 
-ENV MIX_ENV=prod
-ENV MIX_VERSION=0.0.1
+ENV MIX_ENV prod
+ENV PORT 4000
 
 RUN mkdir /gyro
 WORKDIR /gyro
-COPY ./_build/${MIX_ENV}/rel/gyro/releases/${MIX_VERSION}/gyro.tar.gz /gyro
+COPY ./_build/${MIX_ENV}/rel/gyro/releases/${MIX_VERSION}/gyro.tar.gz ./
+RUN tar ./gyro.tar.gz
+RUN rm ./gyro.tar.gz
 
-EXPOSE 4000
-ENV PORT 4000
-CMD ["/gyro/_build/prod/rel/gyro/bin/gyro", "foreground"]
-#CMD ["/gyro/_build/${MIX_ENV}/rel/gyro/bin/gyro", "foreground"]
+EXPOSE ${PORT}
+ENTRYPOINT ["./bin/gyro"]
+CMD ["./bin/gyro", "foreground"]

@@ -20,7 +20,7 @@ services:
       - postgres
 
   node:
-    image: "node:7"
+    image: "node:7-alpine"
     working_dir: "/gyro"
     command: "./node_modules/.bin/brunch watch"
     volumes:
