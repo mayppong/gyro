@@ -1,12 +1,28 @@
 version: "2"
 services:
   postgres:
-    image: "postgres:9.4"
+    image: "postgres:9.6"
     environment:
+      POSTGRES_DB: gyro_dev
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  postgres_test:
+    image: "postgres:9.6"
+    environment:
+      POSTGRES_DB: gyro_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  node:
+    image: "node:7-alpine"
+    working_dir: "/gyro"
+    command: "./node_modules/.bin/brunch watch"
+    volumes:
+      - ./:/gyro
 
   # the main image, this is the application
-  elixir:
+  web:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile
@@ -16,13 +32,24 @@ services:
       - "4000:4000"
     volumes:
       - ./:/gyro
-    depends_on:
+    links:
       - postgres
 
-  node:
+  test:
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile
+    image: "gyro:dev"
+    command: "mix test"
+    volumes:
+      - ./:/gyro
+    links:
+      - postgres_test:postgres
+
+  build-node:
     image: "node:7-alpine"
     working_dir: "/gyro"
-    command: "./node_modules/.bin/brunch watch"
+    command: "./node_modules/.bin/brunch b -p"
     volumes:
       - ./:/gyro
 
@@ -33,7 +60,7 @@ services:
     image: "gyro:dev"
     environment:
       MIX_ENV: prod
-    command: bash -c "./node_modules/brunch/bin/brunch b -p && mix deps.get && mix phoenix.digest && mix release --env=prod"
+    command: bash -c "mix deps.get && mix phoenix.digest && mix release --env=prod"
     volumes:
       - ./:/gyro
 
@@ -41,7 +68,7 @@ services:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile.release
-    image: "gyro:0.1"
+    image: "gyro:0.0.1"
     environment:
       MIX_ENV: "prod"
       MIX_VERSION: "0.0.1"
