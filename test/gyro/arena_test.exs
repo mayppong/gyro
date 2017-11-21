@@ -1,5 +1,4 @@
 defmodule Gyro.ArenaTest do
-  use ExUnit.Case, async: true
   use Gyro.ChannelCase
 
   alias Gyro.UserSocket

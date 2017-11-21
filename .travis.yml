@@ -12,6 +12,8 @@ notifications:
 services:
   - postgresql
 
+env:
+  - DB_HOSTNAME=localhost
 before_script:
   - mix deps.get --only test
 script:

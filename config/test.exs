@@ -15,5 +15,5 @@ config :gyro, Gyro.Repo,
   username: "postgres",
   password: "postgres",
   database: "gyro_test",
-  hostname: "postgres",
+  hostname: System.get_env("DB_HOSTNAME") || "postgres",
   pool: Ecto.Adapters.SQL.Sandbox
