@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: gyro
-          image: gyro:beta
+          image: gyro:0.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 4000

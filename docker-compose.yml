@@ -68,6 +68,8 @@ services:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile.release
+      args:
+        VERSION: 0.0.1
     image: "gyro:0.0.1"
     environment:
       MIX_ENV: "prod"

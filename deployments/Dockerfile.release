@@ -1,14 +1,18 @@
-FROM elixir:1.5-alpine
+FROM alpine:3.6
 
+ARG VERSION=0.0.0
+ENV APP gyro
 ENV MIX_ENV prod
 ENV PORT 4000
 
-RUN mkdir /gyro
-WORKDIR /gyro
-COPY ./_build/${MIX_ENV}/rel/gyro/releases/${MIX_VERSION}/gyro.tar.gz ./
-RUN tar ./gyro.tar.gz
-RUN rm ./gyro.tar.gz
+RUN apk --update add bash openssl && \
+  rm -rf /var/cache/apk/*
+
+WORKDIR /${APP}
+COPY ./_build/${MIX_ENV}/rel/${APP}/releases/${VERSION}/${APP}.tar.gz ./
+RUN tar xfz ${APP}.tar.gz
+RUN rm ${APP}.tar.gz
 
 EXPOSE ${PORT}
 ENTRYPOINT ["./bin/gyro"]
-CMD ["./bin/gyro", "foreground"]
+CMD ["foreground"]
