@@ -1,19 +1,5 @@
 version: "2"
 services:
-  postgres:
-    image: "postgres:9.6"
-    environment:
-      POSTGRES_DB: gyro_dev
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-
-  postgres_test:
-    image: "postgres:9.6"
-    environment:
-      POSTGRES_DB: gyro_test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-
   node:
     image: "node:7-alpine"
     working_dir: "/gyro"
@@ -32,8 +18,6 @@ services:
       - "4000:4000"
     volumes:
       - ./:/gyro
-    links:
-      - postgres
 
   test:
     build:
@@ -43,8 +27,6 @@ services:
     command: "mix test"
     volumes:
       - ./:/gyro
-    links:
-      - postgres_test:postgres
 
   build-node:
     image: "node:7-alpine"

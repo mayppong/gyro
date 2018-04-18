@@ -26,5 +26,3 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
-
-config :gyro, ecto_repos: [Gyro.Repo]

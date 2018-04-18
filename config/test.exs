@@ -8,12 +8,3 @@ config :gyro, Gyro.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
-
-# Configure your database
-config :gyro, Gyro.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "gyro_test",
-  hostname: System.get_env("DB_HOSTNAME") || "postgres",
-  pool: Ecto.Adapters.SQL.Sandbox

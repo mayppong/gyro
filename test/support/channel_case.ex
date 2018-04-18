@@ -21,9 +21,6 @@ defmodule Gyro.ChannelCase do
       use Phoenix.ChannelTest
 
       alias Gyro.Repo
-      import Ecto.Model
-      import Ecto.Query, only: [from: 2]
-
 
       # The default endpoint for testing
       @endpoint Gyro.Endpoint
@@ -31,12 +28,6 @@ defmodule Gyro.ChannelCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Gyro.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Gyro.Repo, {:shared, self()})
-    end
-
     :ok
   end
 
