@@ -1,6 +1,5 @@
 language: elixir
 elixir:
-  - 1.3
   - 1.4
   - 1.5
 otp_release:
@@ -9,11 +8,7 @@ otp_release:
 sudo: false
 notifications:
   email: false
-services:
-  - postgresql
 
-env:
-  - DB_HOSTNAME=localhost
 before_script:
   - mix deps.get --only test
 script:

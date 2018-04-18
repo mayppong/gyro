@@ -20,10 +20,6 @@ defmodule Gyro.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      alias Gyro.Repo
-      import Ecto.Model
-      import Ecto.Query, only: [from: 2]
-
       import Gyro.Router.Helpers
 
       # The default endpoint for testing
@@ -32,12 +28,6 @@ defmodule Gyro.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Gyro.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Gyro.Repo, {:shared, self()})
-    end
-
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
