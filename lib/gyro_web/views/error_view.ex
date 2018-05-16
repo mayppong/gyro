@@ -1,4 +1,4 @@
-defmodule Gyro.ErrorView do
+defmodule GyroWeb.ErrorView do
   use Gyro.Web, :view
 
   def render("404.html", _assigns) do

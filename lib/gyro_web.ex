@@ -17,16 +17,17 @@ defmodule Gyro.Web do
   """
   def controller do
     quote do
-      use Phoenix.Controller
+      use Phoenix.Controller, namespace: GyroWeb
 
-      import Gyro.Router.Helpers
-      import Gyro.Gettext
+      import GyroWeb.Router.Helpers
+      import GyroWeb.Gettext
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "web/templates"
+      use Phoenix.View, root: "lib/gyro_web/templates",
+                        namespace: GyroWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
@@ -34,9 +35,9 @@ defmodule Gyro.Web do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import Gyro.Router.Helpers
-      import Gyro.ErrorHelpers
-      import Gyro.Gettext
+      import GyroWeb.Router.Helpers
+      import GyroWeb.ErrorHelpers
+      import GyroWeb.Gettext
     end
   end
 
@@ -50,7 +51,7 @@ defmodule Gyro.Web do
     quote do
       use Phoenix.Channel
 
-      import Gyro.Gettext
+      import GyroWeb.Gettext
     end
   end
 

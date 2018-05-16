@@ -1,4 +1,4 @@
-defmodule Gyro.Gettext do
+defmodule GyroWeb.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.
 

@@ -1,3 +1,3 @@
-defmodule Gyro.LayoutViewTest do
-  use Gyro.ConnCase, async: true
+defmodule GyroWeb.LayoutViewTest do
+  use GyroWeb.ConnCase, async: true
 end

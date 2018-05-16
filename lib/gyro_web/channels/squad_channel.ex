@@ -1,4 +1,4 @@
-defmodule Gyro.SquadChannel do
+defmodule GyroWeb.SquadChannel do
   use Gyro.Web, :channel
   alias Phoenix.Socket
   alias Gyro.Arena

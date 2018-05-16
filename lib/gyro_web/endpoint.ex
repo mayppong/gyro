@@ -1,7 +1,7 @@
-defmodule Gyro.Endpoint do
+defmodule GyroWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :gyro
 
-  socket "/socket", Gyro.UserSocket
+  socket "/socket", GyroWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -35,5 +35,5 @@ defmodule Gyro.Endpoint do
     key: "_gyro_key",
     signing_salt: "Uv4ca5Cv"
 
-  plug Gyro.Router
+  plug GyroWeb.Router
 end

@@ -1,4 +1,4 @@
-defmodule Gyro.Router do
+defmodule GyroWeb.Router do
   use Gyro.Web, :router
 
   pipeline :browser do
@@ -13,7 +13,7 @@ defmodule Gyro.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Gyro do
+  scope "/", GyroWeb do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index

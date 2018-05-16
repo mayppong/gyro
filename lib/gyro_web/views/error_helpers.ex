@@ -1,4 +1,4 @@
-defmodule Gyro.ErrorHelpers do
+defmodule GyroWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
