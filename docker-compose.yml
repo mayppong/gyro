@@ -51,11 +51,11 @@ services:
       context: .
       dockerfile: ./deployments/Dockerfile.release
       args:
-        VERSION: 0.0.1
-    image: "gyro:0.0.1"
+        VERSION: 0.1.0
+    image: "gyro:0.1.0"
     environment:
       MIX_ENV: "prod"
-      MIX_VERSION: "0.0.1"
+      MIX_VERSION: "0.1.0"
     working_dir: /gyro
     volumes:
       - ./:/gyro
