@@ -1,4 +1,4 @@
-FROM elixir:1.5-alpine
+FROM elixir:1.6-alpine
 
 RUN apk --update add bash openssl && \
   rm -rf /var/cache/apk/*

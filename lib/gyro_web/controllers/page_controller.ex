@@ -1,4 +1,4 @@
-defmodule Gyro.PageController do
+defmodule GyroWeb.PageController do
   use Gyro.Web, :controller
 
   def index(conn, _params) do

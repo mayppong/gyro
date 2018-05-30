@@ -6,7 +6,7 @@
 use Mix.Config
 
 # Configures the endpoint
-config :gyro, Gyro.Endpoint,
+config :gyro, GyroWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "rds/k0cS4P9e20n5ovNm5zQMTmMo7sPJSFZYcTWA4JhFBxY8yYd/dAg1KF5J0CLd",
   render_errors: [accepts: ~w(html json)],

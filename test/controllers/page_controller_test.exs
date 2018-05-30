@@ -1,5 +1,5 @@
-defmodule Gyro.PageControllerTest do
-  use Gyro.ConnCase
+defmodule GyroWeb.PageControllerTest do
+  use GyroWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get conn, "/"

@@ -1,4 +1,4 @@
-defmodule Gyro.ArenaChannel do
+defmodule GyroWeb.ArenaChannel do
   use Gyro.Web, :channel
 
   alias Phoenix.Socket
@@ -13,7 +13,7 @@ defmodule Gyro.ArenaChannel do
   """
   def join("arenas:lobby", payload, socket) do
     if authorized?(payload) do
-      send(self, :init)
+      send(self(), :init)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -32,7 +32,7 @@ defmodule Gyro.ArenaChannel do
   Set spinner up with their initial data on their first join.
   """
   def handle_info(:init, socket) do
-    send(self, :spin)
+    send(self(), :spin)
     {:noreply, socket}
   end
 
@@ -47,7 +47,7 @@ defmodule Gyro.ArenaChannel do
     arena = Arena.introspect(:spinners)
 
     push socket, "introspect", %{"arena" => arena, "spinner" => spinner}
-    Process.send_after(self, :spin, @timer)
+    Process.send_after(self(), :spin, @timer)
     {:noreply, socket}
   end
 

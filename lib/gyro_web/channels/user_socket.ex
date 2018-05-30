@@ -1,4 +1,4 @@
-defmodule Gyro.UserSocket do
+defmodule GyroWeb.UserSocket do
   use Phoenix.Socket
 
   alias Gyro.Spinner

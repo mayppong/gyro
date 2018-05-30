@@ -14,7 +14,7 @@ defmodule Gyro.Spinner do
   The main method for starting a new spinner GenServer.
   """
   def enlist() do
-    case start_link do
+    case start_link() do
       {:ok, spinner_pid} ->
         Arena.enlist(:spinners, spinner_pid)
         {:ok, spinner_pid}
@@ -44,8 +44,8 @@ defmodule Gyro.Spinner do
   For now, we just need to tell it to start spinning.
   """
   def init(state) do
-    state = Map.put(state, :id, self)
-    :timer.send_interval(@timer, self, :spin)
+    state = Map.put(state, :id, self())
+    :timer.send_interval(@timer, self(), :spin)
     {:ok, state}
   end
 

@@ -1,7 +1,7 @@
 defmodule Gyro.ArenaTest do
-  use Gyro.ChannelCase
+  use GyroWeb.ChannelCase
 
-  alias Gyro.UserSocket
+  alias GyroWeb.UserSocket
   alias Gyro.Arena
 
   setup do

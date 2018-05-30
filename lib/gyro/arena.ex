@@ -121,7 +121,7 @@ defmodule Gyro.Arena do
   """
   @spec init(%__MODULE__{}) :: {:ok, %__MODULE__{}}
   def init(state) do
-    send(self, :spin)
+    send(self(), :spin)
     {:ok, state}
   end
 
@@ -191,7 +191,7 @@ defmodule Gyro.Arena do
     scoreboard = Scoreboard.build(scoreboard, members)
 
     state = %{state | scoreboard: scoreboard, score: scoreboard.score, spm: scoreboard.spm}
-    Process.send_after(self, :spin, @timer)
+    Process.send_after(self(), :spin, @timer)
     {:noreply, state}
   end
 

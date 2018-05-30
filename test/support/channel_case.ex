@@ -1,4 +1,4 @@
-defmodule Gyro.ChannelCase do
+defmodule GyroWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -23,11 +23,11 @@ defmodule Gyro.ChannelCase do
       alias Gyro.Repo
 
       # The default endpoint for testing
-      @endpoint Gyro.Endpoint
+      @endpoint GyroWeb.Endpoint
     end
   end
 
-  setup tags do
+  setup _tags do
     :ok
   end
 

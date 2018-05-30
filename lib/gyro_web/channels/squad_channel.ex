@@ -1,4 +1,4 @@
-defmodule Gyro.SquadChannel do
+defmodule GyroWeb.SquadChannel do
   use Gyro.Web, :channel
   alias Phoenix.Socket
   alias Gyro.Arena
@@ -20,7 +20,7 @@ defmodule Gyro.SquadChannel do
       |> String.slice(0, 3)
       |> Squad.enlist(spinner_pid)
 
-      send(self, :init)
+      send(self(), :init)
       {:ok, assign(socket, :squad_pid, squad_pid)}
     else
       {:error, %{reason: "unauthorized"}}
@@ -28,7 +28,7 @@ defmodule Gyro.SquadChannel do
   end
 
   def handle_info(:init, socket) do
-    send(self, :spin)
+    send(self(), :spin)
     {:noreply, socket}
   end
 
@@ -43,7 +43,7 @@ defmodule Gyro.SquadChannel do
     socket = assign(socket, :squad, squad)
 
     push socket, "introspect", %{"arena" => arena, "squad" => squad}
-    Process.send_after(self, :spin, @timer)
+    Process.send_after(self(), :spin, @timer)
     {:noreply, socket}
   end
 
