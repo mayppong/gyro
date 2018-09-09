@@ -5,8 +5,8 @@ defmodule GyroWeb.UserSocket do
 
   ## Channels
   # channel "rooms:*", Gyro.RoomChannel
-  channel "arenas:lobby", Gyro.ArenaChannel
-  channel "arenas:squads:*", Gyro.SquadChannel
+  channel "arenas:lobby", GyroWeb.ArenaChannel
+  channel "arenas:squads:*", GyroWeb.SquadChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

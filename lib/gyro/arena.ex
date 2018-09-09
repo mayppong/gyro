@@ -14,10 +14,11 @@ defmodule Gyro.Arena do
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
+  @derive {Poison.Encoder, except: [:members]}
   defstruct members: %{},
     score: 0, spm: 0, size: 0,
     scoreboard: %Scoreboard{}
-  @derive {Poison.Encoder, except: [:members]}
+
   @type on_start :: {:ok, pid} | :ignore | {:error, {:already_started, pid} | term}
 
   @spinners_pid {:global, :spinners}
