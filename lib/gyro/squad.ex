@@ -97,7 +97,7 @@ defmodule Gyro.Squad do
   """
   def init(state = %{name: name}) do
     state = Map.put(state, :id, {:global, name})
-    send(self, :spin)
+    send(self(), :spin)
     {:ok, state}
   end
 
@@ -151,7 +151,7 @@ defmodule Gyro.Squad do
     {score, spm} = Task.await(score_task)
     scoreboard  = Task.await(scoreboard_task)
 
-    Process.send_after(self, :spin, @timer)
+    Process.send_after(self(), :spin, @timer)
     {:noreply, %{state | score: score, spm: spm, scoreboard: scoreboard}}
   end
 
