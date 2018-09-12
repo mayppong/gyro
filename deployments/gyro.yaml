@@ -3,22 +3,28 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gyro
-  labels:
-    app: gyro
 spec:
   type: LoadBalancer
-  ports:
-    - port: 4000
-      name: web
   selector:
     app: gyro
+  ports:
+    - port: 4000
+      targetPort: web
+      name: web
+
 ---
-apiVersion: extensions/v1beta1
+
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gyro
+  labels:
+    app: gyro
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: gyro
   template:
     metadata:
       labels:
@@ -32,6 +38,5 @@ spec:
             - containerPort: 4000
               name: web
           env:
-            - name: DATABASE_HOST
-              value: postgres.default.svc.cluster.local
-          command: ["mix", "phoenix.server"]
+            - name: PORT
+              value: "4000"

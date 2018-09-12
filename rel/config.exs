@@ -2,7 +2,8 @@
 # They can then be used by adding `plugin MyPlugin` to
 # either an environment, or release definition, where
 # `MyPlugin` is the name of the plugin module.
-Path.join(["rel", "plugins", "*.exs"])
+~w(rel plugins *.exs)
+|> Path.join()
 |> Path.wildcard()
 |> Enum.map(&Code.eval_file(&1))
 
@@ -13,7 +14,7 @@ use Mix.Releases.Config,
     default_environment: Mix.env()
 
 # For a full list of config options for both releases
-# and environments, visit https://hexdocs.pm/distillery/configuration.html
+# and environments, visit https://hexdocs.pm/distillery/config/distillery.html
 
 
 # You may define one or more environments in this file,
@@ -22,15 +23,21 @@ use Mix.Releases.Config,
 # and environment configuration is called a profile
 
 environment :dev do
+  # If you are running Phoenix, you should make sure that
+  # server: true is set and the code reloader is disabled,
+  # even in dev mode.
+  # It is recommended that you build with MIX_ENV=prod and pass
+  # the --env flag to Distillery explicitly if you want to use
+  # dev mode.
   set dev_mode: true
   set include_erts: false
-  set cookie: :"i&A,^[zHj7E~y.?sgh_eyYtpe|74E*OhfQ=F@]>iIRDRJZa0*$J8rClANyS8tCoZ"
+  set cookie: :";l;j;5^h)U&]1;]p`oG@SR6@IWl30&ow}K2AkiMT){JxVM^y*^/Tl?`D7M}IDgeJ"
 end
 
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"tABjn]rBzsr8B%U7y0YBb>BmYj5>wfp46$gH^4m/~]L2v$!q>lWLywsv/FD`UB6)"
+  set cookie: :"u6e`Z.{dMi^eBgHUP*sVUG?ISrRbh07jZBY/&Qml0&r2N;|Y_?4KO1S1L@He3*e_"
 end
 
 # You may define one or more releases in this file.
@@ -40,5 +47,8 @@ end
 
 release :gyro do
   set version: current_version(:gyro)
+  set applications: [
+    :runtime_tools
+  ]
 end
 

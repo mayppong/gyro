@@ -1,7 +1,7 @@
-version: "2"
+version: "3"
 services:
   node:
-    image: "node:7-alpine"
+    image: "node:10-alpine"
     working_dir: "/gyro"
     command: "./node_modules/.bin/brunch watch"
     volumes:
@@ -13,9 +13,18 @@ services:
       context: .
       dockerfile: ./deployments/Dockerfile
     image: "gyro:dev"
-    command: "mix phoenix.server"
+    command: "mix phx.server"
     ports:
       - "4000:4000"
+    volumes:
+      - ./:/gyro
+
+  update:
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile
+    image: "gyro:dev"
+    command: "mix deps.get"
     volumes:
       - ./:/gyro
 
@@ -29,7 +38,7 @@ services:
       - ./:/gyro
 
   build-node:
-    image: "node:7-alpine"
+    image: "node:10-alpine"
     working_dir: "/gyro"
     command: "./node_modules/.bin/brunch b -p"
     volumes:
@@ -42,7 +51,8 @@ services:
     image: "gyro:dev"
     environment:
       MIX_ENV: prod
-    command: bash -c "mix deps.get && mix phoenix.digest && mix release --env=prod"
+    command: sh -c "mix deps.get && mix phx.digest && mix release --env=prod"
+    working_dir: /gyro
     volumes:
       - ./:/gyro
 
@@ -55,7 +65,7 @@ services:
     image: "gyro:0.1.0"
     environment:
       MIX_ENV: "prod"
-      MIX_VERSION: "0.1.0"
+      PORT: 4000
     working_dir: /gyro
-    volumes:
-      - ./:/gyro
+    ports:
+      - "4000:4000"
