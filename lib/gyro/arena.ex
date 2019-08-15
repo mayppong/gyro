@@ -14,7 +14,7 @@ defmodule Gyro.Arena do
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
-  @derive {Poison.Encoder, except: [:members]}
+  @derive {Jason.Encoder, except: [:members]}
   defstruct members: %{},
     score: 0, spm: 0, size: 0,
     scoreboard: %Scoreboard{}

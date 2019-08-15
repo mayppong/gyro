@@ -5,7 +5,7 @@ defmodule Gyro.ArenaTest do
   alias Gyro.Arena
 
   setup do
-    socket = socket("user_id", %{})
+    socket = socket(UserSocket, "user_id", %{})
     {:ok, socket} = UserSocket.connect(nil, socket)
     {:ok, socket: socket, spinner_pid: socket.assigns[:spinner_pid]}
   end

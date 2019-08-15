@@ -5,7 +5,7 @@ defmodule GyroWeb.SquadChannelTest do
   alias GyroWeb.UserSocket
 
   setup do
-    socket = socket("user_id", %{some: :assign})
+    socket = socket(UserSocket, "user_id", %{some: :assign})
     {:ok, socket} = UserSocket.connect(nil, socket)
     {:ok, _, socket} =
       socket
