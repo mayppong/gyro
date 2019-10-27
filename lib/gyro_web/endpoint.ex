@@ -1,7 +1,10 @@
 defmodule GyroWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :gyro
 
-  socket "/socket", GyroWeb.UserSocket
+  socket "/socket", GyroWeb.UserSocket,
+    websocket: true
+    # longpoll: true
+
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -25,7 +28,7 @@ defmodule GyroWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Poison
+    json_decoder: Jason
 
   plug Plug.MethodOverride
   plug Plug.Head

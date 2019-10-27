@@ -4,7 +4,7 @@ defmodule Gyro.Mixfile do
   def project do
     [app: :gyro,
      version: "0.1.0",
-     elixir: "~> 1.6",
+     elixir: "~> 1.9",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
@@ -29,13 +29,14 @@ defmodule Gyro.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.3"},
+    [{:phoenix, "~> 1.4"},
      {:phoenix_pubsub, "~> 1.1"},
      {:phoenix_html, "~> 2.12"},
-     {:phoenix_live_reload, "~> 1.1", only: :dev},
+     {:phoenix_live_reload, "~> 1.2", only: :dev},
      {:gettext, "~> 0.16"},
-     {:cowboy, "~> 1.0"},
-     {:distillery, "~> 2.0"}]
+     {:jason, "~> 1.0"},
+     {:plug_cowboy, "~> 2.0"},
+     {:distillery, "~> 2.1"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

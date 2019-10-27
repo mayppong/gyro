@@ -6,7 +6,7 @@ defmodule Gyro.Squad do
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
 
-  @derive {Poison.Encoder, except: [:id, :members]}
+  @derive {Jason.Encoder, except: [:id, :members]}
   defstruct id: nil, name: nil, created_at: DateTime.utc_now(), members: %{},
     score: 0, spm: 0, scoreboard: %Scoreboard{}
 
