@@ -18,9 +18,11 @@ defmodule GyroWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
-      use Phoenix.ConnTest
+      import Plug.Conn
+      import Phoenix.ConnTest
+      import GyroWeb.ConnCase
 
-      import GyroWeb.Router.Helpers
+      alias GyroWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint GyroWeb.Endpoint

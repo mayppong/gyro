@@ -26,7 +26,8 @@ defmodule Gyro.Squad do
       true ->
         {:ok, {:global, name}}
       false ->
-        case Gyro.Squad.Supervisor.start_child(name, %Squad{name: name}) do
+        Gyro.Squad.DynamicSupervisor.start_child(name, %Squad{name: name})
+        |> case do
           {:ok, squad_pid} ->
             Arena.enlist(:squads, squad_pid)
             {:ok, squad_pid}

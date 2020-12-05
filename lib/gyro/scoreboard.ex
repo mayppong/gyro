@@ -2,6 +2,7 @@ defmodule Gyro.Scoreboard do
   alias __MODULE__
   alias Gyro.Arena.Spinnable
 
+  @derive Jason.Encoder
   defstruct name: nil, score: 0, spm: 0, size: 0,
     legendaries: [], heroics: [], latest: []
 
@@ -33,7 +34,7 @@ defmodule Gyro.Scoreboard do
 
   @doc """
   Counting number of members. It's currently just calling the `Enum.count`
-  directly. However, we might want to expand in the future to 
+  directly. However, we might want to expand in the future to
   """
   def size(list), do: list |> Enum.count
 
