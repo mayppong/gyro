@@ -1,60 +1,30 @@
 version: "3"
 services:
-  node:
-    image: "node:10-alpine"
-    working_dir: "/gyro"
-    command: "./node_modules/.bin/brunch watch"
+  elixir: &elixir
+    image: "gyro:dev"
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile
+    command: sh -c "mix deps.get && npm install"
     volumes:
       - ./:/gyro
 
   # the main image, this is the application
   web:
-    build:
-      context: .
-      dockerfile: ./deployments/Dockerfile
-    image: "gyro:dev"
+    <<: *elixir
     command: "mix phx.server"
     ports:
       - "4000:4000"
-    volumes:
-      - ./:/gyro
-
-  update:
-    build:
-      context: .
-      dockerfile: ./deployments/Dockerfile
-    image: "gyro:dev"
-    command: "mix deps.get"
-    volumes:
-      - ./:/gyro
 
   test:
-    build:
-      context: .
-      dockerfile: ./deployments/Dockerfile
-    image: "gyro:dev"
+    <<: *elixir
     command: "mix test"
-    volumes:
-      - ./:/gyro
-
-  build-node:
-    image: "node:10-alpine"
-    working_dir: "/gyro"
-    command: "./node_modules/.bin/brunch b -p"
-    volumes:
-      - ./:/gyro
 
   build:
-    build:
-      context: .
-      dockerfile: ./deployments/Dockerfile
-    image: "gyro:dev"
+    <<: *elixir
     environment:
       MIX_ENV: prod
     command: sh -c "mix deps.get && mix phx.digest && mix release --env=prod"
-    working_dir: /gyro
-    volumes:
-      - ./:/gyro
 
   release:
     build:
