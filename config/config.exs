@@ -10,8 +10,7 @@ config :gyro, GyroWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "rds/k0cS4P9e20n5ovNm5zQMTmMo7sPJSFZYcTWA4JhFBxY8yYd/dAg1KF5J0CLd",
   render_errors: [accepts: ~w(html json)],
-  pubsub: [name: Gyro.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Gyro.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,

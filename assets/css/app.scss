@@ -1,3 +1,5 @@
+@import "./reset.css";
+
 @font-face {
 	font-family: 'emulogic';
 	src: url('/fonts/emulogic.ttf') format('truetype');
@@ -11,7 +13,7 @@
 	-ms-transform: translateX(-50%) translateY(-50%);
 	-o-transform: translateX(-50%) translateY(-50%);
 	-webkit-transform: translateX(-50%) translateY(-50%);
-	background-image: url("/images/1080p.png");
+	background-image: url("/images/gyro-1080p.png");
 	background-position: 50% 50%;
 	background-repeat:  no-repeat;
 	background-size: cover;
@@ -95,7 +97,7 @@ body {
 	.own-score {
 		font-size: large;
 		line-height: 3rem;
-		
+
 		.score {
 			font-size: xx-large;
 		}
@@ -128,7 +130,7 @@ body {
 	.social-button {
 		text-decoration: none;
 		cursor: pointer;
-		
+
 		background-color: #999;
 		background-color: rgba(0,0,0,0.5);
 		color: white;
@@ -165,7 +167,7 @@ body {
 		padding: 0 1rem;
 		position: relative;
 		cursor: pointer;
-	
+
 		&.selected {
 			border-bottom-width: 2px;
 			bottom: -1px;
@@ -223,7 +225,7 @@ body {
 		&.same-team {
 			color: #9b59b6;
 		}
-		
+
 		&.admin {
 			color: #3498db;
 		}

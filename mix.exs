@@ -29,10 +29,10 @@ defmodule Gyro.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.4"},
-     {:phoenix_pubsub, "~> 1.1"},
-     {:phoenix_html, "~> 2.12"},
-     {:phoenix_live_reload, "~> 1.2", only: :dev},
+    [{:phoenix, "~> 1.5"},
+     {:phoenix_pubsub, "~> 2.0"},
+     {:phoenix_html, "~> 2.14"},
+     {:phoenix_live_reload, "~> 1.3", only: :dev},
      {:gettext, "~> 0.16"},
      {:jason, "~> 1.0"},
      {:plug_cowboy, "~> 2.0"},
@@ -42,10 +42,13 @@ defmodule Gyro.Mixfile do
   # Aliases are shortcut or tasks specific to the current project.
   # For example, to create, migrate and run the seeds file at once:
   #
-  #     $ mix ecto.setup
+  #     $ mix setup
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    [test: "test"]
+    [
+      setup: ["deps.get", "cmd npm install --prefix assets"],
+      test: "test"
+    ]
   end
 end
