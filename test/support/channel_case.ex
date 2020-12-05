@@ -18,9 +18,8 @@ defmodule GyroWeb.ChannelCase do
   using do
     quote do
       # Import conveniences for testing with channels
-      use Phoenix.ChannelTest
-
-      alias Gyro.Repo
+      import Phoenix.ChannelTest
+      import GyroWeb.ChannelCase
 
       # The default endpoint for testing
       @endpoint GyroWeb.Endpoint

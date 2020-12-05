@@ -1,4 +1,8 @@
 defmodule Gyro do
+  # See https://hexdocs.pm/elixir/Application.html
+  # for more information on OTP Applications
+  @moduledoc false
+
   use Application
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
@@ -11,19 +15,18 @@ defmodule Gyro do
   Agent and not starts the arena GenServer.
   """
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
-
     children = [
-      # Start the endpoint when the application starts
-      supervisor(GyroWeb.Endpoint, []),
+      # Start the PubSub system
+      {Phoenix.PubSub, [name: Gyro.PubSub]},
+      # Start the endpoint (http/https) when the application starts
+      GyroWeb.Endpoint,
       # Here you could define other workers and supervisors as children
-      # worker(Gyro.Worker, [arg1, arg2, arg3]),
-      worker(Gyro.Arena, [:spinners], [id: :spinners]),
-      worker(Gyro.Arena, [:squads], [id: :squads]),
-      supervisor(Gyro.Squad.Supervisor, []),
+      %{start: {Gyro.Arena, :start_link, [:spinners]}, id: :spinners},
+      %{start: {Gyro.Arena, :start_link, [:squads]}, id: :squads},
+      Gyro.Squad.DynamicSupervisor
     ]
 
-    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
+    # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Gyro.Supervisor]
     Supervisor.start_link(children, opts)

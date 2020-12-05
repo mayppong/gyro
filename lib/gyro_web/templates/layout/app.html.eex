@@ -13,7 +13,7 @@
 
   <body>
 	<div class="fullscreen-background"></div>
-	<%= render @view_module, @view_template, assigns %>
+	<%= @inner_content %>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
