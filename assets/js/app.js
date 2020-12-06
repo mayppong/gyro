@@ -14,7 +14,7 @@ import "../css/app.scss"
 //     import socket from "./socket"
 //
 import "phoenix_html"
-import Vue from "vue"
+import * as Vue from "vue"
 
 // Import local files
 //
@@ -22,19 +22,20 @@ import Vue from "vue"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
-import components from "./components"
+import * as Components from "./components"
 
-new Vue({
-  el: 'body',
-  data: {
-    socket: socket,
-    arenaChannel: null,
-    squadChannel: null,
-    store: {
-      arena: {},
-      spinner: {},
-      squad: {}
-    },
+const ShwarmaSpin = Vue.createApp({
+  data: function() {
+    return {
+      socket: socket,
+      arenaChannel: null,
+      squadChannel: null,
+      store: {
+        arena: {},
+        spinner: {},
+        squad: {}
+      }
+    };
   },
   computed: {
     arena: function() {
@@ -48,10 +49,10 @@ new Vue({
     }
   },
   created: function() {
-    this._init()
+    this.init()
   },
   methods: {
-    _init() {
+    init() {
       var self = this
       this.arenaChannel = this.socket.channel('arenas:lobby', {})
 
@@ -64,28 +65,27 @@ new Vue({
         self.store.arena = resp.arena
       })
     },
-    intro() {
-      if (this.spinner.newName != '') {
+    intro(newName) {
+      if (newName != '') {
         var self = this
         this.arenaChannel
-          .push('intro', { name: this.spinner.newName })
+          .push('intro', { name: newName })
           .receive('ok', resp => {
             self.store.spinner.name = resp.name
-            console.log('name set', resp)
           })
           .receive('error', resp => { console.log('Unable to set name', resp) })
       }
     },
-    join() {
+    join(squadName) {
       this.leave()
 
-      if (this.squad.newName) {
+      if (squadName) {
         var self = this
-        this.squadChannel = this.socket.channel('arenas:squads:' + this.squad.newName)
+        this.squadChannel = this.socket.channel('arenas:squads:' + squadName)
         this.squadChannel.join()
           .receive('ok', resp => {
             self.squadChannel.on('introspect', resp => {
-              self.store.squad = resp
+              self.store.squad = resp.squad
             })
           })
           .receive('error', resp => {
@@ -93,12 +93,21 @@ new Vue({
           })
       }
     },
-    leave() {
+    leave(_event) {
       if (this.squadChannel) {
         this.squadChannel.leave()
-        this.squadChannel = null;
-        this.store.squad = { name: this.squad.name }
+        this.squadChannel = null
+        this.store.squad = {}
       }
     }
   }
 });
+
+ShwarmaSpin.component('spinner', Components.spinner);
+ShwarmaSpin.component('name-form', Components.nameForm);
+ShwarmaSpin.component('identity', Components.identity);
+ShwarmaSpin.component('message', Components.message);
+ShwarmaSpin.component('chat-room', Components.chatRoom);
+ShwarmaSpin.component('scoreboard', Components.scoreboard);
+
+ShwarmaSpin.mount('#shwarmaspin');
