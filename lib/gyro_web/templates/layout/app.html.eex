@@ -12,8 +12,11 @@
   </head>
 
   <body>
-	<div class="fullscreen-background"></div>
-	<%= @inner_content %>
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <div id="shwarmaspin">
+      <div class="fullscreen-background"></div>
+      <%= @inner_content %>
+    </div>
   </body>
+
+  <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 </html>
