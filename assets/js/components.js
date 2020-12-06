@@ -1,13 +1,6 @@
-import Vue from 'vue'
-
 const spinRate = 16 // milliseconds
 
-let spinner = Vue.component('spinner', {
-  data: function() {
-    return {
-      interval: null
-    };
-  },
+export let spinner = {
   props: {
     score: {
       type: Number,
@@ -19,14 +12,21 @@ let spinner = Vue.component('spinner', {
       default: 0
     }
   },
-  beforeCompile: function() {
+  data: function() {
+    return {
+      currentScore: 0,
+      interval: null
+    };
+  },
+  created: function() {
+    this.currentScore = this.score;
     this.interval = setInterval(() => {
-      this.score += this.increment
+      this.currentScore += this.increment
     }, spinRate)
   },
   computed: {
     prettyScore: function() {
-      return this.score.toFixed(3)
+      return this.currentScore.toFixed(3)
     },
     prettySPM: function() {
       return this.spm.toFixed(1)
@@ -35,68 +35,74 @@ let spinner = Vue.component('spinner', {
       return ((this.spm / 60) * (spinRate / 1000))
     }
   },
-  template: `<span class="score">{{ prettyScore }}</span>&gt;<span class="spm">{{ prettySPM }}</span>`
-});
-
-let nameForm = Vue.component('name-form', {
-  props: ['name'],
   template: `
-    <form class="name">
+    <span>
+      <span class="score">{{ prettyScore }}</span> &gt; <span class="spm">{{ prettySPM }}</span>
+    </span>
+  `
+};
+
+export let nameForm = {
+  data: function() {
+    return { name: '' };
+  },
+  methods: {
+    updateName: function() {
+      this.$emit('update-name', this.name);
+    }
+  },
+  template: `
+    <form class="name" @submit.prevent="updateName">
       <input type="text" v-model="name" maxlength="3" placeholder="___" />
       <button type="submit" class="send"></button>
     </form>
   `
-});
+};
 
-let identity = Vue.component('identity', {
-  data: function(){
-    return {
-      name: '',
-      troupe: ''
-    }
-  },
+export let identity = {
+  props: ['name', 'squad'],
   computed: {
     identity: function(){
       let s = '';
       if (this.name){
         s += '@'+this.name;
       }
-      if (this.troupe){
-        s += '#'+this.troupe;
+      if (this.squad){
+        s += '#'+this.squad;
       }
       return s;
     }
   },
   template: `<span class="identity">{{ identity }}</span>`
-});
+};
 
-let message = Vue.component('message', {
+export let message = {
+  props: ['message'],
   data: function(){
     return {
       body: '',
       time: '',
       name: '',
-      troupe: '',
+      squad: '',
     }
   },
-  props: ['message'],
   template: `
-<div class="message"
-  v-bind:class="{
-    'same-team': same_team,
-    'admin': is_admin}
-  ">
-  <div class="message_header">
-    <span class="timestamp">12:34</span>
-    <identity :name="name"
-      :troupe="troupe"></identity>
-  </div>
-  <div class="message_body">{{ body }}</div>
-</div>
+    <div class="message"
+      v-bind:class="{
+        'same-team': same_team,
+        'admin': is_admin}
+      ">
+      <div class="message-header">
+        <span class="timestamp">12:34</span>
+        <identity :name="name"
+          :squad="squad"></identity>
+      </div>
+      <div class="message-body">{{ body }}</div>
+    </div>
   `
-});
+};
 
-let chatRoom = Vue.component('chat-room', {
+export let chatRoom = {
   data: function() {
     return {
       messages: [],
@@ -105,16 +111,14 @@ let chatRoom = Vue.component('chat-room', {
   },
   props: ['channel'],
   template: `
-<div class="messages fill">
-  <message v-for="message in messages"
-    :message="message"></message>
-</div>`
-});
+    <div class="messages fill">
+      <message v-for="message in messages"
+        :message="message"></message>
+    </div>
+  `
+};
 
-let scoreboard = Vue.component('scoreboard', {
-  data: function() {
-    return { view: 'heroics' }
-  },
+export let scoreboard = {
   props: {
     scoreboard: {
       required: true,
@@ -122,6 +126,9 @@ let scoreboard = Vue.component('scoreboard', {
         return {};
       }
     }
+  },
+  data: function() {
+    return { view: 'heroics' }
   },
   computed: {
     heroics: function() {
@@ -135,55 +142,58 @@ let scoreboard = Vue.component('scoreboard', {
     }
   },
   template: `
-<ul class="tabs">
-  <li class="tab"
-    v-if="view != 'legendaries'"
-    v-on:click="view = 'legendaries'">Legends</li>
-  <li class="tab selected"
-    v-if="view == 'legendaries'">&gt;Legends&lt;</li>
-  <li class="tab"
-    v-if="view != 'heroics'"
-    v-on:click="view = 'heroics'">Heroes</li>
-  <li class="tab selected"
-    v-if="view == 'heroics'">&gt;Heroes&lt;</li>
-  <li class="tab"
-    v-if="view != 'latest'"
-    v-on:click="view = 'latest'">Latest</li>
-  <li class="tab selected"
-    v-if="view == 'latest'">&gt;Latest&lt;</li>
-</ul>
+    <div>
+      <ul class="tabs">
+        <li class="tab"
+          v-if="view != 'legendaries'"
+          v-on:click="view = 'legendaries'">Legends</li>
+        <li class="tab selected"
+          v-if="view == 'legendaries'">&gt;Legends&lt;</li>
+        <li class="tab"
+          v-if="view != 'heroics'"
+          v-on:click="view = 'heroics'">Heroes</li>
+        <li class="tab selected"
+          v-if="view == 'heroics'">&gt;Heroes&lt;</li>
+        <li class="tab"
+          v-if="view != 'latest'"
+          v-on:click="view = 'latest'">Latest</li>
+        <li class="tab selected"
+          v-if="view == 'latest'">&gt;Latest&lt;</li>
+      </ul>
 
-<table class="stats">
-  <thead>
-    <tr>
-      <th class="rank">Rank</th>
-      <th>Name</th>
-      <th>Score</th>
-    </tr>
-  </thead>
+      <table class="stats">
+        <thead>
+          <tr>
+            <th class="rank">Rank</th>
+            <th>Name</th>
+            <th>Score</th>
+          </tr>
+        </thead>
 
-  <tbody v-if="view == 'heroics'">
-    <tr v-for="hero in heroics">
-      <td class="rank">{{ $index }}</td>
-      <td><identity :name="hero.name"></identity></td>
-      <td><spinner :score="hero.score" :spm="hero.spm"></spinner></td>
-    </tr>
-  </tbody>
+        <tbody v-if="view == 'heroics'">
+          <tr v-for="(hero, index) in heroics">
+            <td class="rank">{{ index }}</td>
+            <td><identity :name="hero.name"></identity></td>
+            <td><spinner :score="hero.score" :spm="hero.spm"></spinner></td>
+          </tr>
+        </tbody>
 
-  <tbody v-if="view == 'legendaries'">
-    <tr v-for="legend in legendaries">
-      <td class="rank">{{ $index }}</td>
-      <td><identity :name="legend.name"></identity></td>
-      <td><spinner :score="legend.score" :spm="legend.spm"></spinner></td>
-    </tr>
-  </tbody>
+        <tbody v-if="view == 'legendaries'">
+          <tr v-for="(legend, index) in legendaries">
+            <td class="rank">{{ index }}</td>
+            <td><identity :name="legend.name"></identity></td>
+            <td><spinner :score="legend.score" :spm="legend.spm"></spinner></td>
+          </tr>
+        </tbody>
 
-  <tbody v-if="view == 'latest'">
-    <tr v-for="last in latest">
-      <td class="rank">{{ $index }}</td>
-      <td><identity :name="last.name"></identity></td>
-      <td><spinner :score="last.score" :spm="last.spm"></spinner></td>
-    </tr>
-  </tbody>
-</table>`
-});
+        <tbody v-if="view == 'latest'">
+          <tr v-for="(last, index) in latest">
+            <td class="rank">{{ index }}</td>
+            <td><identity :name="last.name"></identity></td>
+            <td><spinner :score="last.score" :spm="last.spm"></spinner></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `
+};
