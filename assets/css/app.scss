@@ -79,7 +79,7 @@ body {
 	}
 }
 
-.col_header {
+.col-header {
 	margin: 1rem 0;
 	font-size: large;
 	text-align: center;
@@ -103,7 +103,7 @@ body {
 		}
 	}
 
-	.troupe-score {
+	.squad-score {
 		margin-bottom: 1rem;
 		line-height: 1rem;
 	}
@@ -217,7 +217,7 @@ body {
 		padding: 1rem 0.5rem;
 		line-height: 1.5rem;
 
-		.message_header {
+		.message-header {
 			font-size: small;
 			text-decoration: underline;
 		}
@@ -240,7 +240,7 @@ body {
 
 textarea, input, button { outline: none; }
 
-.new_message, .name_picker {
+.new-message, .name-picker {
 	min-height: 2rem;
 
 	input {

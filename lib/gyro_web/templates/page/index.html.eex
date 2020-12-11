@@ -1,18 +1,18 @@
 <div class="col left v-fill dark-bg" v-if="store.spinner.name">
-  <div class="col_header">
+  <div class="col-header">
     Arena: <identity :name="store.spinner.name"></identity>
   </div>
   <scoreboard :scoreboard="store.arena.scoreboard"></scoreboard>
 
-  <div class="col_header">Arena Chat</div>
+  <div class="col-header">Arena Chat</div>
   <chat-room v-bind:channel.once="arenaChannel"></chat-room>
-  <div class="new_message h-fill">
+  <div class="new-message h-fill">
     <input class="fill" type="text" />
     <button type="button">&gt;&gt;</button>
   </div>
 </div>
 <div class="col left v-fill dark-bg" v-else>
-  <div class="col_header">
+  <div class="col-header">
     Choose a name
   </div>
   <name-form @update-name="intro"></name-form>
@@ -24,7 +24,7 @@
       YOU:
       <spinner :score="store.spinner.score" :spm="spinner.spm"></spinner>
     </div>
-    <div class="troupe-score" v-if="squad.name">
+    <div class="squad-score" v-if="store.squad.name">
       <identity :squad="store.squad.name"></identity>:
       <spinner :score="store.squad.score" :spm="store.squad.spm"></spinner>
     </div>
@@ -38,21 +38,21 @@
 </div>
 
 <div class="col right v-fill dark-bg" v-if="squad.name">
-  <div class="col_header">
-    Squad: <identity v-model:squad="store.squad.name"></identity>
+  <div class="col-header">
+    Squad: <identity :squad="store.squad.name"></identity>
   </div>
-  <button type="button" class="abandon">Abandon</button>
+  <button type="button" class="abandon" @click="leave">Abandon</button>
 
-  <div class="col_header">Troupe Chat</div>
+  <div class="col-header">Squad Chat</div>
   <chat-room v-bind:channel.sync="squadChannel"></chat-room>
-  <div class="new_message h-fill">
+  <div class="new-message h-fill">
     <input class="fill" type="text" />
     <button type="button">&gt;&gt;</button>
   </div>
 </div>
 <div class="col right v-fill dark-bg" v-else>
-  <div class="col_header">
-    Choose a Troupe
+  <div class="col-header">
+    Choose a Squad
   </div>
   <name-form @update-name="join"></name-form>
 </div>
