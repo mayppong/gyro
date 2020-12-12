@@ -63,6 +63,19 @@ config :logger, level: :info
 #
 #     config :gyro, Gyro.Endpoint, root: "."
 
+config :libcluster,
+  topologies: [
+    gyro: [
+      strategy: Cluster.Strategy.Kubernetes.DNSSRV,
+      config: [
+        service: "gyro",
+        namespace: "default",
+        application_name: "node",
+        polling_interval: 10_000
+      ]
+    ]
+  ]
+
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"

@@ -38,6 +38,7 @@ defmodule Gyro.Mixfile do
      {:gettext, "~> 0.16"},
      {:jason, "~> 1.0"},
      {:plug_cowboy, "~> 2.0"},
+     {:libcluster, "~> 3.2"},
      {:distillery, "~> 2.1"}]
   end
 
