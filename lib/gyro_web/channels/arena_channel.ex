@@ -1,5 +1,5 @@
 defmodule GyroWeb.ArenaChannel do
-  use Gyro.Web, :channel
+  use GyroWeb, :channel
 
   alias Phoenix.Socket
   alias Gyro.Arena

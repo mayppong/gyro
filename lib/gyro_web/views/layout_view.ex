@@ -1,3 +1,3 @@
 defmodule GyroWeb.LayoutView do
-  use Gyro.Web, :view
+  use GyroWeb, :view
 end

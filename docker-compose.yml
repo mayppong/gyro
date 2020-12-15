@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile
-    command: sh -c "mix deps.get && npm install"
+    command: mix setup
     volumes:
       - ./:/gyro
 
@@ -24,17 +24,17 @@ services:
     <<: *elixir
     environment:
       MIX_ENV: prod
-    command: sh -c "mix deps.get && mix phx.digest && mix release --env=prod"
+    command: sh -c "mix deps.get --only prod && mix compile && mix phx.digest && mix distillery.release --env=prod"
 
   release:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile.release
       args:
-        VERSION: 0.1.0
-    image: "gyro:0.1.0"
+        VERSION: 0.2.0
+    image: "gyro:0.2.0"
     environment:
-      MIX_ENV: "prod"
+      MIX_ENV: prod
       PORT: 4000
     working_dir: /gyro
     ports:

@@ -3,7 +3,7 @@ defmodule Gyro.Mixfile do
 
   def project do
     [app: :gyro,
-     version: "0.1.0",
+     version: "0.2.0",
      elixir: "~> 1.9",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -17,8 +17,10 @@ defmodule Gyro.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {Gyro, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]]
+    [
+      mod: {Gyro, []},
+      extra_applications: [:logger, :runtime_tools]
+    ]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,6 +38,7 @@ defmodule Gyro.Mixfile do
      {:gettext, "~> 0.16"},
      {:jason, "~> 1.0"},
      {:plug_cowboy, "~> 2.0"},
+     {:libcluster, "~> 3.2"},
      {:distillery, "~> 2.1"}]
   end
 
@@ -47,8 +50,7 @@ defmodule Gyro.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"],
-      test: "test"
+      setup: ["deps.get", "cmd npm install --prefix assets"]
     ]
   end
 end

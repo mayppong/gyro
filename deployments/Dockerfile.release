@@ -1,11 +1,11 @@
-FROM alpine:3.8
+FROM alpine:3.9
 
 ARG VERSION=0.0.0
 ENV APP gyro
 ENV MIX_ENV prod
 ENV PORT 4000
 
-RUN apk --update add bash openssl && \
+RUN apk --update add bash openssl ca-certificates erlang-crypto && \
   rm -rf /var/cache/apk/*
 
 WORKDIR /${APP}

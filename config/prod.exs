@@ -17,7 +17,7 @@ config :gyro, GyroWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   root: ".",
-  version: Application.spec(:phoenix_distillery, :vsn)
+  version: Application.spec(:gyro, :vsn)
 
 # Do not print debug messages in production
 config :logger, level: :info
@@ -62,6 +62,19 @@ config :logger, level: :info
 # for the new static assets to be served after a hot upgrade:
 #
 #     config :gyro, Gyro.Endpoint, root: "."
+
+config :libcluster,
+  topologies: [
+    gyro: [
+      strategy: Cluster.Strategy.Kubernetes.DNSSRV,
+      config: [
+        service: "gyro",
+        namespace: "default",
+        application_name: "node",
+        polling_interval: 10_000
+      ]
+    ]
+  ]
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.

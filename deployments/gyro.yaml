@@ -21,7 +21,7 @@ metadata:
   labels:
     app: gyro
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: gyro
@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: gyro
-          image: gyro:0.1.0
+          image: gyro:0.2.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 4000
@@ -40,3 +40,7 @@ spec:
           env:
             - name: PORT
               value: "4000"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP

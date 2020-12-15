@@ -1,5 +1,5 @@
 defmodule GyroWeb.Router do
-  use Gyro.Web, :router
+  use GyroWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
