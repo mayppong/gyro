@@ -50,8 +50,7 @@ defmodule Gyro.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"],
-      test: "test"
+      setup: ["deps.get", "cmd npm install --prefix assets"]
     ]
   end
 end

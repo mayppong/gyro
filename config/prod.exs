@@ -17,7 +17,7 @@ config :gyro, GyroWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true,
   root: ".",
-  version: Application.spec(:phoenix_distillery, :vsn)
+  version: Application.spec(:gyro, :vsn)
 
 # Do not print debug messages in production
 config :logger, level: :info

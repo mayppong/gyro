@@ -1,6 +1,16 @@
 defmodule GyroWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :gyro
 
+
+  # The session will be stored in the cookie and signed,
+  # this means its contents can be read but not tampered with.
+  # Set :encryption_salt if you would also like to encrypt it.
+  @session_options [
+    store: :cookie,
+    key: "_gyro_key",
+    signing_salt: "Uv4ca5Cv"
+  ]
+
   socket "/socket", GyroWeb.UserSocket,
     websocket: true
     # longpoll: true
@@ -32,11 +42,6 @@ defmodule GyroWeb.Endpoint do
 
   plug Plug.MethodOverride
   plug Plug.Head
-
-  plug Plug.Session,
-    store: :cookie,
-    key: "_gyro_key",
-    signing_salt: "Uv4ca5Cv"
-
+  plug Plug.Session, @session_options
   plug GyroWeb.Router
 end

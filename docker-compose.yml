@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./deployments/Dockerfile
-    command: sh -c "mix deps.get && npm install"
+    command: mix setup
     volumes:
       - ./:/gyro
 
