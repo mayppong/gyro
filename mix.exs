@@ -17,8 +17,10 @@ defmodule Gyro.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {Gyro, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]]
+    [
+      mod: {Gyro, []},
+      extra_applications: [:logger, :runtime_tools]
+    ]
   end
 
   # Specifies which paths to compile per environment.
