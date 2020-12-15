@@ -1,5 +1,5 @@
 defmodule GyroWeb.ErrorView do
-  use Gyro.Web, :view
+  use GyroWeb, :view
 
   def render("404.html", _assigns) do
     "Page not found"
