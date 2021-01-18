@@ -63,7 +63,10 @@ const ShwarmaSpin = Vue.createApp({
       this.arenaChannel.on('introspect', (resp) => {
         self.store.spinner = resp.spinner
         self.store.arena = resp.arena
-      })
+      });
+      this.arenaChannel.on('shout', (resp) => {
+        console.log(resp);
+      });
     },
     intro(newName) {
       if (newName != '') {

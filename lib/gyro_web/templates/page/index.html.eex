@@ -5,11 +5,7 @@
   <scoreboard :scoreboard="store.arena.scoreboard"></scoreboard>
 
   <div class="col-header">Arena Chat</div>
-  <chat-room v-bind:channel.once="arenaChannel"></chat-room>
-  <div class="new-message h-fill">
-    <input class="fill" type="text" />
-    <button type="button">&gt;&gt;</button>
-  </div>
+  <chat-room :channel="arenaChannel"></chat-room>
 </div>
 <div class="col left v-fill dark-bg" v-else>
   <div class="col-header">
@@ -45,10 +41,6 @@
 
   <div class="col-header">Squad Chat</div>
   <chat-room v-bind:channel.sync="squadChannel"></chat-room>
-  <div class="new-message h-fill">
-    <input class="fill" type="text" />
-    <button type="button">&gt;&gt;</button>
-  </div>
 </div>
 <div class="col right v-fill dark-bg" v-else>
   <div class="col-header">

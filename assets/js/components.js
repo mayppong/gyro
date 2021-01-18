@@ -53,8 +53,8 @@ export let nameForm = {
   },
   template: `
     <form class="name" @submit.prevent="updateName">
-      <input type="text" v-model="name" maxlength="3" placeholder="___" />
-      <button type="submit" class="send"></button>
+      <input type="text" class="fill" v-model="name" maxlength="3" placeholder="___" />
+      <button type="submit">&gt;&gt;</button>
     </form>
   `
 };
@@ -78,43 +78,52 @@ export let identity = {
 
 export let message = {
   props: ['message'],
-  data: function(){
-    return {
-      body: '',
-      time: '',
-      name: '',
-      squad: '',
+  computed: {
+    timestamp: function() {
+      var date = new Date();
+      return date.getHours() + ":" + date.getMinutes();
     }
   },
   template: `
-    <div class="message"
-      v-bind:class="{
-        'same-team': same_team,
-        'admin': is_admin}
-      ">
+    <div class="message">
       <div class="message-header">
-        <span class="timestamp">12:34</span>
-        <identity :name="name"
-          :squad="squad"></identity>
+        <span class="timestamp">{{ timestamp }}</span>&nbsp;
+        <identity :name="message.from"
+          :squad="message.squad"></identity>
       </div>
-      <div class="message-body">{{ body }}</div>
+      <div class="message-body">{{ message.message }}</div>
     </div>
   `
 };
 
 export let chatRoom = {
+  props: ['channel'],
   data: function() {
     return {
       messages: [],
       input: ''
     }
   },
-  props: ['channel'],
+  created: function() {
+    this.channel.on("shout", (resp) => {
+      this.messages.push(resp);
+    });
+  },
+  methods: {
+    shout: function() {
+      this.channel.push("shout", {message: this.input});
+      this.input = "";
+    }
+  },
   template: `
     <div class="messages fill">
       <message v-for="message in messages"
         :message="message"></message>
     </div>
+    <form class="new-message h-fill" @submit.prevent="shout">
+      <input class="fill" type="text" name="message" v-model="input" />
+      <button type="submit">&gt;&gt;</button>
+    </form>
   `
 };
 
