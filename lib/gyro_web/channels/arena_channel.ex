@@ -61,7 +61,7 @@ defmodule GyroWeb.ArenaChannel do
   Event handler for spinners to send public message to every one in the room.
   """
   def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner: spinner}}) do
-    payload = %{"message" => message, "from" => spinner.name}
+    payload = %{"message" => message, "from" => spinner.name, "squad" => Map.get(spinner, :squad, "")}
     broadcast socket, "shout", payload
     {:noreply, socket}
   end
