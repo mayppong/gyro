@@ -52,7 +52,7 @@ export let nameForm = {
     }
   },
   template: `
-    <form class="name" @submit.prevent="updateName">
+    <form class="name-picker h-fill" @submit.prevent="updateName">
       <input type="text" class="fill" v-model="name" maxlength="3" placeholder="___" />
       <button type="submit">&gt;&gt;</button>
     </form>
