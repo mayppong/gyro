@@ -34,7 +34,8 @@ defmodule Gyro.SquadTest do
     {:ok, spinner_pid} = Spinner.start_link()
     {:noreply, enlisted_state} = Squad.handle_cast({:enlist, spinner_pid}, %Squad{})
 
-    {:noreply, delisted_state} = Squad.handle_info({:DOWN, nil, :process, spinner_pid, nil}, enlisted_state)
+    {:noreply, delisted_state} =
+      Squad.handle_info({:DOWN, nil, :process, spinner_pid, nil}, enlisted_state)
 
     assert delisted_state.members == %{}
   end
@@ -74,12 +75,12 @@ defmodule Gyro.SquadTest do
 
     assert :ok == status
 
-    #squad_pid = GenServer.whereis(squad_pid)
-    #has_squad = Supervisor.which_children(Gyro.Supervisor)
+    # squad_pid = GenServer.whereis(squad_pid)
+    # has_squad = Supervisor.which_children(Gyro.Supervisor)
     #  |> Enum.any?(fn({_, child_pid, _, _}) ->
     #    child_pid == squad_pid
     #  end)
-    #assert has_squad
+    # assert has_squad
   end
 
   test "enlist a member", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
@@ -90,7 +91,10 @@ defmodule Gyro.SquadTest do
     assert @pid == result
   end
 
-  test "delist a spinner from squad stored in its state", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
+  test "delist a spinner from squad stored in its state", %{
+    squad_pid: squad_pid,
+    spinner_pid: spinner_pid
+  } do
     Squad.enlist(squad_pid, spinner_pid)
     Squad.delist(spinner_pid)
 
@@ -108,7 +112,10 @@ defmodule Gyro.SquadTest do
   end
 
   @tag :skip
-  test "enlist a member who's already in another squad", %{squad_pid: squad_pid, spinner_pid: spinner_pid} do
+  test "enlist a member who's already in another squad", %{
+    squad_pid: squad_pid,
+    spinner_pid: spinner_pid
+  } do
     Squad.enlist(@squad.name, spinner_pid)
     Squad.enlist({:global, "MAY"}, spinner_pid)
 
@@ -120,7 +127,6 @@ defmodule Gyro.SquadTest do
     assert Squad.exists?(squad_pid)
     assert Squad.exists?(@squad.name)
   end
-
 
   defp is_member?(spinner_pid, squad_id) when is_pid(spinner_pid) do
     %{members: members} = GenServer.call(squad_id, :introspect)

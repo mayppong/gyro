@@ -5,8 +5,8 @@ defmodule GyroWeb.UserSocket do
 
   ## Channels
   # channel "rooms:*", Gyro.RoomChannel
-  channel "arenas:lobby", GyroWeb.ArenaChannel
-  channel "arenas:squads:*", GyroWeb.SquadChannel
+  channel("arenas:lobby", GyroWeb.ArenaChannel)
+  channel("arenas:squads:*", GyroWeb.SquadChannel)
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -20,14 +20,15 @@ defmodule GyroWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(_params, socket) do
-    socket = socket
-    |> assign(:connected, DateTime.utc_now())
+    socket =
+      socket
+      |> assign(:connected, DateTime.utc_now())
 
     # For the SquadChannel to work, it needs to know the spinner pid. Since we
     # currently can't share socket data in assigns between channels, I had to
     # move the `Spinner.start/1` to the connection level. Data assigns to
     # socket at this level will be available to every channels.
-    #{:ok, socket}
+    # {:ok, socket}
     {:ok, spinner_pid} = Spinner.enlist()
     {:ok, assign(socket, :spinner_pid, spinner_pid)}
   end

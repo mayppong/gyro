@@ -11,11 +11,12 @@ defmodule Gyro.ScoreboardTest do
     {:ok, pid} = Spinner.enlist()
     another = Spinner.introspect(pid)
 
-    spinners = 1..5
-    |> Enum.map(fn(_) -> Spinner.enlist() end)
-    |> Enum.map(fn({:ok, pid}) ->
-      Spinner.introspect(pid)
-    end)
+    spinners =
+      1..5
+      |> Enum.map(fn _ -> Spinner.enlist() end)
+      |> Enum.map(fn {:ok, pid} ->
+        Spinner.introspect(pid)
+      end)
 
     {:ok, spinner: spinner, another: another, spinners: spinners}
   end
@@ -29,14 +30,14 @@ defmodule Gyro.ScoreboardTest do
 
   test "building a list of latest", %{spinner: spinner, another: another} do
     latest = Scoreboard.latest([another, spinner])
-    order = Enum.map(latest, &(&1.created_at))
+    order = Enum.map(latest, & &1.created_at)
 
     assert order == [spinner.created_at, another.created_at]
   end
 
   test "building a list of heroics", %{spinner: spinner, another: another} do
     heroics = Scoreboard.heroics([another, spinner])
-    order = Enum.map(heroics, &(&1.score))
+    order = Enum.map(heroics, & &1.score)
 
     assert order == [spinner.score, another.score]
   end

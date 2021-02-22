@@ -11,7 +11,7 @@ defmodule Gyro.Squad.DynamicSupervisor do
   give a global name scope so it can be referenced anywhere in the network.
   """
   def start_link(_) do
-    DynamicSupervisor.start_link(__MODULE__, :ok, [name: @pid])
+    DynamicSupervisor.start_link(__MODULE__, :ok, name: @pid)
   end
 
   @doc """

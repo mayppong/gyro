@@ -1,5 +1,4 @@
 defmodule Gyro.Arena.Spinnable do
-
   alias __MODULE__
 
   defmacro __using__(_) do
@@ -25,7 +24,7 @@ defmodule Gyro.Arena.Spinnable do
         {:noreply, state}
       end
 
-      defoverridable [ introspect: 1, exists?: 1, update: 3 ]
+      defoverridable introspect: 1, exists?: 1, update: 3
     end
   end
 
@@ -35,9 +34,11 @@ defmodule Gyro.Arena.Spinnable do
   """
   def exists?(nil), do: false
   def exists?(name) when is_bitstring(name), do: exists?({:global, name})
+
   def exists?(pid) when is_pid(pid) do
     Process.alive?(pid)
   end
+
   def exists?(name), do: GenServer.whereis(name) |> exists?
 
   @doc """
@@ -45,10 +46,10 @@ defmodule Gyro.Arena.Spinnable do
   """
   def introspect(list) when is_list(list) do
     list
-    |> Stream.map(fn({_, pid}) ->
+    |> Stream.map(fn {_, pid} ->
       Task.async(fn -> introspect(pid) end)
     end)
-    |> Stream.map(&(Task.await(&1)))
+    |> Stream.map(&Task.await(&1))
     |> Enum.filter(&(!is_nil(&1)))
   end
 
@@ -80,5 +81,4 @@ defmodule Gyro.Arena.Spinnable do
   def update(spinner_pid, key, value) do
     GenServer.cast(spinner_pid, {:update, key, value})
   end
-
 end

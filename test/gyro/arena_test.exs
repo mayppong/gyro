@@ -29,7 +29,10 @@ defmodule Gyro.ArenaTest do
 
     test "handle process down", %{spinner_pid: spinner_pid} do
       {:noreply, enlisted_state} = Arena.handle_cast({:enlist, spinner_pid}, %Arena{})
-      {:noreply, delisted_state} = Arena.handle_info({:DOWN, nil, :process, spinner_pid, nil}, enlisted_state)
+
+      {:noreply, delisted_state} =
+        Arena.handle_info({:DOWN, nil, :process, spinner_pid, nil}, enlisted_state)
+
       assert delisted_state.size == 0
     end
   end
@@ -56,5 +59,4 @@ defmodule Gyro.ArenaTest do
       assert Map.has_key?(state, :members)
     end
   end
-
 end

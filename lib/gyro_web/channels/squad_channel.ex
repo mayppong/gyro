@@ -14,11 +14,17 @@ defmodule GyroWeb.SquadChannel do
   to look up with.
   """
   def join("arenas:squads:", _, _), do: {:error, %{reason: "invalid name"}}
-  def join("arenas:squads:" <> name, payload, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+
+  def join(
+        "arenas:squads:" <> name,
+        payload,
+        socket = %Socket{assigns: %{spinner_pid: spinner_pid}}
+      ) do
     if authorized?(payload) do
-      {:ok, squad_pid} = name
-      |> String.slice(0, 3)
-      |> Squad.enlist(spinner_pid)
+      {:ok, squad_pid} =
+        name
+        |> String.slice(0, 3)
+        |> Squad.enlist(spinner_pid)
 
       send(self(), :init)
       {:ok, assign(socket, :squad_pid, squad_pid)}
@@ -50,7 +56,7 @@ defmodule GyroWeb.SquadChannel do
 
     socket = assign(socket, :squad, squad)
 
-    push socket, "introspect", %{"arena" => arena, "squad" => squad}
+    push(socket, "introspect", %{"arena" => arena, "squad" => squad})
     Process.send_after(self(), :spin, @timer)
     {:noreply, socket}
   end
@@ -63,10 +69,20 @@ defmodule GyroWeb.SquadChannel do
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (squads:lobby).
-  def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
+  def handle_in(
+        "shout",
+        %{"message" => message},
+        socket = %Socket{assigns: %{spinner_pid: spinner_pid}}
+      ) do
     spinner = Spinner.introspect(spinner_pid)
-    payload = %{"message" => message, "from" => spinner.name, "squad" => socket.assigns.squad.name}
-    broadcast socket, "shout", payload
+
+    payload = %{
+      "message" => message,
+      "from" => spinner.name,
+      "squad" => socket.assigns.squad.name
+    }
+
+    broadcast(socket, "shout", payload)
     {:noreply, socket}
   end
 
@@ -74,7 +90,7 @@ defmodule GyroWeb.SquadChannel do
   # to the client. The default implementation is just to push it
   # downstream but one could filter or change the event.
   def handle_out(event, payload, socket) do
-    push socket, event, payload
+    push(socket, event, payload)
     {:noreply, socket}
   end
 

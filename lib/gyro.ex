@@ -28,10 +28,12 @@ defmodule Gyro do
 
     # Add support for clustering under Kubernetes
     topologies = Application.get_env(:libcluster, :topologies, nil)
-    children = case topologies do
-      nil -> children
-      [_] -> [{Cluster.Supervisor, [topologies, [name: Gyro.ClusterSupervisor]]} | children]
-    end
+
+    children =
+      case topologies do
+        nil -> children
+        [_] -> [{Cluster.Supervisor, [topologies, [name: Gyro.ClusterSupervisor]]} | children]
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

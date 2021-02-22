@@ -3,8 +3,7 @@ defmodule Gyro.Scoreboard do
   alias Gyro.Arena.Spinnable
 
   @derive Jason.Encoder
-  defstruct name: nil, score: 0, spm: 0, size: 0,
-    legendaries: [], heroics: [], latest: []
+  defstruct name: nil, score: 0, spm: 0, size: 0, legendaries: [], heroics: [], latest: []
 
   @size 10
 
@@ -13,9 +12,9 @@ defmodule Gyro.Scoreboard do
   spinnable states.
   """
   def build(board \\ %Scoreboard{}, list) do
-    size = list |> size
-    latest = list |> latest
-    heroics = list |> heroics
+    size = list |> size()
+    latest = list |> latest()
+    heroics = list |> heroics()
     legendaries = heroics |> legendaries(board.legendaries)
 
     %Scoreboard{board | size: size, latest: latest, heroics: heroics, legendaries: legendaries}
@@ -27,7 +26,7 @@ defmodule Gyro.Scoreboard do
   """
   def total(list) do
     list
-    |> Enum.reduce({0, 0}, fn(%{score: score, spm: spm}, {acc_score, acc_spm}) ->
+    |> Enum.reduce({0, 0}, fn %{score: score, spm: spm}, {acc_score, acc_spm} ->
       {acc_score + score, acc_spm + spm}
     end)
   end
@@ -36,7 +35,7 @@ defmodule Gyro.Scoreboard do
   Counting number of members. It's currently just calling the `Enum.count`
   directly. However, we might want to expand in the future to
   """
-  def size(list), do: list |> Enum.count
+  def size(list), do: list |> Enum.count()
 
   @doc """
   A method for finding the newest spinnables in the squad.
@@ -65,6 +64,7 @@ defmodule Gyro.Scoreboard do
   have to message multiple GenServer processes to gather the states.
   """
   def legendaries(list, []), do: list |> heroics
+
   def legendaries(list, legends) do
     legends
     |> dedup(list)
@@ -84,9 +84,10 @@ defmodule Gyro.Scoreboard do
 
   # Remove spinnables that have updated state.
   defp dedup([], _), do: []
+
   defp dedup(old, current) do
     old
-    |> Enum.reject(fn(item) ->
+    |> Enum.reject(fn item ->
       Enum.any?(current, &(&1.id == item.id))
     end)
   end
@@ -94,7 +95,7 @@ defmodule Gyro.Scoreboard do
   # Set spinnables spm to 0 if their process is no longer in the system.
   defp mark_dead(spinnables) do
     spinnables
-    |> Stream.map(fn(spinnable = %{id: pid, spm: spm}) ->
+    |> Stream.map(fn spinnable = %{id: pid, spm: spm} ->
       Task.async(fn ->
         if spm != 0 do
           case Spinnable.exists?(pid) do
@@ -106,7 +107,6 @@ defmodule Gyro.Scoreboard do
         end
       end)
     end)
-    |> Stream.map(&(Task.await(&1)))
+    |> Stream.map(&Task.await(&1))
   end
-
 end

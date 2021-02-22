@@ -12,7 +12,7 @@ defmodule Gyro.SpinnerTest do
 
   test "handle spin" do
     {:noreply, state} = Spinner.handle_info(:spin, %Spinner{})
-    assert state.score == 1/60
+    assert state.score == 1 / 60
   end
 
   test "enlist a new spinner" do
@@ -58,5 +58,4 @@ defmodule Gyro.SpinnerTest do
 
     assert name == "MAY"
   end
-
 end

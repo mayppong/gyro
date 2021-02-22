@@ -15,9 +15,7 @@ defmodule Gyro.Arena do
   alias Gyro.Scoreboard
 
   @derive {Jason.Encoder, except: [:members]}
-  defstruct members: %{},
-    score: 0, spm: 0, size: 0,
-    scoreboard: %Scoreboard{}
+  defstruct members: %{}, score: 0, spm: 0, size: 0, scoreboard: %Scoreboard{}
 
   @type on_start :: {:ok, pid} | :ignore | {:error, {:already_started, pid} | term}
 
@@ -70,7 +68,7 @@ defmodule Gyro.Arena do
 
   Returns a map with member list
   """
-  @spec introspect(:spinners) :: Map.t
+  @spec introspect(:spinners) :: Map.t()
   def introspect(:spinners) do
     GenServer.call(@spinners_pid, :introspect)
   end
@@ -80,7 +78,7 @@ defmodule Gyro.Arena do
 
   Returns a map with member list
   """
-  @spec introspect(:squads) :: Map.t
+  @spec introspect(:squads) :: Map.t()
   def introspect(:squads) do
     GenServer.call(@squads_pid, :introspect)
   end
@@ -109,7 +107,7 @@ defmodule Gyro.Arena do
 
   Returns `on_start` type.
   """
-  @spec start_link(String.t | Atom.t, %__MODULE__{}, Keyword.t) :: on_start
+  @spec start_link(String.t() | Atom.t(), %__MODULE__{}, Keyword.t()) :: on_start
   def start_link(name, state \\ %__MODULE__{}, opts \\ []) do
     GenServer.start_link(name, state, opts)
   end
@@ -162,7 +160,6 @@ defmodule Gyro.Arena do
     {:noreply, state}
   end
 
-
   @doc """
   Handle the `:DOWN` message from the Spinnables' processes we monitor on
   enlist.
@@ -172,7 +169,8 @@ defmodule Gyro.Arena do
   Returns a tuple of `:noreply` and the new state to continue the process
   with for the next handler, as given from the delist handler.
   """
-  @spec handle_info({:DOWN, pid, :process, pid, Atom.t}, %__MODULE__{}) :: {:noreply, %__MODULE__{}}
+  @spec handle_info({:DOWN, pid, :process, pid, Atom.t()}, %__MODULE__{}) ::
+          {:noreply, %__MODULE__{}}
   def handle_info({:DOWN, _, :process, spinner_pid, _}, state) do
     handle_cast({:delist, spinner_pid}, state)
   end
@@ -186,8 +184,9 @@ defmodule Gyro.Arena do
   """
   @spec handle_info(:spin, %__MODULE__{}) :: {:noreply, %__MODULE__{}}
   def handle_info(:spin, state = %{members: pids, scoreboard: scoreboard}) do
-    members = pids
-    |> inspect_members
+    members =
+      pids
+      |> inspect_members
 
     scoreboard = Scoreboard.build(scoreboard, members)
 
@@ -198,14 +197,13 @@ defmodule Gyro.Arena do
 
   # A private method for getting the latest state of processes in a given
   # list.
-  @spec inspect_members(Enum.t) :: Enum.t
+  @spec inspect_members(Enum.t()) :: Enum.t()
   defp inspect_members(members) do
     members
-    |> Stream.map(fn({_, pid}) ->
+    |> Stream.map(fn {_, pid} ->
       Task.async(fn -> Spinnable.introspect(pid) end)
     end)
-    |> Stream.map(&(Task.await(&1)))
+    |> Stream.map(&Task.await(&1))
     |> Enum.filter(&(!is_nil(&1)))
   end
-
 end

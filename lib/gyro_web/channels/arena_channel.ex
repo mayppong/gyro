@@ -46,7 +46,7 @@ defmodule GyroWeb.ArenaChannel do
 
     arena = Arena.introspect(:spinners)
 
-    push socket, "introspect", %{"arena" => arena, "spinner" => spinner}
+    push(socket, "introspect", %{"arena" => arena, "spinner" => spinner})
     Process.send_after(self(), :spin, @timer)
     {:noreply, socket}
   end
@@ -61,8 +61,13 @@ defmodule GyroWeb.ArenaChannel do
   Event handler for spinners to send public message to every one in the room.
   """
   def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner: spinner}}) do
-    payload = %{"message" => message, "from" => spinner.name, "squad" => Map.get(spinner, :squad_name, "")}
-    broadcast socket, "shout", payload
+    payload = %{
+      "message" => message,
+      "from" => spinner.name,
+      "squad" => Map.get(spinner, :squad_name, "")
+    }
+
+    broadcast(socket, "shout", payload)
     {:noreply, socket}
   end
 
@@ -70,14 +75,19 @@ defmodule GyroWeb.ArenaChannel do
   Event handler for spinners to change their name. Currently we're just
   responding with the name that the spinner gave as confirmation.
   """
-  def handle_in("intro", payload = %{"name" => name}, socket = %Socket{assigns: %{spinner_pid: spinner_pid, spinner: spinner}}) do
-    name = name
-    |> String.slice(0, 3)
+  def handle_in(
+        "intro",
+        payload = %{"name" => name},
+        socket = %Socket{assigns: %{spinner_pid: spinner_pid, spinner: spinner}}
+      ) do
+    name =
+      name
+      |> String.slice(0, 3)
 
     Spinner.update(spinner_pid, :name, name)
     socket = assign(socket, :spinner, %{spinner | name: name})
 
-    broadcast socket, "shout", %{"message" => "Introducing #{name}", "from" => "ADMIN"}
+    broadcast(socket, "shout", %{"message" => "Introducing #{name}", "from" => "ADMIN"})
     {:reply, {:ok, payload}, socket}
   end
 
@@ -87,7 +97,7 @@ defmodule GyroWeb.ArenaChannel do
   to let everyone know which spinner is trash-talking which spinner.
   """
   def handle_in("taunt", _, socket) do
-    broadcast socket, "taunt", %{"message" => "Someone's been taunted."}
+    broadcast(socket, "taunt", %{"message" => "Someone's been taunted."})
     {:noreply, socket}
   end
 
@@ -95,7 +105,7 @@ defmodule GyroWeb.ArenaChannel do
   # to the client. The default implementation is just to push it
   # downstream but one could filter or change the event.
   def handle_out(event, payload, socket) do
-    push socket, event, payload
+    push(socket, event, payload)
     {:noreply, socket}
   end
 

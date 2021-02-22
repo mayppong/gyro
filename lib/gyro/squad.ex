@@ -7,8 +7,13 @@ defmodule Gyro.Squad do
   alias Gyro.Scoreboard
 
   @derive {Jason.Encoder, except: [:id, :members]}
-  defstruct id: nil, name: nil, created_at: DateTime.utc_now(), members: %{},
-    score: 0, spm: 0, scoreboard: %Scoreboard{}
+  defstruct id: nil,
+            name: nil,
+            created_at: DateTime.utc_now(),
+            members: %{},
+            score: 0,
+            spm: 0,
+            scoreboard: %Scoreboard{}
 
   @timer 5000
 
@@ -25,16 +30,20 @@ defmodule Gyro.Squad do
     case exists?(name) do
       true ->
         {:ok, {:global, name}}
+
       false ->
         Gyro.Squad.DynamicSupervisor.start_child(name, %Squad{name: name})
         |> case do
           {:ok, squad_pid} ->
             Arena.enlist(:squads, squad_pid)
             {:ok, squad_pid}
+
           {:error, {:already_started, squad_pid}} ->
             {:ok, squad_pid}
+
           {:error, {{:already_started, squad_pid}, _}} ->
             {:ok, squad_pid}
+
           error ->
             error
         end
@@ -54,13 +63,16 @@ defmodule Gyro.Squad do
   """
   def enlist(name, spinnable_pid) do
     delist(spinnable_pid)
+
     case form(name) do
       {:ok, squad_pid} ->
         squad_pid |> GenServer.cast({:enlist, spinnable_pid})
         spinnable_pid |> Spinnable.update(:squad_pid, squad_pid)
         spinnable_pid |> Spinnable.update(:squad_name, name)
         {:ok, squad_pid}
-      error -> error
+
+      error ->
+        error
     end
   end
 
@@ -69,6 +81,7 @@ defmodule Gyro.Squad do
   """
   def delist(spinnable_pid) when is_pid(spinnable_pid) do
     %{squad_pid: squad_pid} = Spinnable.introspect(spinnable_pid)
+
     case is_pid(squad_pid) do
       true -> delist(squad_pid, spinnable_pid)
       _ -> true
@@ -145,14 +158,15 @@ defmodule Gyro.Squad do
   calculations.
   """
   def handle_info(:spin, state = %{members: pids, scoreboard: scoreboard}) do
-    members = pids
-    |> inspect_members
+    members =
+      pids
+      |> inspect_members
 
     scoreboard_task = Task.async(fn -> Scoreboard.build(scoreboard, members) end)
     score_task = Task.async(fn -> Scoreboard.total(members) end)
 
     {score, spm} = Task.await(score_task)
-    scoreboard  = Task.await(scoreboard_task)
+    scoreboard = Task.await(scoreboard_task)
 
     Process.send_after(self(), :spin, @timer)
     {:noreply, %{state | score: score, spm: spm, scoreboard: scoreboard}}
@@ -162,11 +176,10 @@ defmodule Gyro.Squad do
   # list.
   defp inspect_members(members) do
     members
-    |> Stream.map(fn({_, pid}) ->
+    |> Stream.map(fn {_, pid} ->
       Task.async(fn -> Spinnable.introspect(pid) end)
     end)
-    |> Stream.map(&(Task.await(&1)))
+    |> Stream.map(&Task.await(&1))
     |> Enum.filter(&(!is_nil(&1)))
   end
-
 end
