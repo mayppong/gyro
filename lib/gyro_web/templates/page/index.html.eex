@@ -1,6 +1,6 @@
 <div class="col left v-fill dark-bg" v-if="store.spinner.name">
   <div class="col-header">
-    Arena: <identity :name="store.spinner.name"></identity>
+    Arena: <identity :name="store.spinner.name" :squad="store.squad.name"></identity>
   </div>
   <scoreboard :scoreboard="store.arena.scoreboard"></scoreboard>
 

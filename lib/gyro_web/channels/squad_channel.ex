@@ -27,6 +27,14 @@ defmodule GyroWeb.SquadChannel do
     end
   end
 
+  @doc """
+  Terminate method is called when a user leaves the channel. In this case,
+  we would want remove the user from the squad when they leave the channel.
+  """
+  def terminate(_, %Socket{assigns: %{spinner_pid: spinner_pid, squad_pid: squad_pid}}) do
+    Squad.delist(squad_pid, spinner_pid)
+  end
+
   def handle_info(:init, socket) do
     send(self(), :spin)
     {:noreply, socket}
@@ -57,7 +65,7 @@ defmodule GyroWeb.SquadChannel do
   # broadcast to everyone in the current topic (squads:lobby).
   def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     spinner = Spinner.introspect(spinner_pid)
-    payload = %{"message" => message, "from" => spinner.name}
+    payload = %{"message" => message, "from" => spinner.name, "squad" => socket.assigns.squad.name}
     broadcast socket, "shout", payload
     {:noreply, socket}
   end

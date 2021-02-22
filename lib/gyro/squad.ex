@@ -58,6 +58,7 @@ defmodule Gyro.Squad do
       {:ok, squad_pid} ->
         squad_pid |> GenServer.cast({:enlist, spinnable_pid})
         spinnable_pid |> Spinnable.update(:squad_pid, squad_pid)
+        spinnable_pid |> Spinnable.update(:squad_name, name)
         {:ok, squad_pid}
       error -> error
     end
@@ -80,6 +81,7 @@ defmodule Gyro.Squad do
   def delist(squad_pid, spinnable_pid) do
     GenServer.cast(squad_pid, {:delist, spinnable_pid})
     spinnable_pid |> Spinnable.update(:squad_pid, nil)
+    spinnable_pid |> Spinnable.update(:squad_name, nil)
   end
 
   @doc """
