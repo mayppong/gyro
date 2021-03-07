@@ -1,4 +1,10 @@
 defmodule Gyro.Arena.Spinnable do
+  @moduledoc """
+  The `Spinnable` module provides a behaviour for implementing GenServer
+  processes meant to represent the functionality of `Spinner` and `Squad`.
+  This includes an interface for working with those GenServer processes
+  within its respective context such as a way to get, and update data.
+  """
   alias __MODULE__
 
   defmacro __using__(_) do

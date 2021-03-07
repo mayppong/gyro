@@ -1,4 +1,8 @@
 defmodule GyroWeb.SquadChannel do
+  @moduledoc """
+  A web socket channel for handling the team game event which runs under
+  the Squad context.
+  """
   use GyroWeb, :channel
   alias Phoenix.Socket
   alias Gyro.Arena

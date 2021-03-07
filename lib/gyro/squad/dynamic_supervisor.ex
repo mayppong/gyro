@@ -1,4 +1,9 @@
 defmodule Gyro.Squad.DynamicSupervisor do
+  @moduledoc """
+  The `DynamicSupervisor` implements `DynamicSupervisor` behaviour to allow
+  `Gyro` application to manage `Spinnable` GenServer processes to be added
+  to the supervision tree dynamically as new spinners or squads are added.
+  """
   use DynamicSupervisor
 
   alias Gyro.Squad

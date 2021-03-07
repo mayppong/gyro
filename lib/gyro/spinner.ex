@@ -1,4 +1,12 @@
 defmodule Gyro.Spinner do
+  @moduledoc """
+  The `Spinner` module implements a GenServer process for storing information
+  related to a spinner(user), with each spinner having its own process, registered
+  as a name process in the global scope.
+
+  It's also a context module providing interface for working with the
+  GenServer process as well.
+  """
   use Gyro.Arena.Spinnable
 
   alias __MODULE__

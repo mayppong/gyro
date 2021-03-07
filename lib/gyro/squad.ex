@@ -1,4 +1,12 @@
 defmodule Gyro.Squad do
+  @moduledoc """
+  The `Squad` module implements a GenServer process for storing information
+  related to a squad, with each squad having its own process, registered
+  as a name process in the global scope.
+
+  It's also a context module providing interface for working with the
+  GenServer process as well.
+  """
   use Gyro.Arena.Spinnable
 
   alias __MODULE__

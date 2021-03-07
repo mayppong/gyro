@@ -1,4 +1,15 @@
 defmodule Gyro.Scoreboard do
+  @moduledoc """
+  The `Scoreboard` is an implmenetation of the GenServer for storing aggregated
+  information about the top scores from 3 different categories:
+  - Legendary refers to highest score of any spinnable process the system has
+    seen (including the ones that's offline)
+  - Heroic refers to highest score *active* spinnable process
+  - Latest refers to newest spinnable process joining the system
+
+  The scoreboard is currently used for both ranking spinner (user), and squad,
+  but separately.
+  """
   alias __MODULE__
   alias Gyro.Arena.Spinnable
 
@@ -95,18 +106,15 @@ defmodule Gyro.Scoreboard do
   # Set spinnables spm to 0 if their process is no longer in the system.
   defp mark_dead(spinnables) do
     spinnables
-    |> Stream.map(fn spinnable = %{id: pid, spm: spm} ->
-      Task.async(fn ->
-        if spm != 0 do
-          case Spinnable.exists?(pid) do
-            false -> %{spinnable | spm: 0}
-            true -> spinnable
-          end
-        else
-          spinnable
-        end
-      end)
+    |> Stream.map(fn spinnable ->
+      if alive?(spinnable) do
+        spinnable
+      else
+        %{spinnable | spm: 0}
+      end
     end)
-    |> Stream.map(&Task.await(&1))
   end
+
+  defp alive?(spinnable = %{id: pid, spm: spm}),
+    do: spm != 0 and Spinnable.exists?(pid)
 end

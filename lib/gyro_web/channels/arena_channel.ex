@@ -1,4 +1,8 @@
 defmodule GyroWeb.ArenaChannel do
+  @moduledoc """
+  A web socket channel for handling the main game event which runs under
+  the Arena context.
+  """
   use GyroWeb, :channel
 
   alias Phoenix.Socket
