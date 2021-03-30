@@ -9,10 +9,19 @@ defmodule Gyro.Squad do
   """
   use Gyro.Arena.Spinnable
 
-  alias __MODULE__
   alias Gyro.Arena
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
+
+  @type t :: %__MODULE__{
+          id: pid(),
+          name: String.t(),
+          members: Map.t(),
+          score: Integer.t(),
+          spm: Integer.t(),
+          created_at: DateTime.t(),
+          scoreboard: Scoreboard.t()
+        }
 
   @derive {Jason.Encoder, except: [:id, :members]}
   defstruct id: nil,
@@ -34,13 +43,14 @@ defmodule Gyro.Squad do
   back as if we successfully started the squad. Otherwise, pass the `:error`
   status and reason back.
   """
+  @spec form(String.t()) :: {:ok, pid()} | {:error, Any.t()} | :ignore
   def form(name) do
     case exists?(name) do
       true ->
         {:ok, {:global, name}}
 
       false ->
-        Gyro.Squad.DynamicSupervisor.start_child(name, %Squad{name: name})
+        Gyro.Squad.DynamicSupervisor.start_child(name, %__MODULE__{name: name})
         |> case do
           {:ok, squad_pid} ->
             Arena.enlist(:squads, squad_pid)
@@ -61,6 +71,7 @@ defmodule Gyro.Squad do
   @doc """
   Stop the given squad GenServer.
   """
+  @spec disband(pid(), term()) :: :ok
   def disband(squad_pid, reason \\ :normal) do
     GenServer.stop(squad_pid, reason)
   end
@@ -69,6 +80,7 @@ defmodule Gyro.Squad do
   Add the given spinnable to a squad of a given name. If the squad doesn't
   already exist, also start it.
   """
+  @spec enlist(String.t(), pid()) :: {:ok, pid()} | {:error, Any.t()} | :ignore
   def enlist(name, spinnable_pid) do
     delist(spinnable_pid)
 
@@ -87,18 +99,20 @@ defmodule Gyro.Squad do
   @doc """
   Remove the given spinnable from the squad stored in its state.
   """
+  @spec delist(pid()) :: :ok
   def delist(spinnable_pid) when is_pid(spinnable_pid) do
     %{squad_pid: squad_pid} = Spinnable.introspect(spinnable_pid)
 
     case is_pid(squad_pid) do
       true -> delist(squad_pid, spinnable_pid)
-      _ -> true
+      _ -> :ok
     end
   end
 
   @doc """
   Remove the spinnable from the given squad.
   """
+  @spec delist(pid(), pid()) :: :ok
   def delist(squad_pid, spinnable_pid) do
     GenServer.cast(squad_pid, {:delist, spinnable_pid})
     spinnable_pid |> Spinnable.update(:squad_pid, nil)
@@ -111,6 +125,7 @@ defmodule Gyro.Squad do
   means the squad name is unique and can be referenced by name from anywhere
   in the system without the process id.
   """
+  @spec start_link(Sting.t(), __MODULE__.t()) :: {:ok, pid()} | {:error, Any.t()} | :ignore
   def start_link(name, state) do
     GenServer.start_link(__MODULE__, state, name: name)
   end
@@ -119,6 +134,7 @@ defmodule Gyro.Squad do
   Once the GenServer is started successfully, the init function is invoked.
   For now, we just need to tell it to start spinning.
   """
+  @spec init(Map.t()) :: {:ok, __MODULE__.t()}
   def init(state = %{name: name}) do
     state = Map.put(state, :id, {:global, name})
     send(self(), :spin)
@@ -129,7 +145,8 @@ defmodule Gyro.Squad do
   Handle adding a new spinnable to the squad.
   The new spinnable is stored in the member list as a map.
   """
-  def handle_cast({:enlist, spinnable_pid}, state = %{members: members}) do
+  @spec handle_cast({:enlist, pid()}, __MODULE__.t()) :: {:noreply, __MODULE__.t()}
+  def handle_cast({:enlist, spinnable_pid}, state = %__MODULE__{members: members}) do
     Process.monitor(spinnable_pid)
     members = Map.put(members, spinnable_pid, spinnable_pid)
     state = Map.put(state, :members, members)
@@ -143,7 +160,8 @@ defmodule Gyro.Squad do
   using the spinnable pid as "key"-ish right now, we can't look up the member
   listing map by key right now.
   """
-  def handle_cast({:delist, quitter_pid}, state = %{members: members}) do
+  @spec handle_cast({:delist, pid()}, __MODULE__.t()) :: {:noreply, __MODULE__.t()}
+  def handle_cast({:delist, quitter_pid}, state = %__MODULE__{members: members}) do
     members = Map.delete(members, quitter_pid)
     state = Map.put(state, :members, members)
 
@@ -154,7 +172,8 @@ defmodule Gyro.Squad do
   Handle the `:DOWN` message from the Spinnables' process we monitor on enlist.
   If the Spinnable process is downed, we delist them from the Squad.
   """
-  def handle_info({:DOWN, _, :process, spinnable_pid, _}, state) do
+  @spec handle_info({:DOWN, pid()}, __MODULE__.t()) :: {:noreply, __MODULE__.t()}
+  def handle_info({:DOWN, _ref, :process, spinnable_pid, _}, state) do
     handle_cast({:delist, spinnable_pid}, state)
   end
 
@@ -165,7 +184,8 @@ defmodule Gyro.Squad do
   asynchronously. Once we have all members data, we can continue on with the
   calculations.
   """
-  def handle_info(:spin, state = %{members: pids, scoreboard: scoreboard}) do
+  @spec handle_info(:spin, __MODULE__.t()) :: {:noreply, __MODULE__.t()}
+  def handle_info(:spin, state = %__MODULE__{members: pids, scoreboard: scoreboard}) do
     members =
       pids
       |> inspect_members
@@ -182,6 +202,7 @@ defmodule Gyro.Squad do
 
   # A private method for getting the latest state of processes in a given
   # list.
+  @spec inspect_members(Map.t()) :: Enum.t()
   defp inspect_members(members) do
     members
     |> Stream.map(fn {_, pid} ->

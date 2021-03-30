@@ -8,3 +8,6 @@ config :gyro, Gyro.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :ex_unit,
+  assert_receive_timeout: 300

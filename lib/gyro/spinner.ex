@@ -9,7 +9,15 @@ defmodule Gyro.Spinner do
   """
   use Gyro.Arena.Spinnable
 
-  alias __MODULE__
+  @type t :: %__MODULE__{
+          id: pid(),
+          name: String.t(),
+          spm: Integer.t(),
+          score: Integer.t(),
+          squad_pid: pid(),
+          created_at: DateTime.t()
+        }
+
   alias Gyro.Arena
 
   @derive {Jason.Encoder, except: [:id, :squad_pid]}
@@ -20,6 +28,7 @@ defmodule Gyro.Spinner do
   @doc """
   The main method for starting a new spinner GenServer.
   """
+  @spec enlist() :: {:ok, pid()} | {:error, Map.t()}
   def enlist() do
     case start_link() do
       {:ok, spinner_pid} ->
@@ -34,6 +43,7 @@ defmodule Gyro.Spinner do
   @doc """
   Stop the spinner GenServer with a given reason
   """
+  @spec delist(pid(), Atom.t()) :: :ok
   def delist(spinner_pid, reason \\ :normal) do
     GenServer.stop(spinner_pid, reason)
   end
@@ -43,7 +53,8 @@ defmodule Gyro.Spinner do
   as an unnamed since we don't worry about duplicating name in this case,
   unlike with squads where we want to allow only a team of the same name.
   """
-  def start_link(state \\ %Spinner{}) do
+  @spec start_link(__MODULE__.t()) :: GenServer.on_start()
+  def start_link(state \\ %__MODULE__{}) do
     GenServer.start_link(__MODULE__, state)
   end
 
@@ -51,6 +62,7 @@ defmodule Gyro.Spinner do
   Once the GenServer is started successfully, the init function is invoked.
   For now, we just need to tell it to start spinning.
   """
+  @spec init(__MODULE__.t()) :: {:ok, __MODULE__.t()}
   def init(state) do
     state = Map.put(state, :id, self())
     :timer.send_interval(@timer, self(), :spin)
@@ -61,6 +73,7 @@ defmodule Gyro.Spinner do
   Handle `spinning` which is where we update the current state of a spinner
   at a set interval.
   """
+  @spec handle_info(:spin, __MODULE__.t()) :: {:noreply, __MODULE__.t()}
   def handle_info(:spin, state) do
     state =
       state
@@ -71,6 +84,7 @@ defmodule Gyro.Spinner do
 
   # Calculate score by converting spin per minute to seconds and convert spin
   # interval from miliseconds to seconds, then combine them together.
+  @spec update_score(__MODULE__.t()) :: __MODULE__.t()
   defp update_score(state = %{score: score, spm: spm}) do
     score = score + spm * (@timer / 1000) / 60
     Map.put(state, :score, score)

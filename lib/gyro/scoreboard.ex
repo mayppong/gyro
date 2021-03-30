@@ -10,8 +10,18 @@ defmodule Gyro.Scoreboard do
   The scoreboard is currently used for both ranking spinner (user), and squad,
   but separately.
   """
-  alias __MODULE__
+
   alias Gyro.Arena.Spinnable
+
+  @type t :: %__MODULE__{
+          name: String.t(),
+          score: Integer.t(),
+          spm: Integer.t(),
+          size: Integer.t(),
+          legendaries: List.t(),
+          heroics: List.t(),
+          latest: List.t()
+        }
 
   @derive Jason.Encoder
   defstruct name: nil, score: 0, spm: 0, size: 0, legendaries: [], heroics: [], latest: []
@@ -22,19 +32,21 @@ defmodule Gyro.Scoreboard do
   Build a scoreboard based on the previous scoreboard given and a list of
   spinnable states.
   """
-  def build(board \\ %Scoreboard{}, list) do
+  @spec build(__MODULE__.t(), List.t()) :: __MODULE__.t()
+  def build(board \\ %__MODULE__{}, list) do
     size = list |> size()
     latest = list |> latest()
     heroics = list |> heroics()
     legendaries = heroics |> legendaries(board.legendaries)
 
-    %Scoreboard{board | size: size, latest: latest, heroics: heroics, legendaries: legendaries}
+    %__MODULE__{board | size: size, latest: latest, heroics: heroics, legendaries: legendaries}
   end
 
   @doc """
   A method for iterating through a given list and return the sum of score and
   spm.
   """
+  @spec total(List.t()) :: List.t()
   def total(list) do
     list
     |> Enum.reduce({0, 0}, fn %{score: score, spm: spm}, {acc_score, acc_spm} ->
@@ -46,6 +58,7 @@ defmodule Gyro.Scoreboard do
   Counting number of members. It's currently just calling the `Enum.count`
   directly. However, we might want to expand in the future to
   """
+  @spec size(List.t()) :: Integer.t()
   def size(list), do: list |> Enum.count()
 
   @doc """
@@ -53,6 +66,7 @@ defmodule Gyro.Scoreboard do
   This is done by iterating through members, sort them by their connected
   time, and take only the first 10 from the list.
   """
+  @spec latest(List.t()) :: List.t()
   def latest(list), do: list |> by_created |> chop
 
   @doc """
@@ -61,6 +75,7 @@ defmodule Gyro.Scoreboard do
   for the current spinnable state, then sort them by score before taking the
   top 10 players.
   """
+  @spec heroics(List.t()) :: List.t()
   def heroics(list), do: list |> by_score |> chop
 
   @doc """
@@ -74,6 +89,7 @@ defmodule Gyro.Scoreboard do
   which is most likely to be the bottleneck in the entire process since we
   have to message multiple GenServer processes to gather the states.
   """
+  @spec legendaries(List.t(), List.t()) :: List.t()
   def legendaries(list, []), do: list |> heroics
 
   def legendaries(list, legends) do
@@ -85,6 +101,7 @@ defmodule Gyro.Scoreboard do
   end
 
   # Sort spinnables by their created at time.
+  @spec by_created(List.t()) :: List.t()
   defp by_created(list), do: list |> Enum.sort(&(&1.created_at > &2.created_at))
 
   # Sort spinnables by their score.
@@ -115,6 +132,6 @@ defmodule Gyro.Scoreboard do
     end)
   end
 
-  defp alive?(spinnable = %{id: pid, spm: spm}),
+  defp alive?(%{id: pid, spm: spm}),
     do: spm != 0 and Spinnable.exists?(pid)
 end
