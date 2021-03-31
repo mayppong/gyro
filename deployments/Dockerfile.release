@@ -1,9 +1,12 @@
 FROM alpine:3.9
 
 ARG VERSION=0.0.0
+
 ENV APP gyro
-ENV MIX_ENV prod
 ENV PORT 4000
+ENV MIX_ENV prod
+# Use REPLACE_OS_VARS=true in order to swap runtime env values in rel/vm.args
+ENV REPLACE_OS_VARS true
 
 RUN apk --update add bash openssl ca-certificates erlang-crypto && \
   rm -rf /var/cache/apk/*

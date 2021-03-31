@@ -69,9 +69,8 @@ config :libcluster,
       strategy: Cluster.Strategy.Kubernetes.DNSSRV,
       config: [
         service: "gyro",
-        namespace: "default",
-        application_name: "node",
-        polling_interval: 10_000
+        namespace: System.get_env("K8S_NAMESPACE"),
+        application_name: "gyro"
       ]
     ]
   ]
