@@ -1,6 +1,6 @@
 version: "3"
 services:
-  elixir: &elixir
+  gyro: &gyro
     image: "gyro:dev"
     build:
       context: .
@@ -11,21 +11,21 @@ services:
 
   # the main image, this is the application
   web:
-    <<: *elixir
+    <<: *gyro
     command: "mix phx.server"
     ports:
       - "4000:4000"
 
   test:
-    <<: *elixir
+    <<: *gyro
     command: "mix test"
 
   credo:
-    <<: *elixir
+    <<: *gyro
     command: "mix credo"
 
   build:
-    <<: *elixir
+    <<: *gyro
     environment:
       MIX_ENV: prod
     command: sh -c "mix deps.get --only prod && mix compile && mix phx.digest && mix distillery.release --env=prod"

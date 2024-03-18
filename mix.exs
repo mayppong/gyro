@@ -5,9 +5,8 @@ defmodule Gyro.Mixfile do
     [
       app: :gyro,
       version: "0.2.0",
-      elixir: "~> 1.9",
+      elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
