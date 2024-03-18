@@ -1,6 +1,7 @@
 <div class="col left v-fill dark-bg" v-if="store.spinner.name">
   <div class="col-header">
-    Arena: <identity :name="store.spinner.name" :squad="store.squad.name"></identity>
+    Arena:
+    <identity :name="store.spinner.name" :squad="store.squad.name"></identity>
   </div>
   <scoreboard :scoreboard="store.arena.scoreboard"></scoreboard>
 
@@ -35,7 +36,8 @@
 
 <div class="col right v-fill dark-bg" v-if="squad.name">
   <div class="col-header">
-    Squad: <identity :squad="store.squad.name"></identity>
+    Squad:
+    <identity :squad="store.squad.name"></identity>
   </div>
   <button type="button" class="abandon" @click="leave">Abandon</button>
 
