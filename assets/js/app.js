@@ -103,7 +103,61 @@ const ShwarmaSpin = Vue.createApp({
         this.store.squad = {}
       }
     }
-  }
+  },
+  template: `
+    <div class="col left v-fill dark-bg" v-if="store.spinner.name">
+      <div class="col-header">
+        Arena:
+        <identity :name="store.spinner.name" :squad="store.squad.name"></identity>
+      </div>
+      <scoreboard :scoreboard="store.arena.scoreboard"></scoreboard>
+
+      <div class="col-header">Arena Chat</div>
+      <chat-room :channel="arenaChannel"></chat-room>
+    </div>
+    <div class="col left v-fill dark-bg" v-else>
+      <div class="col-header">
+        Choose a name
+      </div>
+      <name-form @update-name="intro"></name-form>
+    </div>
+
+    <div class="col middle">
+      <div class="score-box dark-bg">
+        <div class="own-score">
+          YOU:
+          <spinner :score="store.spinner.score" :spm="spinner.spm"></spinner>
+        </div>
+        <div class="squad-score" v-if="store.squad.name">
+          <identity :squad="store.squad.name"></identity>:
+          <spinner :score="store.squad.score" :spm="store.squad.spm"></spinner>
+        </div>
+      </div>
+      <div class="social dark-bg">
+        <a href="" class="social-button">[FB]</a>
+        <a href="" class="social-button">[TW]</a>
+        <a href="" class="social-button">[RD]</a>
+        <a href="" class="social-button">[LI]</a>
+      </div>
+    </div>
+
+    <div class="col right v-fill dark-bg" v-if="squad.name">
+      <div class="col-header">
+        Squad:
+        <identity :squad="store.squad.name"></identity>
+      </div>
+      <button type="button" class="abandon" @click="leave">Abandon</button>
+
+      <div class="col-header">Squad Chat</div>
+      <chat-room :channel="squadChannel"></chat-room>
+    </div>
+    <div class="col right v-fill dark-bg" v-else>
+      <div class="col-header">
+        Choose a Squad
+      </div>
+      <name-form @update-name="join"></name-form>
+    </div>
+  `
 });
 
 ShwarmaSpin.component('spinner', Components.spinner);

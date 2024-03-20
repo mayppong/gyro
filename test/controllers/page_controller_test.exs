@@ -2,7 +2,7 @@ defmodule GyroWeb.PageControllerTest do
   use GyroWeb.ConnCase
 
   test "GET /", %{conn: conn} do
-    conn = get(conn, "/")
-    assert html_response(conn, 200) =~ "Arena"
+    conn = get(conn, ~p"/")
+    assert html_response(conn, 200) =~ "id=\"shwarmaspin\""
   end
 end
