@@ -9,7 +9,11 @@ import Config
 config :gyro, GyroWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "rds/k0cS4P9e20n5ovNm5zQMTmMo7sPJSFZYcTWA4JhFBxY8yYd/dAg1KF5J0CLd",
-  render_errors: [accepts: ~w(html json)],
+  render_errors: [
+    accepts: ~w(html json),
+    formats: [html: GyroWeb.ErrorHTML, json: GyroWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: Gyro.PubSub
 
 # Configures Elixir's Logger

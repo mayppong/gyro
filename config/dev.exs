@@ -13,13 +13,7 @@ config :gyro, GyroWeb.Endpoint,
   cache_static_lookup: false,
   check_origin: false,
   watchers: [
-    node: [
-      "build.js",
-      "--mode",
-      "development",
-      "--watch",
-      cd: Path.expand("../assets", __DIR__)
-    ]
+    node: ["build.js", "--watch", cd: Path.expand("../assets", __DIR__)]
   ]
 
 # Watch static and templates for browser reloading.

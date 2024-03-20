@@ -40,6 +40,7 @@ defmodule Gyro.Mixfile do
       {:phoenix_live_reload, "~> 1.4", only: :dev},
       {:phoenix_live_view, "~> 0.20"},
       {:gettext, "~> 0.24"},
+      {:heroicons, "~> 0.5"},
       {:jason, "~> 1.4"},
       {:plug_cowboy, "~> 2.0"},
       {:libcluster, "~> 3.3", only: :prod},
@@ -55,7 +56,8 @@ defmodule Gyro.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"]
+      setup: ["deps.get", "cmd --cd assets npm install"],
+      "assets.deploy": ["cmd --cd assets node build.js --deploy", "phx.digest"]
     ]
   end
 end

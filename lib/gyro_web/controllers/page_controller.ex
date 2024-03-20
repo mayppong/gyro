@@ -1,7 +1,7 @@
 defmodule GyroWeb.PageController do
   use GyroWeb, :controller
 
-  def index(conn, _params) do
-    render(conn, :home)
+  def home(conn, _params) do
+    render(conn, "home.html")
   end
 end
