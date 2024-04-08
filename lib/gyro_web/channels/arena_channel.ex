@@ -32,18 +32,14 @@ defmodule GyroWeb.ArenaChannel do
     Spinner.delist(spinner_pid)
   end
 
-  @doc """
-  Set spinner up with their initial data on their first join.
-  """
+  # Set spinner up with their initial data on their first join.
   def handle_info(:init, socket) do
     send(self(), :spin)
     {:noreply, socket}
   end
 
-  @doc """
-  Event handler for the infinite spinning loop. Currently it calls Spinner
-  GenServer to get the state of the spinner to report back to client
-  """
+  # Event handler for the infinite spinning loop. Currently it calls Spinner
+  # GenServer to get the state of the spinner to report back to client
   def handle_info(:spin, socket = %Socket{assigns: %{spinner_pid: spinner_pid}}) do
     spinner = Spinner.introspect(spinner_pid)
     socket = assign(socket, :spinner, spinner)
@@ -61,9 +57,7 @@ defmodule GyroWeb.ArenaChannel do
     {:reply, {:ok, payload}, socket}
   end
 
-  @doc """
-  Event handler for spinners to send public message to every one in the room.
-  """
+  # Event handler for spinners to send public message to every one in the room.
   def handle_in("shout", %{"message" => message}, socket = %Socket{assigns: %{spinner: spinner}}) do
     payload = %{
       "message" => message,
@@ -75,10 +69,8 @@ defmodule GyroWeb.ArenaChannel do
     {:noreply, socket}
   end
 
-  @doc """
-  Event handler for spinners to change their name. Currently we're just
-  responding with the name that the spinner gave as confirmation.
-  """
+  # Event handler for spinners to change their name. Currently we're just
+  # responding with the name that the spinner gave as confirmation.
   def handle_in(
         "intro",
         payload = %{"name" => name},
@@ -95,11 +87,9 @@ defmodule GyroWeb.ArenaChannel do
     {:reply, {:ok, payload}, socket}
   end
 
-  @doc """
-  Event handler for spinner to private message each other, mainly for
-  trash-talking. The room should then broadcase a notification message
-  to let everyone know which spinner is trash-talking which spinner.
-  """
+  # Event handler for spinner to private message each other, mainly for
+  # trash-talking. The room should then broadcase a notification message
+  # to let everyone know which spinner is trash-talking which spinner.
   def handle_in("taunt", _, socket) do
     broadcast(socket, "taunt", %{"message" => "Someone's been taunted."})
     {:noreply, socket}

@@ -177,13 +177,11 @@ defmodule Gyro.Squad do
     handle_cast({:delist, spinnable_pid}, state)
   end
 
-  @doc """
-  Handle `spinning` which is where we update the current state of the squad
-  at a set interval.
-  A new process is spun up for each member to introspect the state
-  asynchronously. Once we have all members data, we can continue on with the
-  calculations.
-  """
+  # Handle `spinning` which is where we update the current state of the squad
+  # at a set interval.
+  # A new process is spun up for each member to introspect the state
+  # asynchronously. Once we have all members data, we can continue on with the
+  # calculations.
   @spec handle_info(:spin, __MODULE__.t()) :: {:noreply, __MODULE__.t()}
   def handle_info(:spin, state = %__MODULE__{members: pids, scoreboard: scoreboard}) do
     members =

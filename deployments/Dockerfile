@@ -1,4 +1,4 @@
-FROM elixir:1.10-alpine
+FROM elixir:1.16-alpine
 
 RUN apk --update add bash openssl nodejs npm inotify-tools \
   rm -rf /var/cache/apk/*
