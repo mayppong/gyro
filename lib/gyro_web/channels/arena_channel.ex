@@ -5,9 +5,9 @@ defmodule GyroWeb.ArenaChannel do
   """
   use GyroWeb, :channel
 
-  alias Phoenix.Socket
   alias Gyro.Arena
   alias Gyro.Spinner
+  alias Phoenix.Socket
 
   @timer 5000
 

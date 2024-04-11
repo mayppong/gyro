@@ -11,7 +11,9 @@ defmodule GyroWeb.CoreComponents do
   """
   use Phoenix.Component
 
+  alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
+
   import GyroWeb.Gettext
 
   @doc """
@@ -263,20 +265,20 @@ defmodule GyroWeb.CoreComponents do
                                    pattern placeholder readonly required size step)
   slot :inner_block
 
-  def input(%{field: {f, field}} = assigns) do
+  def input(assigns = %{field: {f, field}}) do
     assigns
     |> assign(field: nil)
     |> assign_new(:name, fn ->
-      name = Phoenix.HTML.Form.input_name(f, field)
+      name = Form.input_name(f, field)
       if assigns.multiple, do: name <> "[]", else: name
     end)
-    |> assign_new(:id, fn -> Phoenix.HTML.Form.input_id(f, field) end)
-    |> assign_new(:value, fn -> Phoenix.HTML.Form.input_value(f, field) end)
+    |> assign_new(:id, fn -> Form.input_id(f, field) end)
+    |> assign_new(:value, fn -> Form.input_value(f, field) end)
     |> assign_new(:errors, fn -> translate_errors(f.errors || [], field) end)
     |> input()
   end
 
-  def input(%{type: "checkbox"} = assigns) do
+  def input(assigns = %{type: "checkbox"}) do
     assigns = assign_new(assigns, :checked, fn -> input_equals?(assigns.value, "true") end)
 
     ~H"""
@@ -296,7 +298,7 @@ defmodule GyroWeb.CoreComponents do
     """
   end
 
-  def input(%{type: "select"} = assigns) do
+  def input(assigns = %{type: "select"}) do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
@@ -315,7 +317,7 @@ defmodule GyroWeb.CoreComponents do
     """
   end
 
-  def input(%{type: "textarea"} = assigns) do
+  def input(assigns = %{type: "textarea"}) do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
@@ -357,10 +359,10 @@ defmodule GyroWeb.CoreComponents do
     """
   end
 
-  defp input_border([] = _errors),
+  defp input_border(_errors = []),
     do: "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5"
 
-  defp input_border([_ | _] = _errors),
+  defp input_border(_errors = [_ | _]),
     do: "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10"
 
   @doc """

@@ -69,12 +69,10 @@ defmodule Gyro.Arena.Spinnable do
   end
 
   def introspect(pid) do
-    try do
-      introspect!(pid)
-    catch
-      :exit, {:noproc, _} -> nil
-      :exit, _ -> nil
-    end
+    introspect!(pid)
+  catch
+    :exit, {:noproc, _} -> nil
+    :exit, _ -> nil
   end
 
   @doc """

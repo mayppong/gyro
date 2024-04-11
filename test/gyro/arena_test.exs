@@ -1,8 +1,8 @@
 defmodule Gyro.ArenaTest do
   use GyroWeb.ChannelCase
 
-  alias GyroWeb.UserSocket
   alias Gyro.Arena
+  alias GyroWeb.UserSocket
 
   setup do
     socket = socket(UserSocket, "user_id", %{})

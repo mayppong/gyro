@@ -28,8 +28,8 @@ defmodule Gyro.Spinner do
   @doc """
   The main method for starting a new spinner GenServer.
   """
-  @spec enlist() :: {:ok, pid()} | {:error, Map.t()}
-  def enlist() do
+  @spec enlist :: {:ok, pid()} | {:error, Map.t()}
+  def enlist do
     case start_link() do
       {:ok, spinner_pid} ->
         Arena.enlist(:spinners, spinner_pid)

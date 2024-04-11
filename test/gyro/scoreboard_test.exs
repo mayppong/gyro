@@ -1,8 +1,8 @@
 defmodule Gyro.ScoreboardTest do
   use ExUnit.Case, async: true
 
-  alias Gyro.Spinner
   alias Gyro.Scoreboard
+  alias Gyro.Spinner
 
   setup do
     {:ok, spinner_pid} = Spinner.enlist()

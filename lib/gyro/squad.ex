@@ -12,6 +12,7 @@ defmodule Gyro.Squad do
   alias Gyro.Arena
   alias Gyro.Arena.Spinnable
   alias Gyro.Scoreboard
+  alias Gyro.Squad.DynamicSupervisor
 
   @type t :: %__MODULE__{
           id: pid(),
@@ -50,7 +51,7 @@ defmodule Gyro.Squad do
         {:ok, {:global, name}}
 
       false ->
-        Gyro.Squad.DynamicSupervisor.start_child(name, %__MODULE__{name: name})
+        DynamicSupervisor.start_child(name, %__MODULE__{name: name})
         |> case do
           {:ok, squad_pid} ->
             Arena.enlist(:squads, squad_pid)

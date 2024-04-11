@@ -4,10 +4,11 @@ defmodule GyroWeb.SquadChannel do
   the Squad context.
   """
   use GyroWeb, :channel
-  alias Phoenix.Socket
+
   alias Gyro.Arena
-  alias Gyro.Squad
   alias Gyro.Spinner
+  alias Gyro.Squad
+  alias Phoenix.Socket
 
   @timer 5000
 
